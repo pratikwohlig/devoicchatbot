@@ -23,14 +23,16 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('FormCtrl', function ($scope, TemplateService, NavigationService, $timeout) {
+    .controller('FormCtrl', function ($scope, TemplateService, NavigationService, $timeout, toastr, $http) {
         $scope.template = TemplateService.getHTML("content/form.html");
         TemplateService.title = "Form"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         $scope.formSubmitted = false;
         $scope.submitForm = function (data) {
-            console.log(data);
-            $scope.formSubmitted = true;
+            console.log("This is it");
+            $scope.yourPromise = $http.get("http://admin.accessworld.in/index.php/json/getHomeProducts").then(function () {
+                toastr.error("Form Submitting Error");
+            });
         };
     })
 

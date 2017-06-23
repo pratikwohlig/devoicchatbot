@@ -1,38 +1,42 @@
 <div class="container">
-    <h2>Demo Validation Form</h2>
-
-    <form name="formName" ng-submit="submitForm(formData);" ng-if="!formSubmitted">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group" ng-class="{'form-invalid': formName.name.$invalid && formName.name.$touched}">
-                    <label>Name* </label>
-                    <input type="text" name="name" class="form-control" ng-model="formData.name" required>
-                    <span ng-show="formName.name.$touched && formName.name.$invalid">The name is required.</span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group" ng-class="{'form-invalid': formName.email.$invalid && formName.email.$touched}">
-                    <label>Email*</label>
-                    <input type="email" name="email" class="form-control" ng-model="formData.email" required>
-                    <span ng-show="formName.email.$touched && formName.email.$invalid">Please enter vaild email.</span>
-                </div>
+    <h1>Form</h1>
+    <!--<pre>{{data|json}}</pre>-->
+    <!--<pre style="background: #b0deff;">{{formData.age|json}}</pre>-->
+    <form name="formData">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" ng-model="data.name" class="form-control" id="name" placeholder="Name" required name="name">
+            <div class="pull-right" ng-repeat="(field,value) in formData.name.$error" ng-show="formData.name.$touched">
+                <span class="label label-danger" ng-if="field=='required' && value">Please Enter Name</span>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group" ng-class="{'form-invalid': formName.query.$invalid && formName.query.$touched}">
-                    <label>Query*</label>
-                    <textarea name="query" class="form-control" ng-model="formData.query" required></textarea>
-                     <span ng-show="formName.query.$touched && formName.query.$invalid">Enter your Query.</span>
-                </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" ng-model="data.email" class="form-control" id="email" placeholder="Email" name="email" required>
+            <div class="pull-right" ng-repeat="(field,value) in formData.email.$error" ng-show="formData.email.$touched">
+                <span class="label label-danger" ng-if="field=='required' && value">Please Enter Email</span>
             </div>
         </div>
-        <div class="text-center">
-            <button class="btn btn-primary" ng-disabled="formName.$invalid">Submit</button>
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" name="age" ng-model="data.age" class="form-control" id="age" placeholder="Age" min="18" max="50" required>
+            <div class="pull-right" ng-repeat="(field,value) in formData.age.$error" ng-show="formData.age.$touched">
+                <span class="label label-danger" ng-if="field=='required' && value">Please Enter Age</span>
+                <span class="label label-danger" ng-if="field=='min' && value">Age should be greater than 18</span>
+                <span class="label label-danger" ng-if="field=='max' && value">Age should be less than 50</span>
+            </div>
         </div>
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" ng-model="data.subject" class="form-control" id="subject" placeholder="Subject" name="subject">
+        </div>
+        <div class="form-group">
+            <label for="query">Query</label>
+            <textarea name="query" ng-model="data.query" id="query" cols="30" rows="10" class="form-control" required></textarea>
+            <div class="pull-right" ng-repeat="(field,value) in formData.query.$error" ng-show="formData.query.$touched">
+                <span class="label label-danger" ng-if="field=='required' && value">Please Enter Query</span>
+            </div>
+        </div>
+        <button ng-click="submitForm()" class="btn btn-default" ng-disabled="formData.$invalid" promise-btn="yourPromise">Submit</button>
     </form>
-    <div class="form-submission text-center" ng-if="formSubmitted">
-        <h3>Thank you for submitting the form!</h3>
-        <p>We will get back to you soon.</p>
-    </div>
 </div>

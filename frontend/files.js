@@ -7,6 +7,7 @@ module.exports = [
   'bower_components/smart-app-banner/smart-app-banner.js',
   "bower_components/moment/min/moment.min.js",
 
+
   //Angular Libs
   'bower_components/angular/angular.js',
   'bower_components/angular-sanitize/angular-sanitize.js',
@@ -20,6 +21,9 @@ module.exports = [
   'bower_components/angulartics/dist/angulartics.min.js',
   'bower_components/angulartics-google-analytics/dist/angulartics-ga.min.js',
   'bower_components/angular-ui-swiper/dist/angular-ui-swiper.js',
+  "bower_components/angular-toastr/dist/angular-toastr.js",
+  "bower_components/angular-toastr/dist/angular-toastr.tpls.js",
+  "bower_components/angular-promise-buttons/dist/angular-promise-buttons.js",
 
   //App.js
   'frontend/js/app.js',
