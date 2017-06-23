@@ -28,10 +28,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         TemplateService.title = "Form"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         $scope.formSubmitted = false;
+        // $scope.data = {
+        //     name: "Chintan",
+        //     "age": 20,
+        //     "email": "chinyan@wohlig.com",
+        //     "query": "query"
+        // };
         $scope.submitForm = function (data) {
             console.log("This is it");
-            $scope.yourPromise = $http.get("http://admin.accessworld.in/index.php/json/getHomeProducts").then(function () {
-                toastr.error("Form Submitting Error");
+            return new Promise(function (callback) {
+                $timeout(function () {
+                    callback();
+                }, 500);
             });
         };
     })
