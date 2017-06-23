@@ -39,7 +39,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             return new Promise(function (callback) {
                 $timeout(function () {
                     callback();
-                }, 500);
+                }, 5000);
             });
         };
     })

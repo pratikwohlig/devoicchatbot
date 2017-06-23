@@ -1,7 +1,7 @@
 <div class="container">
     <h1>Form</h1>
     <!--<pre>{{data|json}}</pre>-->
-    <!--<pre style="background: #b0deff;">{{formData.age|json}}</pre>-->
+    <!--<pre style="background: #b0deff;">{{formData.email|json}}</pre>-->
     <form name="formData">
         <div class="form-group">
             <label for="name">Name</label>
@@ -15,6 +15,7 @@
             <input type="email" ng-model="data.email" class="form-control" id="email" placeholder="Email" name="email" required>
             <div class="pull-right" ng-repeat="(field,value) in formData.email.$error" ng-show="formData.email.$touched">
                 <span class="label label-danger" ng-if="field=='required' && value">Please Enter Email</span>
+                <span class="label label-danger" ng-if="field=='email' && value">Please Enter Valid Email</span>
             </div>
         </div>
         <div class="form-group">
