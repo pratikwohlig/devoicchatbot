@@ -11,16 +11,17 @@ module.exports = {
         req.file("file").upload({
             maxBytes: 10000000 // 10 MB Storage 1 MB = 10^6
         }, function (err, uploadedFile) {
+            console.log(err);
+            console.log(uploadedFile);
             if (err) {
                 res.callback(err);
             } else if (uploadedFile && uploadedFile.length > 0) {
-                async.each(uploadedFile, function (n, callback) {
+                async.concat(uploadedFile, function (n, callback) {
                     Config.uploadFile(n.fd, function (err, value) {
                         if (err) {
                             callback(err);
                         } else {
-                            fileNames.push(value.name);
-                            callback(null);
+                            callback(null, value.name);
                         }
                     });
                 }, res.callback);

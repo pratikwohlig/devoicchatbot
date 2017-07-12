@@ -163,7 +163,9 @@ var model = {
             data.googleAccessToken = accessToken;
             data.save(function () {});
         });
-    }
+    },
+    getAllMedia: function (data, callback) {
 
+    }
 };
 module.exports = _.assign(module.exports, exports, model);

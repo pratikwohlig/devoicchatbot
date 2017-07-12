@@ -88,6 +88,9 @@ var controller = {
         } else {
             res.callback("Access Denied for Database Backup");
         }
+    },
+    getAllMedia: function (req, res) {
+        Media.getAllMedia(req.body, res.callback);
     }
 };
 module.exports = _.assign(module.exports, controller);
