@@ -360,23 +360,40 @@ var models = {
         });
     },
     sendEmail: function (fromEmail, toEmail, subject, filename, data) {
+        console.log(process.env.SENDGRID_API_KEY);
         var helper = require('sendgrid').mail;
-        var from_email = new helper.Email(fromEmail);
-        var to_email = new helper.Email(toEmail);
-        sails.hooks.views.render("email/" + filename, data, function (err, html) {
-            var content = new helper.Content('text/html', html);
-            var mail = new helper.Mail(from_email, subject, to_email, content);
-            var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
-            var request = sg.emptyRequest({
-                method: 'POST',
-                path: '/v3/mail/send',
-                body: mail.toJSON(),
-            });
-            sg.API(request, function (error, response) {
-                console.log(response.statusCode);
-                console.log(response.body);
-                console.log(response.headers);
-            });
+        var fromEmail = new helper.Email(fromEmail);
+        var toEmail = new helper.Email(toEmail);
+        var subject = 'Sending with SendGrid is Fun';
+        var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
+        var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+
+
+        fs.readFile('http://www.auraart.in/user/resize?width=1200&file=62df106a-2699-4470-abbf-c507dab8c313.jpg', function (err, data) {
+            sendgrid.send({
+                to: hexDecode(_.e),
+                from: 'xxxxxxxxx@gmail.com',
+                subject: 'Report',
+
+                files: [{ filename: 'Report.pdf', content: data }],
+                html: 'bla bla'
+            })
+        })
+
+        var sg = require('sendgrid')("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");
+        var request = sg.emptyRequest({
+            method: 'POST',
+            path: '/v3/mail/send',
+            body: mail.toJSON()
+        });
+
+        sg.API(request, function (error, response) {
+            if (error) {
+                console.log('Error response received');
+            }
+            console.log(response.statusCode);
+            console.log(response.body);
+            console.log(response.headers);
         });
 
     }

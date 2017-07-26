@@ -122,4 +122,5 @@ nbproject
 .sailsrc
 backup
 .vscode
-*.log
+*.logsendgrid.env
+sendgrid.env
