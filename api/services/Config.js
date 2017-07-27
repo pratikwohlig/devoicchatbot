@@ -368,7 +368,7 @@ var models = {
         // var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
         // var mail = new helper.Mail(fromEmail, subject, toEmail, content);
 
-        // var sg = require('sendgrid')("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");
+        // var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
 
         // var request = sg.emptyRequest({
         //     method: 'POST',
@@ -388,7 +388,7 @@ var models = {
 
 
         var helper = require('sendgrid').mail;
-        var sg = require('sendgrid')("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");
+        var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
         var fs = require('fs');
 
         var mail = new helper.Mail();
