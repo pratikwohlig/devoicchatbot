@@ -361,40 +361,72 @@ var models = {
     },
     sendEmail: function (fromEmail, toEmail, subject, filename, data) {
         console.log(process.env.SENDGRID_API_KEY);
+        // var helper = require('sendgrid').mail;
+        // var fromEmail = new helper.Email(fromEmail);
+        // var toEmail = new helper.Email(toEmail);
+        // var subject = 'Sending with SendGrid is Funhjghjghj';
+        // var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
+        // var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+
+        // var sg = require('sendgrid')("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");
+
+        // var request = sg.emptyRequest({
+        //     method: 'POST',
+        //     path: '/v3/mail/send',
+        //     body: mail.toJSON()
+        // });
+
+        // sg.API(request, function (error, response) {
+        //     if (error) {
+        //         console.log('Error response received');
+        //     }
+        //     console.log(response.statusCode);
+        //     console.log(response.body);
+        //     console.log(response.headers);
+        // });
+
+
+
         var helper = require('sendgrid').mail;
-        var fromEmail = new helper.Email(fromEmail);
-        var toEmail = new helper.Email(toEmail);
-        var subject = 'Sending with SendGrid is Fun';
-        var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
-        var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+        var sg = require('sendgrid')("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");
+        var fs = require('fs');
 
+        var mail = new helper.Mail();
+        var email = new helper.Email('hr@wohlig.com', 'Example User');
+        mail.setFrom(email);
 
-        fs.readFile('http://www.auraart.in/user/resize?width=1200&file=62df106a-2699-4470-abbf-c507dab8c313.jpg', function (err, data) {
-            sendgrid.send({
-                to: hexDecode(_.e),
-                from: 'xxxxxxxxx@gmail.com',
-                subject: 'Report',
+        mail.setSubject('Hello World from the SendGrid Node.js Library');
 
-                files: [{ filename: 'Report.pdf', content: data }],
-                html: 'bla bla'
-            })
-        })
+        var personalization = new helper.Personalization();
+        email = new helper.Email('jagruti@wohlig.com', 'Example User');
+        personalization.addTo(email);
+        mail.addPersonalization(personalization);
 
-        var sg = require('sendgrid')("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");
+        var content = new helper.Content('text/html', '<html><body>some text here</body></html>')
+        mail.addContent(content);
+
+        var attachment = new helper.Attachment();
+        var file = fs.readFileSync('views/email/demo.txt');
+        var base64File = new Buffer(file).toString('base64');
+        attachment.setContent(base64File);
+        attachment.setType('application/text');
+        attachment.setFilename('demo.txt');
+        attachment.setDisposition('attachment');
+        mail.addAttachment(attachment);
+
         var request = sg.emptyRequest({
             method: 'POST',
             path: '/v3/mail/send',
-            body: mail.toJSON()
+            body: mail.toJSON(),
         });
 
-        sg.API(request, function (error, response) {
-            if (error) {
-                console.log('Error response received');
-            }
+        sg.API(request, function (err, response) {
             console.log(response.statusCode);
             console.log(response.body);
             console.log(response.headers);
         });
+
+
 
     }
 };
