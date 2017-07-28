@@ -152,6 +152,25 @@ var models = {
 
 
     },
+    readAttachment: function (filename, callback) {
+        console.log("filename", filename);
+        var readstream = gfs.createReadStream({
+            filename: filename
+        });
+        readstream.on('error', function (err) {
+
+            callback(err, false);
+        });
+        var buf;
+        var bufs = [];
+        readstream.on('data', function (d) {
+            bufs.push(d);
+        });
+        readstream.on('end', function () {
+            buf = Buffer.concat(bufs);
+            callback(null, buf);
+        });
+    },
     readUploaded: function (filename, width, height, style, res) {
         res.set({
             'Cache-Control': 'public, max-age=31557600',
@@ -360,71 +379,58 @@ var models = {
         });
     },
     sendEmail: function (fromEmail, toEmail, subject, filename, data) {
-        console.log(process.env.SENDGRID_API_KEY);
-        // var helper = require('sendgrid').mail;
-        // var fromEmail = new helper.Email(fromEmail);
-        // var toEmail = new helper.Email(toEmail);
-        // var subject = 'Sending with SendGrid is Funhjghjghj';
-        // var content = new helper.Content('text/plain', 'and easy to do anywhere, even with Node.js');
-        // var mail = new helper.Mail(fromEmail, subject, toEmail, content);
 
-        // var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+        Password.findOneByName("sendgrid", function (err, data) {
+            if (err) {
 
-        // var request = sg.emptyRequest({
-        //     method: 'POST',
-        //     path: '/v3/mail/send',
-        //     body: mail.toJSON()
-        // });
+            } else {
+                var helper = require('sendgrid').mail;
+                var sg = require('sendgrid')(data.key);
+                var fs = require('fs');
 
-        // sg.API(request, function (error, response) {
-        //     if (error) {
-        //         console.log('Error response received');
-        //     }
-        //     console.log(response.statusCode);
-        //     console.log(response.body);
-        //     console.log(response.headers);
-        // });
+                var mail = new helper.Mail();
+                var email = new helper.Email('hr@wohlig.com', 'Example User');
+                mail.setFrom(email);
 
+                mail.setSubject('Hello World from the SendGrid Node.js Library');
 
+                var personalization = new helper.Personalization();
+                email = new helper.Email('jagruti@wohlig.com', 'Example User');
+                personalization.addTo(email);
+                mail.addPersonalization(personalization);
 
-        var helper = require('sendgrid').mail;
-        var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
-        var fs = require('fs');
+                var content = new helper.Content('text/html', '<html><body>some text here</body></html>')
+                mail.addContent(content);
 
-        var mail = new helper.Mail();
-        var email = new helper.Email('hr@wohlig.com', 'Example User');
-        mail.setFrom(email);
+                var attachment = new helper.Attachment();
+                // var file = fs.readFileSync('views/email/demo.txt');
+                Config.readAttachment(filename, function (err, data) {
+                    console.log("demonstration................");
+                    console.log(data.n);
+                    var base64File = new Buffer(data).toString('base64');
+                    attachment.setContent(base64File);
+                    // attachment.setType('application/text');
+                    attachment.setFilename(filename);
+                    attachment.setDisposition('attachment');
+                    mail.addAttachment(attachment);
 
-        mail.setSubject('Hello World from the SendGrid Node.js Library');
+                    var request = sg.emptyRequest({
+                        method: 'POST',
+                        path: '/v3/mail/send',
+                        body: mail.toJSON(),
+                    });
 
-        var personalization = new helper.Personalization();
-        email = new helper.Email('jagruti@wohlig.com', 'Example User');
-        personalization.addTo(email);
-        mail.addPersonalization(personalization);
+                    sg.API(request, function (err, response) {
+                        console.log(response.statusCode);
+                        console.log(response.body);
+                        console.log(response.headers);
+                    });
+                });
 
-        var content = new helper.Content('text/html', '<html><body>some text here</body></html>')
-        mail.addContent(content);
-
-        var attachment = new helper.Attachment();
-        var file = fs.readFileSync('views/email/demo.txt');
-        var base64File = new Buffer(file).toString('base64');
-        attachment.setContent(base64File);
-        attachment.setType('application/text');
-        attachment.setFilename('demo.txt');
-        attachment.setDisposition('attachment');
-        mail.addAttachment(attachment);
-
-        var request = sg.emptyRequest({
-            method: 'POST',
-            path: '/v3/mail/send',
-            body: mail.toJSON(),
+            }
         });
 
-        sg.API(request, function (err, response) {
-            console.log(response.statusCode);
-            console.log(response.body);
-            console.log(response.headers);
-        });
+
 
 
 
