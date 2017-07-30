@@ -47,11 +47,10 @@ module.exports = {
     },
     demo: function (req, res) {
         sails.renderView('email/welcome', {
-            name: "Pooja",
-            lastname: "Thakre",
+            name: "Tushar",
+            lastname: "Sachde",
             hobbies: ["cricket", "name", "email", "phone"]
         }, function (err, view) {
-
             res.send(view);
         });
     }
