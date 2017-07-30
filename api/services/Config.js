@@ -378,55 +378,57 @@ var models = {
             callback(err);
         });
     },
-    sendEmail: function (fromEmail, toEmail, subject, filename, data) {
+    sendEmail: function (fromEmail, toEmail, subject, html, attachments, callback) {
 
         Password.findOneByName("sendgrid", function (err, data) {
             if (err) {
-
+                callback(err);
             } else {
                 var helper = require('sendgrid').mail;
                 var sg = require('sendgrid')(data.key);
-                var fs = require('fs');
-
                 var mail = new helper.Mail();
-                var email = new helper.Email('hr@wohlig.com', 'Example User');
+
+                var email = new helper.Email(fromEmail.email, fromEmailName.name);
                 mail.setFrom(email);
-
-                mail.setSubject('Hello World from the SendGrid Node.js Library');
-
+                mail.setSubject(subject);
                 var personalization = new helper.Personalization();
-                email = new helper.Email('jagruti@wohlig.com', 'Example User');
-                personalization.addTo(email);
-                mail.addPersonalization(personalization);
-
-                var content = new helper.Content('text/html', '<html><body>some text here</body></html>')
-                mail.addContent(content);
-
-                var attachment = new helper.Attachment();
-                // var file = fs.readFileSync('views/email/demo.txt');
-                Config.readAttachment(filename, function (err, data) {
-                    console.log("demonstration................");
-                    console.log(data.n);
-                    var base64File = new Buffer(data).toString('base64');
-                    attachment.setContent(base64File);
-                    // attachment.setType('application/text');
-                    attachment.setFilename(filename);
-                    attachment.setDisposition('attachment');
-                    mail.addAttachment(attachment);
-
-                    var request = sg.emptyRequest({
-                        method: 'POST',
-                        path: '/v3/mail/send',
-                        body: mail.toJSON(),
-                    });
-
-                    sg.API(request, function (err, response) {
-                        console.log(response.statusCode);
-                        console.log(response.body);
-                        console.log(response.headers);
-                    });
+                _.each(toEmail, function (n) {
+                    var email = new helper.Email(n.email, n.name);
+                    personalization.addTo(email);
                 });
 
+                mail.addPersonalization(personalization);
+
+                var content = new helper.Content('text/html', html);
+                mail.addContent(content);
+
+                async.each(attachments, function (filename, callback) {
+                    var attachment = new helper.Attachment();
+                    Config.readAttachment(filename, function (err, data) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            var base64File = new Buffer(data).toString('base64');
+                            attachment.setContent(base64File);
+                            attachment.setFilename(filename);
+                            attachment.setDisposition('attachment');
+                            mail.addAttachment(attachment);
+                            callback();
+                        }
+                    });
+                }, function (err) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        var request = sg.emptyRequest({
+                            method: 'POST',
+                            path: '/v3/mail/send',
+                            body: mail.toJSON(),
+                        });
+                        sg.API(request, callback);
+                    }
+
+                });
             }
         });
 
