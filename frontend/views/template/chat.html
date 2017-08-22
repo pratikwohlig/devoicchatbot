@@ -14,16 +14,17 @@
             </div>
             <div class="container-fluid chatbody">
                 <div class="row">
-                <div style=" whitespace: nowrap; height: 100%;" class="col-md-5">
-                    <ul class="breadcrumb" style="background-color: #f5f5f5; height: 10px;padding-left:0px;">
+                <div style=" whitespace: nowrap; height: 100%;" class="col-md-5 col-xs-4">
+                    <ul class="breadcrumb categorybreadcrumb">
                         <li><a href="#" id="faq"> FAQ </a></li>
+                        <li class="tmpcategory" ng-if="selectedCategory.id != 'default'">{{selectedCategory.name}}</li>
                     </ul>
                         <div id="faqs_dropdown" >
-                            <select id="faqs_category" ng-change="getCategoryFAQ(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" >
+                            <select id="faqs_category"  ng-change="getCategoryFAQ(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" >
                             
-                        </select><br>
-                            <div class="all_questions" id="all_questions" style="height:320px; overflow-y:auto;">
-                                <div class="questions" ng-repeat="link in links.tiledlist[0].question track by $index">
+                            </select><br>
+                            <div class="all_questions row" id="all_questions" >
+                                <div class="questions col-md-12" ng-repeat="link in links.tiledlist[0].question track by $index">
                                     <div >
                                         
                                             <a href="#" id="{{$index}}" ng-click="pushLinkmsg($index,link);">
@@ -37,14 +38,14 @@
                             </div>
                         </div>
                 </div>
-                <div class="col-md-7 chatbody2">
+                <div class="col-md-7 chatbody2 col-xs-8">
                 <div class="panel-body row"> 
                     <ul class="chat">
                         <li class="{{list.position}} lastchat clearfix" ng-repeat="list in chatlist track by $index">
                             <span class="chat-img pull-{{list.position}}">
                                 <img ng-src="img/{{list.position == 'left' && 'logo5.jpg' || 'logo7.png'}}" alt="BOT" class="img-circle " />
                             </span>
-                            <div ng-class="{'chat-body':list.position==='right' || list.msg.tiledlist[0].type !== 'Instruction'}">
+                            <div class="chat-body">
                                 <div class="clearfix" ng-if="list.position==='right'">
                                     <p class="lastmsg" >
                                         <ng-bind-html ng-bind-html = "list.msg">
@@ -65,12 +66,34 @@
                                         </div>
                                         <div class="chatType" ng-if="list.msg.tiledlist[0].type==='package details'">
                                             <p class="lastmsg" >
-                                                <ng-bind-html ng-bind-html = "list.msg.queslink|newlines">
-                                                    
+                                                <ng-bind-html ng-bind-html = "trustedHtml(list.msg.queslink)" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''">
                                                     {{list.msg.queslink}}
                                                 </ng-bind-html>
                                                 
                                             </p>
+                                        </div>
+                                        <div class="chatType" ng-if="list.msg.tiledlist[0].type==='FAQ'">
+                                            <p>Here are the top five questions resembling your question:</p>
+                                            <ol class="quesList" >
+                                                <li ng-repeat="faqlist in chatRes.FAQ">
+                                                <div class="viewquesans">
+                                                    <div class="faqques">
+                                                        <p class="lastmsg" ><a href="#" >
+                                                        <ng-bind-html ng-bind-html = "faqlist.Questions|newlines" >
+                                                            {{faqlist.Questions}}
+                                                        </ng-bind-html>
+                                                        </a></p>
+                                                    </div>
+                                                    <div class="faqans" style="display:none;">
+                                                        <p class="lastmsg" >
+                                                        <ng-bind-html ng-bind-html = "faqlist.Answers|newlines" >
+                                                            {{faqlist.Answers}}
+                                                        </ng-bind-html>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                </li>
+                                            </ol>
                                         </div>
                                         <!--<div class="chatType" ng-if="list.msg.tiledlist[0].type==='rate card'">
                                             <p class="lastmsg" >
@@ -181,11 +204,11 @@
                             <span  class="thumbsIcon">
                                 <span class="chatbottomtext">Was this information useful ? 
                                     <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
-                                    <span class="thumbsdown glyphicon glyphicon-thumbs-down" ng-click="dislikeChatClick();"></span>
+                                    <span class="thumbsdown glyphicon glyphicon-thumbs-down" ></span>
                                 </span>
                             </span>
                         
-                            <div class="loader_msg" ng-show="showMsgLoader">
+                            <div class="loader_msg" ng-if="showMsgLoader">
                                 <div class="loading">Typing</div>
                             </div>
                                 <input type="text" class="form-control chatinput" ng-change="" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />

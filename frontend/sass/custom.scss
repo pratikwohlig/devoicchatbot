@@ -442,9 +442,9 @@ div.scriptData {
     /* default iPad screens */
     #chat_window_1 
     {
-        width:60% !important;
+        width:80% !important;
         .panel-body {
-            height:420px !important;
+            height:520px !important;
         }
     }
 }
@@ -453,9 +453,17 @@ div.scriptData {
     /* For portrait layouts only */
     #chat_window_1 
     {
-        width:60% !important;
+        width:80% !important;
         .panel-body {
-            height:420px !important;
+            height:654px !important;
+            overflow-y: scroll;
+        }
+        .chatbody2 {
+            height:100% !important;
+        }
+        .chatbody .panel-footer
+        {
+            
         }
     }
 }
@@ -464,9 +472,9 @@ div.scriptData {
     /* For landscape layouts only */
     #chat_window_1 
     {
-        width:60% !important;
+        width:80% !important;
         .panel-body {
-            height:420px !important;
+            height:520px !important;
         }
     }
 }

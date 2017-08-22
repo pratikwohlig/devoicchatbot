@@ -36,3 +36,4 @@ myApp.filter('newlines', function () {
       return text.replace(/\n/g, '<br/>');
   }
 });
+

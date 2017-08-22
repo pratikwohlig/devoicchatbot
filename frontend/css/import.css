@@ -10281,6 +10281,27 @@ button.headerbtns:focus {
 .panel .slidedown .glyphicon, .chat .glyphicon {
   margin-right: 5px; }
 
+div#all_questions {
+  padding-top: 10px;
+  height: 320px;
+  overflow-y: auto; }
+
+.categorybreadcrumb {
+  height: 10px;
+  padding-left: 0px; }
+
+.categorybreadcrumb > li + li:before {
+  content: "> "; }
+
+ol.quesList {
+  padding-left: 15px; }
+
+.quesList li {
+  color: #0d9dff; }
+
+.faqans {
+  color: #000 !important; }
+
 .panel-body {
   overflow-y: auto;
   height: 320px; }
@@ -10833,24 +10854,27 @@ div.scriptData {
 @media only screen and (device-width: 768px) {
   /* default iPad screens */
   #chat_window_1 {
-    width: 60% !important; }
+    width: 80% !important; }
     #chat_window_1 .panel-body {
-      height: 420px !important; } }
+      height: 520px !important; } }
 
 /* different techniques for iPad screening */
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: portrait) {
   /* For portrait layouts only */
   #chat_window_1 {
-    width: 60% !important; }
+    width: 80% !important; }
     #chat_window_1 .panel-body {
-      height: 420px !important; } }
+      height: 654px !important;
+      overflow-y: scroll; }
+    #chat_window_1 .chatbody2 {
+      height: 100% !important; } }
 
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: landscape) {
   /* For landscape layouts only */
   #chat_window_1 {
-    width: 60% !important; }
+    width: 80% !important; }
     #chat_window_1 .panel-body {
-      height: 420px !important; } }
+      height: 520px !important; } }
 
 *, :before, :after {
   box-sizing: border-box; }

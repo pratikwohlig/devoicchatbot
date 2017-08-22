@@ -38,52 +38,20 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         });
         $rootScope.categorylist =  [
             {id:"default",name:"Choose a Category"},
-            {id:"acc_faqs_list",name:"Account"},
+            {id:"a1",name:"Account"},
             {id:"b1",name:"Billing"},
-            {id:"brow_faqs_list",name:"Browser"},
-            {id:"ren_faqs_list",name:"Renewal"},
-            {id:"new_conn_faqs_list",name:"New Connection"},
+            {id:"br1",name:"Browser"},
+            {id:"r1",name:"Renewal"},
+            {id:"nc1",name:"New Connection"},
         ];
-        // $rootScope.showChatwindow = function () {           
-        //     //  newlist = $.jStorage.get("chatlist");            
-        //     //  if(!newlist || newlist == null)
-        //     // {                
-        //     //      $rootScope.firstMsg = false;
-        //     // }            
-        //     // else            
-        //     // {                 
-        //     //     $rootScope.firstMsg = true;
-        //     // }            
-        //     // $.jStorage.set("showchat",true); 
-        //     // if(!$rootScope.firstMsg)            
-        //     // {
-        //     //     $rootScope.firstMsg = true;
-        //     //     msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};                
-        //     //     $rootScope.pushSystemMsg(0,msg);              
-        //     // }
-        //     $('#chat_panel').slideDown("slow");
-        //     $('.panel-heading span.icon_minim').removeClass('panel-collapsed');
-        //     $('.panel-heading span.icon_minim').removeClass('glyphicon-plus').addClass('glyphicon-minus'); 
-        //     $(".clickImage").hide();          
-        //     $rootScope.chatOpen = true;           
-        //     //$rootScope.scrollChatWindow();
-        // };
-        // $rootScope.minimizeChatwindow = function() { 
-        //     //$.jStorage.set("showchat",false);
-        //     $rootScope.showTimeoutmsg = false;
-        //     $rootScope.autocompletelist = [];
-        //     $('#chat_panel').slideUp();            
-        //     $('.panel-heading span.icon_minim').addClass('panel-collapsed');            
-        //     $('.panel-heading span.icon_minim').addClass('glyphicon-plus').removeClass('glyphicon-minus');
-        //     $(".clickImage").show( "fadeIn");
-        // };
         $rootScope.links = [];
+        $rootScope.selectedCategory = $rootScope.categorylist[0];
         $rootScope.pushLinkmsg = function(index,link) {
-            //alert(link);  
+            //alert(link);
+              
             $rootScope.pushQuestionMsg(index,link);
         };
         $rootScope.getCategoryFAQ = function(category) {
-            alert(category.id);
             $scope.formData = { user_input:category.id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
             //console.log($scope.formData);
             apiService.getCategoryFAQ($scope.formData).then( function (response) {
@@ -97,11 +65,28 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             console.log("This is a button Click");
         };
 
-
+        $timeout(function(){
+            $(document).on('click', '.portalapp', function(){ 
+                var linktext=$(this).text();
+                $rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
+                // if($(this).text().search(new RegExp("ION Portal", "i"))>=0)
+                // {
+                //     $rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
+                // }
+                // else if($(this).text().search(new RegExp("ION app", "i"))>=0)
+                // {
+                //     $rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
+                // }
+            });
+            $(document).on('click', '.faqques a', function(){ 
+                $rootScope.showFAQAns(this);
+            });
+            
+        });
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$uibModal) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$uibModal,$sce,$compile,$cookies) {
         
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
@@ -135,25 +120,30 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         $rootScope.chatText = "";
         $rootScope.getAutocomplete = function(chatText) {
-            $rootScope.showTimeoutmsg = false;
-            if($rootScope.showTimeoutmsg == false && chatText=="") 
-            {
-                $timeout(function () {
-                    $rootScope.showTimeoutmsg = true;
-                    msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
-                    $rootScope.pushSystemMsg(0,msg);
-                },60000);
-            }
-            $rootScope.chatText = chatText;
-            if(chatText == "" || chatText == " " || chatText == null)
-                $rootScope.autocompletelist = [];
-            else {
-                $rootScope.chatdata = { string:$rootScope.chatText};
-                apiService.getautocomplete($rootScope.chatdata).then(function (response){
-                       // console.log(response.data);
-                    $rootScope.autocompletelist = response.data.data;
-                });
-            }
+            // $rootScope.showTimeoutmsg = false;
+            // if($rootScope.showTimeoutmsg == false && chatText=="") 
+            // {
+            //     $timeout(function () {
+            //         $rootScope.showTimeoutmsg = true;
+            //         msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
+            //         $rootScope.pushSystemMsg(0,msg);
+            //     },60000);
+            // }
+            // $rootScope.chatText = chatText;
+            // if(chatText == "" || chatText == " " || chatText == null)
+            //     $rootScope.autocompletelist = [];
+            // else {
+            //     $rootScope.chatdata = { string:$rootScope.chatText};
+            //     apiService.getautocomplete($rootScope.chatdata).then(function (response){
+            //            // console.log(response.data);
+            //         $rootScope.autocompletelist = response.data.data;
+            //     });
+            // }
+        };
+        $rootScope.showFAQAns = function(e) {
+            console.log(e);
+            $(e).parent().parent().parent().find('.faqans').slideDown();
+            console.log($(e).parent().parent().find('.faqans'));
         };
         $rootScope.pushSystemMsg = function(id,value) {
             $rootScope.chatmsgid = id;
@@ -165,28 +155,76 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             });
             
         };
+        $scope.trustedHtml = function (plainText) {
+            return $sce.trustAsHtml(plainText);
+        };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
-            $rootScope.chatlist.push({id:id,msg:value,position:"left",curTime: $rootScope.getDatetime()});
-            console.log($rootScope.chatlist);
-            console.log($rootScope.chatmsgid);
+            var value2 = $rootScope.links;
+            if(value2.tiledlist[0].link[id] != "")
+            {
+                var linkdata="";
+                final_link = value2.tiledlist[0].link[id].split("<br>");
+                _.each(final_link, function(value, key) {
+                    //console.log(key);
+                    var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                    linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
+                   //console.log(linkdata);
+                   
+                });
+                value2.queslink=linkdata;
+            }
+            else
+            {    
+                //value2.queslink=_.replace(value2.tiledlist[0].answer[id], '../static/data_excel/', adminurl2+'static/data_excel/');
+                value2.queslink = value2.tiledlist[0].answer[id].replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                //value2.queslink=value2.tiledlist[0].answer[id];
+            }
+                //$compile(linkdata)($scope);
+            $rootScope.chatlist.push({id:id,msg:angular.copy(value2),position:"left",curTime: $rootScope.getDatetime()});
+            $rootScope.showMsgLoader=false;
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
                 $rootScope.scrollChatWindow();
             });
             
         };
-        $rootScope.showChatwindow = function () {
-            newlist = $.jStorage.get("chatlist");
-            if(!newlist || newlist == null)
+        $rootScope.pushPortalLink= function(id,type) {
+            console.log(id,"index");//index of array
+            console.log(type,"value");// 0-ion portal ,1-ion app
+            $rootScope.chatmsgid = id;
+            $rootScope.chatmsg = type;
+            var value3 = $rootScope.links;
+            if(value3.tiledlist[0].answer[id] != "")
             {
-                $rootScope.firstMsg = false;
+                var answer1 =new Array();
+                answer1 = value3.tiledlist[0].answer[id].split("(2nd)");
+                if(type==0)
+				    answer1 = answer1[0];
+                else if(type==1)
+                    answer1 = answer1[1];
+                value3.queslink=answer1;
+                
             }
-            else
-            { 
-                $rootScope.firstMsg = true;
-            }
+            //$compile(linkdata)($scope);
+            $rootScope.chatlist.push({id:id,msg:angular.copy(value3),position:"left",curTime: $rootScope.getDatetime()});
+            $rootScope.showMsgLoader=false;
+            //$.jStorage.set("chatlist",$rootScope.chatlist);
+            $timeout(function(){
+                $rootScope.scrollChatWindow();
+            });
+        };
+        $rootScope.showChatwindow = function () {
+            // newlist = $.jStorage.get("chatlist");
+            // if(!newlist || newlist == null)
+            // {
+            //     $rootScope.firstMsg = false;
+            // }
+            // else
+            // { 
+            //     $rootScope.firstMsg = true;
+            // }
             //$.jStorage.set("showchat",true);
             if(!$rootScope.firstMsg)
             {
@@ -232,19 +270,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             $rootScope.autocompletelist = [];
-            var prevlist = new Array();
-            prevlist = $rootScope.chatlist;
-            var value2 = $rootScope.links;
-            value2.queslink=value2.tiledlist[0].link[id];
-            console.log(value2);
-            prevlist.push({id:id,msg:value2,position:"right",curTime: $rootScope.getDatetime()});
-            //$rootScope.chatlist.push({id:id,msg:value2,position:"right",curTime: $rootScope.getDatetime()});
-            //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
-            $rootScope.chatlist = prevlist;
-            $rootScope.getQuestionMsg(id,value2);
-            //$.jStorage.set("chatlist",$rootScope.chatlist);
+            $rootScope.chatlist.push({id:id,msg:value,position:"right",curTime: $rootScope.getDatetime()});
+            $rootScope.getQuestionMsg(id,value);
             $rootScope.msgSelected = false;
-            $rootScope.showMsgLoader=true;
+            //$rootScope.showMsgLoader=true;
             $rootScope.scrollChatWindow();
         };
         if($.jStorage.get("showchat"))
@@ -305,6 +334,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
            
             
         };
+        $rootScope.FAQResponse = function (id,data) {
+            $rootScope.pushSystemMsg(id,data);
+            $rootScope.showMsgLoader = false; 
+        };
         $rootScope.InstructionResponse = function(id,data) {
             $rootScope.pushSystemMsg(id,data);
 			console.log(data);
@@ -317,53 +350,55 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         $rootScope.getQuestionMsg = function (index,value) {
             $rootScope.pushQuesMsg(index,value);
+            $rootScope.showMsgLoader = false; 
         };
         $rootScope.getSystemMsg = function(id,value){
             //console.log("id",id);
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                //$rootScope.formData = {user_id:1164,user_input:value,auto_id:parseInt(id),auto_value:value,'csrfmiddlewaretoken':token};
-                var mysessiondata = $.jStorage.get("sessiondata");
+                $scope.formData = { user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+                //var mysessiondata = $.jStorage.get("sessiondata");
                 //mysessiondata = mysessiondata.toObject();
                 //mysessiondata.data = {id:parseInt(id),Text:value};
 				//mysessiondata.data = {id:id,Text:value};
-                $rootScope.formData = mysessiondata;
+                //$rootScope.formData = mysessiondata;
                 $timeout(function(){
                     $(".chatinput").val("");
                 });
-                apiService.getSysMsg($rootScope.formData).then(function (data){
-						//console.log(data);
-                    angular.forEach(data.data.data.tiledlist, function(value, key) {
-                        //console.log(value);
-                        if(value.type=="text")
-                        {
-                        	$rootScope.pushSystemMsg(0,data.data.data);
-                            $rootScope.showMsgLoader = false;
+                apiService.getCategoryFAQ($scope.formData).then(function (data){
+						console.log(data);
+                    angular.forEach(data.data.tiledlist, function(value, key) {
+                        console.log(value);
+                        // if(value.type=="text")
+                        // {
+                        // 	$rootScope.pushSystemMsg(0,data.data.data);
+                        //     $rootScope.showMsgLoader = false;
                             
                             
-                            return false;
-                        }
-                        if(value.type=="rate card")
-                        {
-                            $rootScope.pushSystemMsg(0,data.data.data);
-                            $rootScope.showMsgLoader = false;
+                        //     return false;
+                        // }
+                        // if(value.type=="rate card")
+                        // {
+                        //     $rootScope.pushSystemMsg(0,data.data.data);
+                        //     $rootScope.showMsgLoader = false;
                             
                             
-                            return false;
-                        }
-                        else if(value.type=="DTHyperlink")
+                        //     return false;
+                        // }
+                        // else if(value.type=="DTHyperlink")
+                        // {
+                        //    $rootScope.DthResponse(0,data.data.data);  
+                        // }
+                        // else if(value.type=="Instruction")
+                        // {
+						// 	$rootScope.InstructionResponse(0,data.data.data);  
+                        // }
+                        if(value.type=="FAQ")
                         {
-                           $rootScope.DthResponse(0,data.data.data);  
+                            $rootScope.FAQResponse(0,data.data);  
                         }
-                        else if(value.type=="Instruction")
-                        {
-							console.log(data);
-                           $rootScope.InstructionResponse(0,data.data.data);  
-                        }
-                        
                     });
                     
 
-                    $("#topic").text(data.data.data.tiledlist[0].topic);
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 });
             //});
@@ -418,14 +453,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
             if(e.which == 13)
             {
-                if($rootScope.autolistid=="" || $rootScope.autolistid == null || $rootScope.autolistid == 0)
-                {
-                    $(".chatinput").val("");
-                    $rootScope.pushMsg("",$rootScope.chatText);
-                }
-                else {
-                    $rootScope.pushMsg($rootScope.autolistid,$rootScope.chatText);
-				}
+                // if($rootScope.autolistid=="" || $rootScope.autolistid == null || $rootScope.autolistid == 0)
+                // {
+                //     $(".chatinput").val("");
+                //     $rootScope.pushMsg("",$rootScope.chatText);
+                // }
+                // else {
+                //     $rootScope.pushMsg($rootScope.autolistid,$rootScope.chatText);
+                // }
+                
+                $rootScope.pushMsg("",$(".chatinput").val());
+                $(".chatinput").val("");
             }
         };
         $rootScope.crnSubmit = function(crnno) {
