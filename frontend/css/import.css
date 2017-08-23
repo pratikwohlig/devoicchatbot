@@ -10291,7 +10291,11 @@ div#all_questions {
   overflow-y: auto;
   overflow-x: hidden; }
 
+.questions hr {
+  background-color: #C0C0C0; }
+
 .categorybreadcrumb {
+  background-color: transparent;
   padding-left: 0px;
   margin-bottom: 10px; }
 

@@ -399,9 +399,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
-                    console.log(reason);
+                    //console.log(reason);
                     msg = {Text:"Sorry I could not understand",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
+                    $rootScope.showMsgLoader=false;
                 });
             //});
             
