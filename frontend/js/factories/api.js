@@ -1,6 +1,7 @@
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) {
     adminurl2 = "http://cingulariti.com:8097/";
-    adminurl2 = "http://localhost:8000/";
+    //adminurl2 = "http://localhost:8000/";
+    //adminurl2 = "http://192.168.0.129:8000/";
     return {
 
         // This is a demo Service for POST Method.
