@@ -414,15 +414,22 @@ div.scriptData {
     }
     #chat_window_1 
     {
-        width:50% !important;
+        width:50% ;
         .panel-body {
-            height:260px !important;
+            height:420px !important;
         }
     }
 }
 @media screen and (max-width: 800px) {
     .clickImage {
         height:80px !important;
+    }
+    #chat_window_1 
+    {
+        width:50% ;
+        .panel-body {
+            height:420px !important;
+        }
     }
 }
 @media only screen and (max-width: 414px) {
@@ -431,20 +438,42 @@ div.scriptData {
         width:90% !important;
     }
 }
-@media only screen and (max-device-width:480px){
+@media only screen and (max-device-width:480px) and (orientation:portrait){
     /* styles for mobile browsers smaller than 480px; (iPhone) */
     #chat_window_1 
     {
-        width:90% !important;
+        width:90%;
+        .panel-body {
+            height:420px;
+        }
+    }
+    .chatbody2 {
+        height:450px;
+    }
+    div#all_questions {
+        height: 325px;
+    }
+    #chat_panel {
+        height:100%;
     }
 }
+
 @media only screen and (device-width:768px){
     /* default iPad screens */
     #chat_window_1 
     {
-        width:80% !important;
+        width:80% ;
         .panel-body {
-            height:520px !important;
+            height:520px;
+        }
+        .chatbody2 {
+            height:700px;
+        }
+        div#all_questions {
+            height: 600px;
+        }
+        #chat_panel {
+            height:100%;
         }
     }
 }
@@ -455,15 +484,17 @@ div.scriptData {
     {
         width:80% !important;
         .panel-body {
-            height:654px !important;
+            height:620px !important;
             overflow-y: scroll;
         }
         .chatbody2 {
-            height:100% !important;
+            height:700px !important;
         }
-        .chatbody .panel-footer
-        {
-            
+        div#all_questions {
+            height: 600px;
+        }
+        #chat_panel {
+            height:100%;
         }
     }
 }
@@ -472,9 +503,37 @@ div.scriptData {
     /* For landscape layouts only */
     #chat_window_1 
     {
-        width:80% !important;
+        width:80% ;
         .panel-body {
-            height:520px !important;
+            height:520px ;
         }
+        .chatbody2 {
+            height:600px ;
+        }
+        div#all_questions {
+            height: 500px;
+        }
+        #chat_panel {
+            height:100%;
+        }
+    }
+}
+@media only screen and (max-device-width:732px)  and (min-aspect-ratio: 13/9){
+    /* styles for mobile browsers smaller than 480px; (iPhone) */
+    #chat_window_1 
+    {
+        width:90% !important;
+        .panel-body {
+            height:220px !important;
+        }
+    }
+    .chatbody2 {
+        height:300px !important;
+    }
+    div#all_questions {
+        height: 210px!important;
+    }
+    #chat_panel {
+        height:100% !important;
     }
 }

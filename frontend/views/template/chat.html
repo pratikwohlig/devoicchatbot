@@ -14,15 +14,22 @@
             </div>
             <div class="container-fluid chatbody">
                 <div class="row">
-                <div style=" whitespace: nowrap; height: 100%;" class="col-md-5 col-xs-4">
-                    <ul class="breadcrumb categorybreadcrumb">
-                        <li><a href="#" id="faq"> FAQ </a></li>
-                        <li class="tmpcategory" ng-if="selectedCategory.id != 'default'">{{selectedCategory.name}}</li>
-                    </ul>
-                        <div id="faqs_dropdown" >
-                            <select id="faqs_category"  ng-change="getCategoryFAQ(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" >
+                <div  class="quest_panel col-md-5 col-xs-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="breadcrumb categorybreadcrumb">
+                                <li><a href="#" id="faq"> FAQ </a></li>
+                                <li class="tmpcategory" ng-if="selectedCategory.id != 'default'">{{selectedCategory.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="faqs_dropdown" class="row">
+                        <div class="col-md-12">
+                            <select id="faqs_category"  ng-change="getCategoryFAQ(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" class="form-control" >
                             
-                            </select><br>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
                             <div class="all_questions row" id="all_questions" >
                                 <div class="questions col-md-12" ng-repeat="link in links.tiledlist[0].question track by $index">
                                     <div >
@@ -37,6 +44,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
                 <div class="col-md-7 chatbody2 col-xs-8">
                 <div class="panel-body row"> 
@@ -182,7 +190,7 @@
                                         </div> -->
                                     </div>
                                 </div>
-                                <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type==='SYS_INACTIVE' || list.msg.type==='SYS_FIRST'))">
+                                <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type==='SYS_INACTIVE' || list.msg.type==='SYS_FIRST' || list.msg.type === 'SYS_EMPTY_RES'))">
                                     <p class="lastmsg" >
                                         <ng-bind-html ng-bind-html = "list.msg.Text">
                                             {{list.msg.Text}}
@@ -199,34 +207,35 @@
                             </div>
                         </li>    
                     </ul>
-                    <div class="panel-footer row">
-                        <div class="form-group">
-                            <span  class="thumbsIcon">
-                                <span class="chatbottomtext">Was this information useful ? 
-                                    <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
-                                    <span class="thumbsdown glyphicon glyphicon-thumbs-down" ></span>
-                                </span>
+                    
+                </div>
+                <div class="panel-footer row">
+                    <div class="form-group">
+                        <span  class="thumbsIcon">
+                            <span class="chatbottomtext">Was this information useful ? 
+                                <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
+                                <span class="thumbsdown glyphicon glyphicon-thumbs-down" ></span>
                             </span>
-                        
-                            <div class="loader_msg" ng-if="showMsgLoader">
-                                <div class="loading">Typing</div>
-                            </div>
-                                <input type="text" class="form-control chatinput" ng-change="" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
-                                
-                            </div>
-                            <input type="hidden"  name="user_id" id="user_id"  value="{{sessionId}}" />
-                            <div id="autocomplete_field"></div>
-                            <div id="field_val"></div>
-                            <div id="field_id"></div>
+                        </span>
+                    
+                        <div class="loader_msg" ng-if="showMsgLoader">
+                            <div class="loading">Typing</div>
                         </div>
-                        <a id="mybtn_trigger" class="hidden" ng-click="Speaktext(text);">Speakme</a>
-                        <div id= "suggestionList">
-                            <ul ng-if="autocompletelist.length > 0" class="{{autocompletelist.length}}  ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" id="ui-id-1">
-                                <div class="ui-menu-item-wrapper">
-                                    <li class="ui-menu-item autolist" data-id="{{list.id}}" data-value="{{list.value}}"  ng-repeat="list in autocompletelist | filter:chatText  " ng-click="pushMsg(list.id,list.value);"  ng-bind-html="list.value | highlight:chatText" >{{list.value}}</li>
-                                </div>
-                            </ul>
+                            <input type="text" class="form-control chatinput" ng-change="" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
+                            
                         </div>
+                        <input type="hidden"  name="user_id" id="user_id"  value="{{sessionId}}" />
+                        <div id="autocomplete_field"></div>
+                        <div id="field_val"></div>
+                        <div id="field_id"></div>
+                    </div>
+                    <a id="mybtn_trigger" class="hidden" ng-click="Speaktext(text);">Speakme</a>
+                    <div id= "suggestionList">
+                        <ul ng-if="autocompletelist.length > 0" class="{{autocompletelist.length}}  ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" id="ui-id-1">
+                            <div class="ui-menu-item-wrapper">
+                                <li class="ui-menu-item autolist" data-id="{{list.id}}" data-value="{{list.value}}"  ng-repeat="list in autocompletelist | filter:chatText  " ng-click="pushMsg(list.id,list.value);"  ng-bind-html="list.value | highlight:chatText" >{{list.value}}</li>
+                            </div>
+                        </ul>
                     </div>
                 </div>
                 </div>

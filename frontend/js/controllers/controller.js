@@ -141,9 +141,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
         };
         $rootScope.showFAQAns = function(e) {
-            console.log(e);
             $(e).parent().parent().parent().find('.faqans').slideDown();
-            console.log($(e).parent().parent().find('.faqans'));
+            //$rootScope.scrollChatWindow();
         };
         $rootScope.pushSystemMsg = function(id,value) {
             $rootScope.chatmsgid = id;
@@ -365,17 +364,16 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $(".chatinput").val("");
                 });
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
-						console.log(data);
+						
                     angular.forEach(data.data.tiledlist, function(value, key) {
-                        console.log(value);
-                        // if(value.type=="text")
-                        // {
-                        // 	$rootScope.pushSystemMsg(0,data.data.data);
-                        //     $rootScope.showMsgLoader = false;
+                        if(value.type=="text")
+                        {
+                        	$rootScope.pushSystemMsg(0,data.data);
+                            $rootScope.showMsgLoader = false;
                             
                             
-                        //     return false;
-                        // }
+                            return false;
+                        }
                         // if(value.type=="rate card")
                         // {
                         //     $rootScope.pushSystemMsg(0,data.data.data);
@@ -400,6 +398,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     
 
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
+                }).catch(function (reason) {
+                    console.log(reason);
+                    msg = {Text:"Sorry I could not understand",type:"SYS_EMPTY_RES"};
+                    $rootScope.pushSystemMsg(0,msg); 
                 });
             //});
             

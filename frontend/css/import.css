@@ -9996,6 +9996,10 @@ ul#chatTabs {
 .chattab-content {
   padding-top: 5px; }
 
+.quest_panel {
+  whitespace: nowrap;
+  height: 100%; }
+
 .cals {
   text-align: center; }
 
@@ -10284,11 +10288,12 @@ button.headerbtns:focus {
 div#all_questions {
   padding-top: 10px;
   height: 320px;
-  overflow-y: auto; }
+  overflow-y: auto;
+  overflow-x: hidden; }
 
 .categorybreadcrumb {
-  height: 10px;
-  padding-left: 0px; }
+  padding-left: 0px;
+  margin-bottom: 10px; }
 
 .categorybreadcrumb > li + li:before {
   content: "> "; }
@@ -10834,29 +10839,47 @@ div.scriptData {
   .clickImage {
     height: 135px !important; }
   #chat_window_1 {
-    width: 50% !important; }
+    width: 50%; }
     #chat_window_1 .panel-body {
-      height: 260px !important; } }
+      height: 420px !important; } }
 
 @media screen and (max-width: 800px) {
   .clickImage {
-    height: 80px !important; } }
+    height: 80px !important; }
+  #chat_window_1 {
+    width: 50%; }
+    #chat_window_1 .panel-body {
+      height: 420px !important; } }
 
 @media only screen and (max-width: 414px) {
   #chat_window_1 {
     width: 90% !important; } }
 
-@media only screen and (max-device-width: 480px) {
+@media only screen and (max-device-width: 480px) and (orientation: portrait) {
   /* styles for mobile browsers smaller than 480px; (iPhone) */
   #chat_window_1 {
-    width: 90% !important; } }
+    width: 90%; }
+    #chat_window_1 .panel-body {
+      height: 420px; }
+  .chatbody2 {
+    height: 450px; }
+  div#all_questions {
+    height: 325px; }
+  #chat_panel {
+    height: 100%; } }
 
 @media only screen and (device-width: 768px) {
   /* default iPad screens */
   #chat_window_1 {
-    width: 80% !important; }
+    width: 80%; }
     #chat_window_1 .panel-body {
-      height: 520px !important; } }
+      height: 520px; }
+    #chat_window_1 .chatbody2 {
+      height: 700px; }
+    #chat_window_1 div#all_questions {
+      height: 600px; }
+    #chat_window_1 #chat_panel {
+      height: 100%; } }
 
 /* different techniques for iPad screening */
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: portrait) {
@@ -10864,17 +10887,40 @@ div.scriptData {
   #chat_window_1 {
     width: 80% !important; }
     #chat_window_1 .panel-body {
-      height: 654px !important;
+      height: 620px !important;
       overflow-y: scroll; }
     #chat_window_1 .chatbody2 {
-      height: 100% !important; } }
+      height: 700px !important; }
+    #chat_window_1 div#all_questions {
+      height: 600px; }
+    #chat_window_1 #chat_panel {
+      height: 100%; } }
 
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation: landscape) {
   /* For landscape layouts only */
   #chat_window_1 {
-    width: 80% !important; }
+    width: 80%; }
     #chat_window_1 .panel-body {
-      height: 520px !important; } }
+      height: 520px; }
+    #chat_window_1 .chatbody2 {
+      height: 600px; }
+    #chat_window_1 div#all_questions {
+      height: 500px; }
+    #chat_window_1 #chat_panel {
+      height: 100%; } }
+
+@media only screen and (max-device-width: 732px) and (min-aspect-ratio: 13 / 9) {
+  /* styles for mobile browsers smaller than 480px; (iPhone) */
+  #chat_window_1 {
+    width: 90% !important; }
+    #chat_window_1 .panel-body {
+      height: 220px !important; }
+  .chatbody2 {
+    height: 300px !important; }
+  div#all_questions {
+    height: 210px !important; }
+  #chat_panel {
+    height: 100% !important; } }
 
 *, :before, :after {
   box-sizing: border-box; }
