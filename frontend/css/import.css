@@ -10601,9 +10601,6 @@ div.img-box {
   display: none;
   float: right; }
 
-#myTabs {
-  /* right: 100px; */ }
-
 #myTabs li {
   display: inline;
   background: #777;
@@ -10655,9 +10652,6 @@ div.img-box {
 .nav-pills > li.active > a, .btn-primary {
   background-color: #003874;
   border-color: #003874; }
-
-body {
-  /*    overflow: hidden;*/ }
 
 .navbar-brand img {
   height: 35px !important;

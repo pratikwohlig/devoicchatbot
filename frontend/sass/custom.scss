@@ -156,15 +156,6 @@ div.img-box { height: 100px; /*background: #ccc;*/ display: table-cell; vertical
     	display: none;
     	float:right;
     }
-    #myTabs{
-        
-        /* right: 100px; */
-        // position: absolute;
-        // top: 8px;
-        // margin-right: 15px;
-        // width: 100%;
-        // margin-left: -35px;
-    }
     #myTabs li {
         display: inline;
         background: #777;
@@ -218,9 +209,7 @@ div.img-box { height: 100px; /*background: #ccc;*/ display: table-cell; vertical
         background-color: #003874;
         border-color: #003874;
     }
-body{
-/*    overflow: hidden;*/
-}
+
 .navbar-brand img {
     height: 35px !important;
     margin-top: -8px !important;
@@ -228,10 +217,6 @@ body{
     .subnav li a{
         padding: 5px 10px;;
     }
-.panel-body {
-    
-}
-
 .inputs .form-control{
     width: 55%;
     display: inline;
