@@ -86,7 +86,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$uibModal,$sce,$compile,$cookies) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies) {
         
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
@@ -483,19 +483,19 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.$dislikemodalInstance = {};
         $rootScope.dislikesuggestionerror = 0;
         $rootScope.dislikeChatClick = function(){
-            $rootScope.$dislikemodalInstance = $uibModal.open({
+            /*$rootScope.$dislikemodalInstance = $uibModal.open({
                 scope: $rootScope,
                 animation: true,
                 size: 'sm',
                 templateUrl: 'views/modal/dislikechat.html',
                 //controller: 'CommonCtrl'
-            });
+            });*/
             $timeout(function(){ 
                 $('span.thumbsdown').css("color", "#ed232b");
                 $('.thumbsup').css("color", "#444");
             },200);
         };
-        $rootScope.dislikeCancel = function() {
+        /*$rootScope.dislikeCancel = function() {
             //console.log("dismissing");
             $scope.$dislikemodalInstance.dismiss('cancel');
         };
@@ -506,7 +506,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.dislikesuggestionSuccess = 0;
                 $rootScope.dislikeCancel();
             },500);
-        };
+        };*/
         
        $timeout(function(){
             //$('#chatTabs a:last').tab('show');

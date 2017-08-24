@@ -23,15 +23,16 @@
 process.chdir(__dirname);
 var mongoose;
 mongoose = require('mongoose');
-
+global["Grid"] = require('gridfs-stream');
 global["database"] = "database";
+
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/' + database, {
-    useMongoClient: true,
-}, function (err) {
-    if (err) {
-        console.log(err);
-    }
+// var conn = mongoose.createConnection('mongodb://user:pass@localhost:port/database');
+var conn = mongoose.createConnection('mongodb://localhost:27017/' + database);
+
+conn.on('open', function () {
+    global.gfs = Grid(conn.db, mongoose.mongo);
+    gfs.mongo = mongoose.mongo;
 });
 // Ensure a "sails" can be located:
 (function () {
