@@ -392,10 +392,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         // }
                         if(value.type=="FAQ")
                         {
-                            var reversefaq = new Array();
-                            //console.log(data.data.tiledlist[0].FAQ);
-                            reversefaq = _.reverse(data.data.tiledlist[0].FAQ);
-                            data.data.tiledlist[0].FAQ = reversefaq;
+                            // var reversefaq = new Array();
+                            // //console.log(data.data.tiledlist[0].FAQ);
+                            // reversefaq = _.reverse(data.data.tiledlist[0].FAQ);
+                            // data.data.tiledlist[0].FAQ = reversefaq;
                             //console.log(reversefaq);
                             $rootScope.FAQResponse(0,data.data);  
                         }
