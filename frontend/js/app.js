@@ -13,14 +13,7 @@ var myApp = angular.module('myApp', [
     'toastr',
     'ngCookies'
 ])
-.run(['$http', '$cookies', function($http, $cookies) {
-   
-    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
-    $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
-   // $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-    
-  }]);
+
 
 
 // Define all the routes below
@@ -54,7 +47,14 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
+myApp.run(['$http', '$cookies', function($http, $cookies) {
+	   
+	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
+	$http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
+	// $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+}]);
 
 // For Language JS
 myApp.config(function ($translateProvider) {

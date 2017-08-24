@@ -1,6 +1,6 @@
 apps:
   - script: "app.js"
-    name: "NodeFramework - 80"
+    name: "chatbot - 8091"
     watch: false
     args: "--prod"
     exec_mode: "cluster"

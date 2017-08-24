@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                 routes: route,
                 middleware: [historyApiFallback()]
             },
-            port: 8080,
+            port: 8091,
             notify: false,
             browser: "google chrome",
         }
