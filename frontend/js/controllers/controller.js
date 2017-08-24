@@ -392,6 +392,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         // }
                         if(value.type=="FAQ")
                         {
+                            var reversefaq = new Array();
+                            //console.log(data.data.tiledlist[0].FAQ);
+                            reversefaq = _.reverse(data.data.tiledlist[0].FAQ);
+                            data.data.tiledlist[0].FAQ = reversefaq;
+                            //console.log(reversefaq);
                             $rootScope.FAQResponse(0,data.data);  
                         }
                     });
@@ -468,57 +473,6 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.pushMsg("",$(".chatinput").val());
                 $(".chatinput").val("");
             }
-        };
-        $rootScope.crnSubmit = function(crnno) {
-            //console.log(crnno,"crnno");
-            $rootScope.userid=$.jStorage.get("id");
-            var datatype = 'CRN';
-            CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                apiService.crnsubmit($rootScope.formData).then(function (callback){
-                    console.log(callback,"crn");
-                });
-                    
-            // $.ajax({
-            
-            //     url : "",
-            //     data: {user_input: crnno, user_id:$scope.userid, number_type:datatype,'csrfmiddlewaretoken': token,
-            //     headers: {'X-CSRFToken': token},
-            //     type: "POST",
-            //     dataType: "json",
-            //     success: function(data){
-            //         var output = data.Output.Result;
-            //         $scope.result_crn(output);
-            //     }
-            // });
-            });
-        };
-        $rootScope.srnSubmit = function(srno,crnno) { 
-            //console.log(crnno+"crnno,sr"+srno);
-            $rootScope.userid=$.jStorage.get("id");
-            var datatype = 'SR';
-            CsrfTokenService.getCookie("csrftoken").then(function(token) {
-            // $.ajax({
-            //     // url: "/srandcrn/",
-            //     data: {user_input: srno, user_id:$scope.userid, number_type:datatype,'csrfmiddlewaretoken': token},
-            //     headers: {'X-CSRFToken': token},
-            //     type: "POST",
-            //     dataType: "json",
-            //     success: function(data){
-            //         var output = data.Output.Result;
-            //         $scope.result_sr(output);
-            //     }
-            // });
-            });
-        };
-        $rootScope.result_sr = function(output) {
-            $timeout(function () {
-                $('#sr_details').html(output);
-            },200);
-        };
-        $rootScope.result_crn = function(output) {
-            $timeout(function () {
-                $('#crn_details').html(output);
-            },200);
         };
         $rootScope.likeChatClick = function(){
             $timeout(function(){
