@@ -1,7 +1,7 @@
 #chat_panel{
     display: none;
     font-family: 'Roboto', sans-serif;
-    height:455px;
+    height:500px;
     position: relative;
 }
 div#suggestionList {
@@ -345,10 +345,10 @@ ol.quesList { padding-left:15px; }
 .panel-body
 {
     overflow-y: auto;
-    height: 320px;
+    height: 375px;
 }
 .chatbody2 {
-    height: 410px;
+    height: 455px;
     border-left: 1px solid #000;
 }
 ::-webkit-scrollbar-track
