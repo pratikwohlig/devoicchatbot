@@ -5,8 +5,6 @@ var myApp = angular.module('myApp', [
     'angulartics',
     'angulartics.google.analytics',
     'ui.bootstrap',
-    'ngAnimate',
-    'ngSanitize',
     'angular-flexslider',
     'ui.swiper',
     'angularPromiseButtons',
@@ -25,8 +23,8 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     //$httpProvider.defaults.headers.post['X-CSRFToken'] = $.jStorage.get("csrftoken")
     //$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
-    
-  //  $httpProvider.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
+
+    //  $httpProvider.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
     // for http request with session
     $stateProvider
         .state('home', {
@@ -47,12 +45,12 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
-myApp.run(['$http', '$cookies', function($http, $cookies) {
-	   
-	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
-	$http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
-	// $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+myApp.run(['$http', '$cookies', function ($http, $cookies) {
+
+    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
+    $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
+    // $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 }]);
 
