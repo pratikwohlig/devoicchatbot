@@ -72,9 +72,10 @@ global["validators"] = require('mongoose-validators');
 global["monguurl"] = require('monguurl');
 require('mongoose-middleware').initialize(mongoose);
 global["Schema"] = mongoose.Schema;
-
+global["Grid"] = require('gridfs-stream');
+global["gfs"] = Grid(mongoose.connections[0].db, mongoose);
 global["http"] = require('http');
-
+gfs.mongo = mongoose.mongo;
 
 //Image Library
 global["stream"] = require('stream');
@@ -117,10 +118,6 @@ global["green"] = function (data) {
 global["log"] = function (data) {
     console.log(data);
 };
-
-
-// sending Emails using sendgrid
-
 
 if (process.env.NODE_ENV && process.env.NODE_ENV === "production") {
     global["env"] = require("./env/production.js");

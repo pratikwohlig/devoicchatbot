@@ -10,8 +10,8 @@ module.exports = [
 
   //Angular Libs
   'bower_components/angular/angular.js',
-  // 'bower_components/angular-sanitize/angular-sanitize.js',
-  // 'bower_components/angular-animate/angular-animate.min.js',
+  'bower_components/angular-sanitize/angular-sanitize.js',
+  'bower_components/angular-animate/angular-animate.min.js',
   'bower_components/angular-bootstrap/ui-bootstrap.min.js',
   'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
   'bower_components/angular-ui-router/release/angular-ui-router.min.js',
@@ -25,7 +25,7 @@ module.exports = [
   "bower_components/angular-toastr/dist/angular-toastr.tpls.js",
   "bower_components/angular-promise-buttons/dist/angular-promise-buttons.js",
   "frontend/js/factories/angular-cookies.min.js",
-  "bower_components/jStorage/jStorage.js",
+  "bower_components/jStorage/jstorage.js",
   //App.js
   'frontend/js/app.js',
 

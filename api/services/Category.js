@@ -1,27 +1,24 @@
 var schema = new Schema({
     name: {
         type: String,
-        required: true,
-        unique: true,
-        uniqueCaseInsensitive: true
     },
-    key: {
-        type: String
+    id: {
+        type:String
     }
 });
 
-schema.plugin(deepPopulate, {});
+//schema.plugin(deepPopulate, {});
 schema.plugin(uniqueValidator);
 schema.plugin(timestamps);
-module.exports = mongoose.model('Password', schema);
+module.exports = mongoose.model('category', schema,'category');
 
 var exports = _.cloneDeep(require("sails-wohlig-service")(schema));
 var model = {
-    findOneByName: function (name, callback) {
+    getCategoryDropdown: function (reqdata, callback) {
         var Model = this;
-        Model.findOne({
-            "name": name
-        }, function (err, data) {
+        Model.find({
+            
+        }).exec(function (err, data) {
             if (err) {
                 callback(err, null);
             } else {

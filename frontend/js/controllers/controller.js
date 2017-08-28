@@ -2,7 +2,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.template = TemplateService.getHTML("content/home.html");
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
-
+        //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
         $rootScope.getCookie = function(c_name)
 		{
@@ -36,27 +36,44 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         var abc = _.times(100, function (n) {
             return n;
         });
-        $rootScope.categorylist =  [
-            {id:"default",name:"Choose a Category"},
-            {id:"a1",name:"Account"},
-            {id:"b1",name:"Billing"},
-            {id:"br1",name:"Browser"},
-            {id:"r1",name:"Renewal"},
-            {id:"nc1",name:"New Connection"},
-        ];
+        $rootScope.categorylist = [];
+        apiService.getCategoryDropdown({}).then( function (response) {
+            $rootScope.categorylist = response.data.data;
+            $rootScope.selectedCategory = $rootScope.categorylist[0];
+        });
+        //$rootScope.categorylist = $scope.categorydropdown.data;
+        // $rootScope.categorylist =  [
+        //     {id:"default",name:"Choose a Category"},
+        //     {id:"a1",name:"Account"},
+        //     {id:"b1",name:"Billing"},
+        //     {id:"br1",name:"Browser"},
+        //     {id:"r1",name:"Renewal"},
+        //     {id:"nc1",name:"New Connection"},
+        // ];
         $rootScope.links = [];
-        $rootScope.selectedCategory = $rootScope.categorylist[0];
+        
         $rootScope.pushLinkmsg = function(index,link) {
             //alert(link);
               
             $rootScope.pushQuestionMsg(index,link);
         };
         $rootScope.getCategoryFAQ = function(category) {
-            $scope.formData = { user_input:category.id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
             //console.log($scope.formData);
             apiService.getCategoryFAQ($scope.formData).then( function (response) {
                 $rootScope.links = response.data;
                 //console.log(response.data);
+            });
+        };
+        
+        $rootScope.getCategoryQuestions = function(category) {
+            categoryid = category._id;
+            $scope.formData = { category:categoryid };
+            //console.log($scope.formData);
+            apiService.getCategoryQuestions($scope.formData).then( function (response) {
+                $rootScope.links = response.data.data;
+                $rootScope.links.type = "cat_faq";
+                //console.log($rootScope.links);
             });
         };
         var i = 0;
@@ -161,12 +178,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             var value2 = $rootScope.links;
-            if(value2.tiledlist[0].link[id] != "")
+            if(value2[id].link != "")
             {
                 var linkdata="";
-                final_link = value2.tiledlist[0].link[id].split("<br>");
+                final_link = value2[id].link.split("<br>");
                 _.each(final_link, function(value, key) {
-                    //console.log(key);
                     var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
                     linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
                    //console.log(linkdata);
@@ -174,14 +190,30 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
                 value2.queslink=linkdata;
             }
+            // else if(value2[id].answers != "")
+            // {
+            //     console.log("Entering");
+            //     var linkdata="";
+            //     final_link = value2[id].answers.split("<br>");
+            //     _.each(final_link, function(value, key) {
+            //         console.log(key);
+            //         var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+            //         linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
+            //        //console.log(linkdata);
+                   
+            //     });
+            //     value2.queslink=linkdata;
+            // }
             else
             {    
                 //value2.queslink=_.replace(value2.tiledlist[0].answer[id], '../static/data_excel/', adminurl2+'static/data_excel/');
-                value2.queslink = value2.tiledlist[0].answer[id].replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
                 //value2.queslink=value2.tiledlist[0].answer[id];
             }
                 //$compile(linkdata)($scope);
-            $rootScope.chatlist.push({id:id,msg:angular.copy(value2),position:"left",curTime: $rootScope.getDatetime()});
+            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+            //console.log(msg2);
+            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
@@ -195,10 +227,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = type;
             var value3 = $rootScope.links;
-            if(value3.tiledlist[0].answer[id] != "")
+            if(value3[id].answers != "")
             {
                 var answer1 =new Array();
-                answer1 = value3.tiledlist[0].answer[id].split("(2nd)");
+                answer1 = value3[id].answers.split("(2nd)");
                 if(type==0)
 				    answer1 = answer1[0];
                 else if(type==1)
@@ -207,7 +239,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 
             }
             //$compile(linkdata)($scope);
-            $rootScope.chatlist.push({id:id,msg:angular.copy(value3),position:"left",curTime: $rootScope.getDatetime()});
+            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faq"};
+            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){

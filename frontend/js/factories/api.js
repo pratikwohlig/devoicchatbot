@@ -1,5 +1,6 @@
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) {
     adminurl2 = "http://cingulariti.com:8097/";
+    var adminurl3 = "http://localhost/api/";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
     return {
@@ -35,6 +36,27 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) 
                 //withCredentials:false
             });
         },
-
+        getCategoryQuestions: function (formData, callback) {
+            return $http({
+                url: adminurl3+'Categoryquestions/getCategoryQuestions',
+                //headers: {'X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                //user_id: 2471,
+                data: (formData),
+                //dataType:"json"
+                //withCredentials:false
+            });
+        },
+        getCategoryDropdown: function (formData, callback) {
+            return $http({
+                url: adminurl3+'Category/getCategoryDropdown',
+                method: 'POST',
+                //user_id: 2471,
+                data: {},
+                //dataType:"json"
+                //withCredentials:false
+            });
+        },
+        
     };
 });
