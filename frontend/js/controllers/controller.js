@@ -179,7 +179,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 value2.queslink=linkdata;
             }
             
-            lse
+            else
             {    
                 value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
             }
@@ -517,6 +517,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$('#chatTabs a:last').tab('show');
        },200);
     })
+    
     .controller('FormCtrl', function ($scope, TemplateService, NavigationService, $timeout, toastr, $http) {
         $scope.template = TemplateService.getHTML("content/form.html");
         TemplateService.title = "Form"; //This is the Title of the Website

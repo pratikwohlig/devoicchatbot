@@ -13,14 +13,13 @@ myApp.service('TemplateService', function () {
         this.chatcontent = "views/template/chat.html";
         this.footer = "views/template/footer.html";
     };
-
     this.getHTML = function (page) {
         this.init();
         var data = this;
         data.content = "views/" + page;
         return data;
     };
-
+    
     this.init();
 
 });
