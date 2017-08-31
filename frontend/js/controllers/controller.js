@@ -44,7 +44,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     console.log("Different domain");
         // else    
         //     console.log("same domain");
-        console.log(Browser.getParentUrl());
+        //console.log(Browser.getParentUrl());
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
         $rootScope.showTimeoutmsg = false;
