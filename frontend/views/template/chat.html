@@ -1,4 +1,4 @@
-<div id="chat_window_1" ng-controller="ChatCtrl"  ng-if="!validDomain">
+<div id="chat_window_1" ng-controller="ChatCtrl"  >
         <div class="panel panel-primary " id="chat_panel" >
             <div class="panel-heading container-fluid" id="accordion">
                 <span class="glyphicon glyphicon-comment"></span> Chat
@@ -252,6 +252,6 @@
                 
         </div>
     </div>
-    <div id="chatImage">
+    <div id="chatImage" ng-if="!validDomain">
         <img class="clickImage" src="img/Tenali.png" ng-click="showChatwindow();">
     </div>
