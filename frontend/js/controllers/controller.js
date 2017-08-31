@@ -20,26 +20,26 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
     })
 
     .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location) {
-        // var url = $location.absUrl().split('?')[0];
-        // console.log(url);
-        // console.log(window.parent.location);
-        //  var pId = $location.path().split("/")[3]||"Unknown";    //path will be /person/show/321/, and array looks like: ["","person","show","321",""]
-        // console.log(document.baseURI);
-        // $scope.getParentUrl =function() {
-        //     var isInIframe = (parent !== window),
-        //         parentUrl = null;
+        var url = $location.absUrl().split('?')[0];
+        console.log(url);
+        console.log(window.parent.location);
+         var pId = $location.path().split("/")[3]||"Unknown";    //path will be /person/show/321/, and array looks like: ["","person","show","321",""]
+        console.log(document.baseURI);
+        $scope.getParentUrl =function() {
+            var isInIframe = (parent !== window),
+                parentUrl = null;
 
-        //     if (isInIframe) {
-        //         parentUrl = document.referrer;
-        //         console.log("in iframe");
-        //     }
+            if (isInIframe) {
+                parentUrl = document.referrer;
+                console.log("in iframe");
+            }
 
-        //     return parentUrl;
-        // };
-        // console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
-        // var url2 = (window.location != window.parent.location)? document.referrer: document.location.href;
-        // console.log(url2);// returns blank if cross domain | returns url
-        // console.log(document.referrer);// returns blank if cross domain | returns url
+            return parentUrl;
+        };
+        console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
+        var url2 = (window.location != window.parent.location)? document.referrer: document.location.href;
+        console.log(url2);// returns blank if cross domain | returns url
+        console.log(document.referrer);// returns blank if cross domain | returns url
         // if(!window.top.location.href)
         //     console.log("Different domain");
         // else    
