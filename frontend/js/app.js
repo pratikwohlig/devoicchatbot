@@ -22,7 +22,7 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     //$httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     //$httpProvider.defaults.headers.post['X-CSRFToken'] = $.jStorage.get("csrftoken")
     //$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
 
