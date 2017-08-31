@@ -19,7 +19,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$translate) {
+        //$translate.use("hi");
         var url = $location.absUrl().split('?')[0];
         console.log(url);
         console.log(window.parent.location);
@@ -261,7 +262,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             if(!$rootScope.firstMsg)
             {
                 $rootScope.firstMsg = true;
-                msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+                msg = {Text:"Hi, How may I help you ? ABOUT",type:"SYS_FIRST"};
                 $rootScope.pushSystemMsg(0,msg);  
             }
             $('#chat_panel').slideDown("slow");

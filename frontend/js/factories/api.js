@@ -1,7 +1,7 @@
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) {
     adminurl2 = "http://cingulariti.com:8097/";
     var adminurl3 = "http://localhost/api/";
-    var adminurl3 = "http://104.46.103.162:8094/api/";
+    //var adminurl3 = "http://104.46.103.162:8094/api/";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
     return {
@@ -18,7 +18,7 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) 
         getCategoryFAQ: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",
-                headers: {'X-CSRFToken':formData.csrfmiddlewaretoken },
+                headers: {'X-CSRFToken':formData.csrfmiddlewaretoken,'Content-Type':"application/x-www-form-urlencoded" },
                 method: 'POST',
                 //user_id: 2471,
                 data: $.param(formData),
