@@ -45,6 +45,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         // else    
         //     console.log("same domain");
         //console.log(Browser.getParentUrl());
+        $rootScope.validDomain = false;
+        var referrerurl = $scope.getParentUrl();
+        if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/")
+            $rootScope.validDomain = true;
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
         $rootScope.showTimeoutmsg = false;
