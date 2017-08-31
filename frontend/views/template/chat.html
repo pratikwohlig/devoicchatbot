@@ -19,15 +19,20 @@
                         <div class="col-md-12">
                             <ul class="breadcrumb categorybreadcrumb">
                                 <li><a href="#" id="faq"> FAQ </a></li>
-                                <li class="tmpcategory" ng-if="selectedCategory.id != 'default'">{{selectedCategory.name}}</li>
+                                <li class="tmpcategory" ng-if="selectedCategory.id != 'default'" ><span comp-translate ="{{selectedCategory.name}}"></li>
                             </ul>
                         </div>
                     </div>
                     <div id="faqs_dropdown" class="row">
                         <div class="col-md-12">
-                            <select id="faqs_category"  ng-change="getCategoryQuestions(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" class="form-control" >
-                            
-                            </select>
+                             <select id="faqs_category"  ng-change="getCategoryQuestions(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" class="form-control"  >
+                                
+                            </select> 
+                            <!-- <select id="faqs_category"  ng-change="getCategoryQuestions(selectedCategory);"  ng-model="selectedCategory" class="form-control"  >
+                                <option ng-repeat="cat in categorylist" value="{{selectedCategory}}" comp-translate="{{cat.name}}">
+                                    
+                                </option>
+                            </select> -->
                         </div>
                         <div class="col-md-12">
                             <div class="all_questions row" id="all_questions" >
@@ -36,7 +41,9 @@
                                         
                                             <a href="#" id="{{$index}}" ng-click="pushLinkmsg($index,link.questions);">
                                                 <span>&rarr;</span>
-                                                <ng-bind-html ng-bind-html = "link.questions">{{link.questions}}</ng-bind-html>
+                                                <!-- <ng-bind-html ng-bind-html = "link.questions" > -->
+                                                    <span comp-translate="{{link.questions}}"></span>
+                                                <!-- </ng-bind-html> -->
                                                 <hr>
                                             </a>
                                         
@@ -192,17 +199,18 @@
                                 </div>
                                 <div class="chatType" ng-if="list.msg.type==='cat_faq'">
                                     <p class="lastmsg" >
-                                        <ng-bind-html ng-bind-html = "trustedHtml(list.msg.queslink)" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''">
-                                            {{list.msg.queslink}}
-                                        </ng-bind-html>
                                         
+                                        <ng-bind-html ng-bind-html = "trustedHtml(list.msg.queslink)" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''"> -->
+                                             {{list.msg.queslink}} 
+                                        </ng-bind-html>  
+                                        <!-- <span comp-translate="{{list.msg.queslink}}">  </span> -->
                                     </p>
                                 </div>
                                 <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type==='SYS_INACTIVE' || list.msg.type==='SYS_FIRST' || list.msg.type === 'SYS_EMPTY_RES'))">
                                     <p class="lastmsg" >
-                                        <ng-bind-html ng-bind-html = "list.msg.Text">
-                                            {{list.msg.Text}}
-                                        </ng-bind-html>
+                                        <!-- <ng-bind-html ng-bind-html = "list.msg.Text"> -->
+                                            <span comp-translate="{{list.msg.Text}}"></span>
+                                        <!-- </ng-bind-html> -->
                                     </p>
                                 </div>
                                 <p class="lastmsg">

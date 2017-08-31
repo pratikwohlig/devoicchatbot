@@ -33,20 +33,7 @@ var model = {
                 callback(err, null);
             } else {
                 //console.log(data,"data");
-                const translate = require('google-translate-api');
-                //console.log(translate);
-                translate('I speak English!', {from: 'en', to: 'hi'}).then(res => {
-                    console.log(res.text);
-                    //=> Ik spreek Nederlands! 
-                    console.log(res.from.text.autoCorrected);
-                    //=> true 
-                    console.log(res.from.text.value);
-                    //=> I [speak] Dutch! 
-                    console.log(res.from.text.didYouMean);
-                    //=> false 
-                }).catch(err => {
-                    console.error(err);
-                });
+               
                 callback(err, data);
             }
         });

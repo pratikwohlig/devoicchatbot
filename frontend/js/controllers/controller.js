@@ -22,10 +22,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
     .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$translate) {
         //$translate.use("hi");
         var url = $location.absUrl().split('?')[0];
-        console.log(url);
-        console.log(window.parent.location);
+        // console.log(url);
+        // console.log(window.parent.location);
          var pId = $location.path().split("/")[3]||"Unknown";    //path will be /person/show/321/, and array looks like: ["","person","show","321",""]
-        console.log(document.baseURI);
+        //console.log(document.baseURI);
         $scope.getParentUrl =function() {
             var isInIframe = (parent !== window),
                 parentUrl = null;
@@ -37,10 +37,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
             return parentUrl;
         };
-        console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
+        //console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
         var url2 = (window.location != window.parent.location)? document.referrer: document.location.href;
-        console.log(url2);// returns blank if cross domain | returns url
-        console.log(document.referrer);// returns blank if cross domain | returns url
+        //console.log(url2);// returns blank if cross domain | returns url
+        //console.log(document.referrer);// returns blank if cross domain | returns url
         // if(!window.top.location.href)
         //     console.log("Different domain");
         // else    
@@ -123,7 +123,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.getCategoryQuestions = function(category) {
             categoryid = category._id;
             $scope.formData = { category:categoryid };
-            //console.log($scope.formData);
+            //console.log(category.name);
             apiService.getCategoryQuestions($scope.formData).then( function (response) {
                 $rootScope.links = response.data.data;
                 $rootScope.links.type = "cat_faq";
@@ -202,7 +202,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 _.each(final_link, function(value, key) {
                     var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
                     linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
-                   //console.log(linkdata);
+                   //console.log(value);
                    
                 });
                 value2.queslink=linkdata;
@@ -212,7 +212,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {    
                 value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
             }
+            //value2.queslink = $scope.trustedHtml(value2.queslink);
                 //$compile(linkdata)($scope);
+            console.log(value2.queslink);
             msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
             $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;
@@ -262,7 +264,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             if(!$rootScope.firstMsg)
             {
                 $rootScope.firstMsg = true;
-                msg = {Text:"Hi, How may I help you ? ABOUT",type:"SYS_FIRST"};
+                msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
                 $rootScope.pushSystemMsg(0,msg);  
             }
             $('#chat_panel').slideDown("slow");

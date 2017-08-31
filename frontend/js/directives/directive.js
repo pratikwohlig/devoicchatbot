@@ -102,5 +102,47 @@ myApp.directive('img', function ($compile, $parse) {
         };
     })
 
+    .directive('compTranslate', function ($compile, apiService) {
+        return {
+            restrict: 'A',
+            scope: true,
+            priority: 0,
+            compile: function (element, attrs) {
+                var originalText = element.text();
+                //var originalTooltip = attrs['tooltip'];
+                //console.log(originalText);
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.originalText = originalText;
+                        //scope.originalTooltip = originalTooltip;
+                    
+                        
+                        var translationChangeOccurred = function () {
+                            attrs.$observe('compTranslate', function(value) {
+                                var formData = { "text": value };
+                                //console.log(element);
+                                element.text(value);
+                                //element.html(apiService.translate(formdata));
+                                // apiService.translate(formData).then( function (response) {
+                                //     element.text(response.data.data);
+                                // });
+                                // if (scope.originalTooltip) {
+                                //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
+                                // }
+                    
+                                $compile(element.contents())(scope);
+                            });
+                        };
+                        //translation changes by default while linking!
+                        translationChangeOccurred();
+            
+                        scope.$on('$translationLanguageChanged', translationChangeOccurred);
+                    },
+                    post: function () {
+                    }
+                };
+            }
+        };
+    })
 
 ;

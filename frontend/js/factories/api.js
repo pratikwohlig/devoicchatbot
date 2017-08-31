@@ -1,4 +1,4 @@
-myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) {
+myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
     adminurl2 = "http://cingulariti.com:8097/";
     var adminurl3 = "http://localhost/api/";
     //var adminurl3 = "http://104.46.103.162:8094/api/";
@@ -18,10 +18,11 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) 
         getCategoryFAQ: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",
-                headers: {'X-CSRFToken':formData.csrfmiddlewaretoken,'Content-Type':"application/x-www-form-urlencoded" },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
                 //user_id: 2471,
-                data: $.param(formData),
+                data: (formData),
+                //data : $httpParamSerializer(formData),
                 //dataType:"json"
                 //withCredentials:false
             });
@@ -58,6 +59,15 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) 
                 //withCredentials:false
             });
         },
-        
+        translate: function (formData,callback) {
+            return $http({
+                url: adminurl3+'Translate/translate',
+                method: 'POST',
+                //user_id: 2471,
+                data: formData,
+                //dataType:"json"
+                //withCredentials:false
+            });
+        },
     };
 });
