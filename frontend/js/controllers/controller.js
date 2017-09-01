@@ -19,8 +19,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$translate) {
-        //$translate.use("hi");
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location) {
+        
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
         // console.log(window.parent.location);
@@ -50,6 +50,40 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         var referrerurl = $scope.getParentUrl();
         if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/")
             $rootScope.validDomain = true;
+        $rootScope.languagelist = [
+            {id:"en" , name:"English"},
+            {id:"hi" , name:"Hindi"},
+            {id:"mr" , name:"Marathi"},
+            {id:"gu" , name:"Gujarati"},
+            {id:"ta" , name:"Tamil"},
+        ];
+        $rootScope.selectedLanguage = $rootScope.languagelist[0];
+        $scope.formSubmitted = false;
+        $scope.loginerror=0;
+        $rootScope.isLoggedin = false;
+        if($.jStorage.get("isLoggedin"))
+            $rootScope.isLoggedin = true;
+        $scope.login = function(username,password,language)
+        {
+            /*
+            $scope.formData = {username:username,password:sha256_digest(password),csrfmiddlewaretoken:token};
+            
+            apiService.login($scope.formData).then(function (callback){
+                //console.log(callback);
+            });*/
+            $.jStorage.flush();
+            if(username == "admin@exponentiadata.com" && password == "admin")
+            {
+                $.jStorage.set("id", 1);
+                $.jStorage.set("name", "Admin");
+                $.jStorage.set("language", language.id);
+                $.jStorage.set("email", username);
+                $.jStorage.set("isLoggedin", true);
+                $rootScope.isLoggedin = true;
+            }
+        };
+
+
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
         $rootScope.showTimeoutmsg = false;
@@ -195,7 +229,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             var value2 = $rootScope.links;
-            if(value2[id].link != "")
+            if(value2[id].link != "" )
             {
                 var linkdata="";
                 final_link = value2[id].link.split("<br>");
@@ -212,9 +246,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {    
                 value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
             }
-            //value2.queslink = $scope.trustedHtml(value2.queslink);
+            
+            value2.queslink = $scope.trustedHtml(value2.queslink);
                 //$compile(linkdata)($scope);
-            console.log(value2.queslink);
+            //console.log( $sce.trustAsHtml(value2.queslink));
+            //value2.queslink = $sce.trustAsHtml(value2.queslink);
             msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
             $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;

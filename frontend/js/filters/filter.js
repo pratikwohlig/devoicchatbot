@@ -36,4 +36,9 @@ myApp.filter('newlines', function () {
       return text.replace(/\n/g, '<br/>');
   }
 });
-
+myApp.filter('langtranslate', function () {
+  return function(text) {
+      //return text.replace(/\n/g, '<br/>');
+      return (text);
+  }
+});

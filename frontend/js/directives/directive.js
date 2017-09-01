@@ -119,13 +119,14 @@ myApp.directive('img', function ($compile, $parse) {
                         
                         var translationChangeOccurred = function () {
                             attrs.$observe('compTranslate', function(value) {
-                                var formData = { "text": value };
+                                var languageid = $.jStorage.get("language");
+                                var formData = { "text": value,"language":languageid };
                                 //console.log(element);
-                                element.text(value);
+                                //element.text(value);
                                 //element.html(apiService.translate(formdata));
-                                // apiService.translate(formData).then( function (response) {
-                                //     element.text(response.data.data);
-                                // });
+                                apiService.translate(formData).then( function (response) {
+                                    element.text(response.data.data);
+                                });
                                 // if (scope.originalTooltip) {
                                 //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
                                 // }

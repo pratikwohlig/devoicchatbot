@@ -12,9 +12,9 @@ var model = {
     translate: function (reqdata, callback) {
         const translate = require('google-translate-api');
         //console.log(reqdata);
-        translate(reqdata.text, {from: 'en', to: 'hi'}).then(res => {
-            console.log(res.text);
-            callback(null, reqdata.text);
+        translate(reqdata.text, {from: 'en', to: reqdata.language}).then(res => {
+            //console.log(res.text);
+            callback(null, res.text);
             //=> Ik spreek Nederlands! 
             // console.log(res.from.text.autoCorrected);
             // //=> true 
