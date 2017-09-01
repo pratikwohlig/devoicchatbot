@@ -244,12 +244,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 var linkdata="";
                 final_link = value2[id].link.split("<br>");
                 _.each(final_link, function(value, key) {
-                    // apiService.translate({text:value,"language":$.jStorage.get("language")}).then( function (response) {
-                        //value = response.data.data;
-                        var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                    var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
                         linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
-                   //console.log(value);
-                    // });
                 });
                 value2.queslink=linkdata;
             }
@@ -262,7 +258,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //value2.queslink = $scope.trustedHtml(value2.queslink);
                 //$compile(linkdata)($scope);
             //console.log( $sce.trustAsHtml(value2.queslink));
-            //value2.queslink = $sce.trustAsHtml(value2.queslink);
+            value2.queslink = $sce.trustAsHtml(value2.queslink);
             msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
             $timeout(function(){
                 $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});

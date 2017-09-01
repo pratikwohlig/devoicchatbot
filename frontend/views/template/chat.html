@@ -250,9 +250,9 @@
                                         <div class="chatType" ng-if="list.msg.type==='cat_faq'">
                                             <p class="lastmsg" >
                                                 
-                                                <span data-ng-bind-html = "list.msg.queslink|langtranslate" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''"> 
+                                                <ng-bind-html ng-bind-html = "list.msg.queslink" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''"> 
                                                     {{list.msg.queslink}}
-                                                </span>   
+                                                </ng-bind-html>   
                                                 <!-- <span comp-translater content="{{list.msg.queslink}}" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''">
 
                                                 </span> -->
