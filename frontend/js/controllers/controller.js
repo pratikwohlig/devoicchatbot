@@ -82,8 +82,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.isLoggedin = true;
             }
         };
-
-
+        $scope.logout = function()
+        {
+            $.jStorage.flush();
+            $rootScope.isLoggedin = false;
+        };
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
         $rootScope.showTimeoutmsg = false;
