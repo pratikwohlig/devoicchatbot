@@ -89,6 +89,33 @@ li.ui-menu-item {
     font-size: 12px;
     color: #053c6d;
 }
+// .animate_fade.ng-enter {
+//     transition:2.5s linear all;
+//     opacity:0;
+//     display:none;
+// }
+// .animate_fade.ng-enter.ng-enter-active {
+//     // transition:0.0s linear all;
+//     opacity:1;
+//     display:block;
+// }
+.animate_fade.ng-move,
+.animate_fade.ng-enter,
+.animate_fade.ng-leave {
+  transition:all linear 2.0s;
+}
+
+.animate_fade.ng-leave.ng-leave-active,
+.animate_fade.ng-move,
+.animate_fade.ng-enter {
+  opacity:0;
+}
+
+.animate_fade.ng-leave,
+.animate_fade.ng-move.ng-move-active,
+.animate_fade.ng-enter.ng-enter-active {
+  opacity:1;
+}
 .loader_msg { font-style: italic; }
 #firstMsg { font-size: 10px; }
 #chat_window_1 {  

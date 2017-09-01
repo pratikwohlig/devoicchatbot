@@ -86,6 +86,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             $.jStorage.flush();
             $rootScope.isLoggedin = false;
+            $rootScope.chatlist = [];
+            $.jStorage.set("showchat",false);
+            $rootScope.chatOpen = false;
+            $rootScope.links = [];
+            $rootScope.firstMsg = true;
+            var msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+            $rootScope.pushSystemMsg(0,msg); 
         };
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
@@ -237,10 +244,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 var linkdata="";
                 final_link = value2[id].link.split("<br>");
                 _.each(final_link, function(value, key) {
-                    var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
-                    linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
+                    // apiService.translate({text:value,"language":$.jStorage.get("language")}).then( function (response) {
+                        //value = response.data.data;
+                        var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                        linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
                    //console.log(value);
-                   
+                    // });
                 });
                 value2.queslink=linkdata;
             }
@@ -250,17 +259,20 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
             }
             
-            value2.queslink = $scope.trustedHtml(value2.queslink);
+            //value2.queslink = $scope.trustedHtml(value2.queslink);
                 //$compile(linkdata)($scope);
             //console.log( $sce.trustAsHtml(value2.queslink));
             //value2.queslink = $sce.trustAsHtml(value2.queslink);
             msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-            $rootScope.showMsgLoader=false;
-            //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
+                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                $rootScope.showMsgLoader=false;
                 $rootScope.scrollChatWindow();
-            });
+            },2000);
+            
+            
+            //$.jStorage.set("chatlist",$rootScope.chatlist);
+            
             
         };
         $rootScope.pushPortalLink= function(id,type) {
