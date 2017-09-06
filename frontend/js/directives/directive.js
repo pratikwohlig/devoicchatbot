@@ -124,14 +124,22 @@ myApp.directive('img', function ($compile, $parse) {
                                 //console.log(element);
                                 //element.text(value);
                                 //element.html(apiService.translate(formdata));
-                                
-                                apiService.translate(formData).then( function (response) {
-                                    // html =$sce.trustAsHtml(response.data.data);
-                                    // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
-                                    element.text(response.data.data);
+                                if(languageid == "en")
+                                {
                                     
-                                });
-                                // if (scope.originalTooltip) {
+                                    hcont=$.parseHTML(value);
+                                    element.html(hcont);
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //console.log(response.data.data);
+                                        element.html(response.data.data);
+                                    });
+                                }
+                                    // if (scope.originalTooltip) {
                                 //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
                                 // }
                                 $compile(element.contents())(scope);
@@ -149,7 +157,67 @@ myApp.directive('img', function ($compile, $parse) {
             }
         };
     })
-
+    .directive('filterTranslate', function ($compile, apiService,$sce) {
+        return {
+            restrict: 'A',
+            scope: true,
+            priority: 0,
+            compile: function (element, attrs) {
+                var originalText = element.text();
+                //var originalTooltip = attrs['tooltip'];
+                //console.log(originalText);
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.originalText = originalText;
+                        //scope.originalTooltip = originalTooltip;
+                    
+                        var translationChangeOccurred = function () {
+                            attrs.$observe('filterTranslate', function(value) {
+                                var languageid = $.jStorage.get("language");
+                                value = value.replace(new RegExp('('+$(".chatinput").val()+')', 'gi'),
+                                    '<span class="highlighted"> $& </span>');
+                                var formData = { "text": value,"language":languageid };
+                                //console.log(element);
+                                //element.text(value);
+                                //element.html(apiService.translate(formdata));
+                                
+                                //console.log(value);
+                                if(languageid == "en")
+                                {
+                                    
+                                    hcont=$.parseHTML(value);
+                                    element.html(hcont);
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //console.log(response.data.data);
+                                        texttoreplace = response.data.data;
+                                        texttoreplace=texttoreplace.replace('<span class = \"highlighted\">', '<span class = "highlighted">'); 
+                                        texttoreplace=texttoreplace.replace('</ span>', '</span>'); 
+                                        element.html(texttoreplace);
+                                    });
+                                }
+                                    // if (scope.originalTooltip) {
+                                //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
+                                // }
+                                $compile(element.contents())(scope);
+                                
+                            });
+                        };
+                        //translation changes by default while linking!
+                        translationChangeOccurred();
+            
+                        scope.$on('$translationLanguageChanged', translationChangeOccurred);
+                    },
+                    post: function () {
+                    }
+                };
+            }
+        };
+    })
     .directive('compTranslater', function ($compile, apiService,$sce) {
         return {
             restrict: 'EA',
@@ -174,25 +242,29 @@ myApp.directive('img', function ($compile, $parse) {
                                 contents = contents.replace("\n","<br>");     
                                 contents = contents.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');     
                                 var formData = { "text": contents,"language":languageid };
-                                //console.log(element);
                                 //element.text(value);
                                 //element.html(apiService.translate(formdata));
-                                //console.log(contents);
-                                //console.log(formData);
-                                apiService.translate(formData).then( function (response) {
-                                    // html =$sce.trustAsHtml(response.data.data);
-                                    // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
-                                    //hcont = $sce.trustAsHtml(response.data.data);
-                                    
-                                    hcont=$.parseHTML(response.data.data);
-                                    
-                                    //hcont= $compile(hcont)(scope);
+                                if(languageid == "en")
+                                {
+                                    hcont=$.parseHTML(contents);
                                     element.html(hcont);
-                                    
-                                });
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //hcont = $sce.trustAsHtml(response.data.data);
+                                        hcont=$.parseHTML(response.data.data);
+                                        
+                                        //hcont= $compile(hcont)(scope);
+                                        element.html(hcont);
+                                        
+                                    });
                                 // if (scope.originalTooltip) {
                                 //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
                                 // }
+                                }
                                 $compile(element.contents())(scope);
                                 
                             });

@@ -25,6 +25,24 @@ var model = {
         }).catch(err => {
             //console.error(err);
         });
+    },
+    translatelink: function (reqdata, callback) {
+        const translate = require('google-translate-api');
+        //console.log(reqdata);
+        var async = require('async');
+        translate(reqdata.text, {from: 'en', to: reqdata.language}).then(res => {
+            //console.log(res.text);
+            callback(null, res.text);
+            //=> Ik spreek Nederlands! 
+            // console.log(res.from.text.autoCorrected);
+            // //=> true 
+            // console.log(res.from.text.value);
+            // //=> I [speak] Dutch! 
+            // console.log(res.from.text.didYouMean);
+            // //=> false 
+        }).catch(err => {
+            //console.error(err);
+        });
     }
 };
 module.exports = _.assign(module.exports, exports, model);

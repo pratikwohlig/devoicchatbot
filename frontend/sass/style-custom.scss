@@ -24,7 +24,7 @@ body { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px
 .char-input input[type='text'] { width: 100%; float: left; padding: 10px;  border: none; outline: none; }
 
 .ui-autocomplete-loading { background: white url("../images/ui-loading.gif") 98% center no-repeat; }
-#suggestionList .ui-widget.ui-widget-content { position: absolute; bottom: 69px; top: auto !important; }
+#suggestionList .ui-widget.ui-widget-content { position: absolute; bottom: -31px; top: auto !important; }
 
 .typing-text { font-size:11px; color:#333; visibility: hidden; margin-bottom: 5px; }
 

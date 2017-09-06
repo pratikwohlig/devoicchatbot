@@ -11188,7 +11188,7 @@ body {
 
 #suggestionList .ui-widget.ui-widget-content {
   position: absolute;
-  bottom: 69px;
+  bottom: -31px;
   top: auto !important; }
 
 .typing-text {
