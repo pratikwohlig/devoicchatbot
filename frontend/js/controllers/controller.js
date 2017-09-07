@@ -252,7 +252,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $scope.formData = {"text": value,"language":languageid };
                     var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
                     linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
-                    value2.queslink=linkdata;
+                    
                     // value2.queslink = $sce.trustAsHtml(value2.queslink);
                     // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
                     // $timeout(function(){
@@ -290,7 +290,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     // });
                     
                 });
-                
+                value2.queslink=linkdata;
             }
             
             else
