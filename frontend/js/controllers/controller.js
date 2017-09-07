@@ -48,7 +48,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //console.log(Browser.getParentUrl());
         $rootScope.validDomain = false;
         var referrerurl = $scope.getParentUrl();
-        if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/")
+        if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
             $rootScope.validDomain = true;
         $rootScope.languagelist = [
             {id:"en" , name:"English"},
