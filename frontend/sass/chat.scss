@@ -1,6 +1,6 @@
 #chat_panel{
     display: none;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Helvetica Neue','Roboto';
     height:500px;
     position: relative;
 }
@@ -87,7 +87,7 @@ li.ui-menu-item {
 }
 .chatbottomtext { 
     font-size: 12px;
-    color: #053c6d;
+    color: #ED6D05;
 }
 // .animate_fade.ng-enter {
 //     transition:2.5s linear all;
@@ -219,8 +219,8 @@ width:90%;
  }
 .panel-primary>.panel-heading {
     color: #fff;
-    background-color: #003874;
-    border-color: #003874;
+    background-color: #ED6D05;
+    border-color: #ED6D05;
 }
 .btn-group .btn-default {
     color: #fff;
@@ -282,7 +282,7 @@ background-color: #fafafa;
     position:relative;
 }
 .right .chat-body{
-    background: #003874;
+    background: #ED6D05;
     color: #e2e2e2;
     border-top-right-radius: 0em;
     box-shadow: -1px 1px 1px 0px rgba(0,0,0,0.4);
@@ -290,7 +290,7 @@ background-color: #fafafa;
     float: right;
     right: 0;
 }
-.chatbody .panel-footer { width:100% !important; }
+.chatbody .panel-footer { width:100% !important; background-color: #1B1918; }
 .left .chat-body:before{
     content: "";
     position: absolute;
@@ -298,7 +298,7 @@ background-color: #fafafa;
     left: -10px;
     width: 0;
     height: 0;
-    border: 5px solid #d9edf7;
+    border: 5px solid #1B1918;
     border-left-color: transparent;
     border-bottom-color: transparent;
 }
@@ -309,18 +309,19 @@ background-color: #fafafa;
     right: -10px;
     width: 0;
     height: 0;
-    border: 5px solid #003874;
+    border: 5px solid #ED6D05;
     border-right-color: transparent;
     border-bottom-color: transparent;
 }
-.left .chat-body{
+.left .chat-body {
     border-top-left-radius: 0em;
-    background: #d9edf7;
-    color:#2d2d2d;
+    background: #1B1918;
+    color:#fff;
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.4);
     display: table;
     left: 0;
 }
+.left .chat-body a { color: #ED6D05; }
 .chat li .chat-body p
 {
     margin: 0;
@@ -348,11 +349,14 @@ height:30px!important;
     margin-right: 5px;
 }
 div#all_questions {
+    margin-top: 10px;
     padding-top: 10px;
     height: 320px;
     overflow-y: auto;
     overflow-x: hidden;
+    background: #ED6D05;
 }
+div#all_questions a { color:#fff; }
 .questions hr { background-color: #C0C0C0; }
 .categorybreadcrumb {
     // background-color: #f5f5f5; 
@@ -364,11 +368,15 @@ div#all_questions {
 .categorybreadcrumb > li + li:before {
     content: "> ";
 }
+.categorybreadcrumb li:first-child a {
+    color:#ED6D05;
+}
+select#faqs_category { border: 1px solid #ED6D05; }
 ol.quesList { padding-left:15px; }
 .quesList li {
-    color:#0d9dff;
+    color:#ED6D05;
 }
-.faqans { color: #000 !important; }
+.faqans { color: #fff !important; }
 .panel-body
 {
     overflow-y: auto;

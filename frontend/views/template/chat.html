@@ -97,7 +97,7 @@
                                 <li class="{{list.position}} lastchat clearfix animate_fade"   ng-repeat="list in chatlist track by $index">
                                     <span class="chat-img pull-{{list.position}}">
                                         <span ng-if="list.position == 'left'">
-                                            <img ng-src="img/cingulariti.png" alt="Cingulariti" class="img-circle " />
+                                            <img ng-src="img/logo.jpg" alt="ION" class="img-circle " />
                                         </span>
                                         <span ng-if="list.position == 'right'">
                                             <img ng-src="img/{{list.position == 'left' && 'logo5.jpg' || 'logo7.png'}}" alt="BOT" class="img-circle " />
@@ -295,7 +295,7 @@
                                 <span  class="thumbsIcon">
                                     <span class="chatbottomtext">Was this information useful ? 
                                         <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
-                                        <span class="thumbsdown glyphicon glyphicon-thumbs-down" ></span>
+                                        <span class="thumbsdown glyphicon glyphicon-thumbs-down" ng-click="dislikeChatClick();"></span>
                                     </span>
                                 </span>
                             
@@ -327,5 +327,5 @@
         </div>
     </div>
     <div id="chatImage" ng-if="validDomain">
-        <img class="clickImage" src="img/cingulariti.png" ng-click="showChatwindow();">
+        <img class="clickImage img-circle" src="img/logo.jpg" ng-click="showChatwindow();">
     </div>

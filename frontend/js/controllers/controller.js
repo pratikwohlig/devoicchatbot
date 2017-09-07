@@ -141,6 +141,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         apiService.getCategoryDropdown({}).then( function (response) {
             $rootScope.categorylist = response.data.data;
             $rootScope.selectedCategory = $rootScope.categorylist[0];
+            $("div#all_questions").css("background","none");
         });
         //$rootScope.categorylist = $scope.categorydropdown.data;
         // $rootScope.categorylist =  [
@@ -169,11 +170,16 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         
         $rootScope.getCategoryQuestions = function(category) {
             categoryid = category._id;
+            
             $scope.formData = { category:categoryid };
             //console.log(category.name);
             apiService.getCategoryQuestions($scope.formData).then( function (response) {
                 $rootScope.links = response.data.data;
                 $rootScope.links.type = "cat_faq";
+                if(category.name == "Choose a Category")
+                    $("div#all_questions").css("background","none");
+                else
+                    $("div#all_questions").css("background","#ED6D05");
                 //console.log($rootScope.links);
             });
         };
@@ -633,8 +639,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         $rootScope.likeChatClick = function(){
             $timeout(function(){
-                $('span.thumbsup').css("color", "#ed232b");
-                $('.thumbsdown').css("color", "#444");
+                $('span.thumbsup').css("color", "#39E61F");
+                $('.thumbsdown').css("color", "#ED6D05");
             },200);
         };
         $rootScope.$dislikemodalInstance = {};
@@ -648,8 +654,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //controller: 'CommonCtrl'
             });*/
             $timeout(function(){ 
-                $('span.thumbsdown').css("color", "#ed232b");
-                $('.thumbsup').css("color", "#444");
+                $('span.thumbsdown').css("color", "#F32525");
+                $('.thumbsup').css("color", "#ED6D05");
             },200);
         };
         /*$rootScope.dislikeCancel = function() {
