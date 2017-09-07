@@ -180,7 +180,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $timeout(function(){
             $(document).on('click', '.portalapp', function(){ 
                 var linktext=$(this).text();
-                //$rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
+                $rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
                 // if($(this).text().search(new RegExp("ION Portal", "i"))>=0)
                 // {
                 //     $rootScope.pushPortalLink($(this).attr("data-id"),$(this).attr("id"));
