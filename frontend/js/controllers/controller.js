@@ -622,20 +622,38 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
             if(e.which == 13) // Enter
             {
-                if($rootScope.autolistid=="" || $rootScope.autolistid == null )
+                if($rootScope.autolistid=="" || $rootScope.autolistid == null)
                 {
-                    console.log("null",$rootScope.autolistid);
-                    $(".chatinput").val("");
-                    $rootScope.pushMsg("",$rootScope.chatText);
+                    if($(".chatinput").val() != "")
+                    {
+                        console.log("null",$rootScope.autolistid);
+                        $(".chatinput").val("");
+                        $rootScope.pushMsg("",$rootScope.chatText);
+                        $rootScope.chatText="";
+                    }
                 }
                 else {
                     $rootScope.pushMsg("",$rootScope.autolistvalue);
+                    
                     //$rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.chatText,$rootScope.answers);
                 }
-                
+                $rootScope.autocompletelist = [];
                 //$rootScope.pushMsg("",$(".chatinput").val());
                 $(".chatinput").val("");
             }
+            if(e.which == 8)
+            {
+                
+                if($(".chatinput").val()=="")
+                {
+                    $rootScope.autocompletelist = [];
+                    $rootScope.chatText = "";
+                }
+                
+            }
+            // $rootScope.chatText = "";
+            // $rootScope.autolistid=="";
+            // $rootScope.autolistvalue = "";
         };
         $rootScope.likeChatClick = function(){
             $timeout(function(){

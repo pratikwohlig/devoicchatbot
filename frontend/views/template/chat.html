@@ -292,15 +292,19 @@
                         </div>
                         <div class="panel-footer row">
                             <div class="form-group">
-                                <span  class="thumbsIcon">
-                                    <span class="chatbottomtext">Was this information useful ? 
-                                        <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
-                                        <span class="thumbsdown glyphicon glyphicon-thumbs-down" ng-click="dislikeChatClick();"></span>
-                                    </span>
-                                </span>
+                                <div  class="thumbsIcon col-md-8 pull-right">
+                                    <div class="row">
+                                        <span class="chatbottomtext pull-right">Was this information useful ? 
+                                            <span class="thumbsup glyphicon glyphicon-thumbs-up" ng-click="likeChatClick();"></span>&nbsp; 
+                                            <span class="thumbsdown glyphicon glyphicon-thumbs-down" ng-click="dislikeChatClick();"></span>
+                                        </span>
+                                    </div>
+                                </div>
                             
-                                <div class="loader_msg" ng-if="showMsgLoader">
-                                    <div class="loading">Typing</div>
+                                <div class="loader_msg col-md-4" ng-if="showMsgLoader">
+                                    <div class="row">
+                                        <div class="loading">Typing</div>
+                                    </div>
                                 </div>
                                     <input type="text" class="form-control chatinput" comp-translate="chatText" ng-change="getAutocomplete(chatText);" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
                                     

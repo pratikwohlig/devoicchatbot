@@ -83,7 +83,7 @@ li.ui-menu-item {
 {
     position: relative;
     z-index: 0;
-    float: right;
+    // float: right;
 }
 .chatbottomtext { 
     font-size: 12px;
@@ -118,6 +118,7 @@ li.ui-menu-item {
 }
 .loader_msg { font-style: italic; }
 #firstMsg { font-size: 10px; }
+.loader_msg { color:#fff; }
 #chat_window_1 {  
     position: fixed;
     bottom: 0;
