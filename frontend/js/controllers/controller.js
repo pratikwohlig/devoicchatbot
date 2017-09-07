@@ -306,7 +306,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 // },2000);
             }
             
-            //value2.queslink = $sce.trustAsHtml(value2.queslink);
+            value2.queslink = $sce.trustAsHtml(value2.queslink);
             
             msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
             $timeout(function(){
