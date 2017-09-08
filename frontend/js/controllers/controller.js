@@ -19,7 +19,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal) {
         
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
@@ -664,21 +664,22 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.$dislikemodalInstance = {};
         $rootScope.dislikesuggestionerror = 0;
         $rootScope.dislikeChatClick = function(){
-            /*$rootScope.$dislikemodalInstance = $uibModal.open({
+            $rootScope.$dislikemodalInstance = $uibModal.open({
                 scope: $rootScope,
                 animation: true,
                 size: 'sm',
                 templateUrl: 'views/modal/dislikechat.html',
                 //controller: 'CommonCtrl'
-            });*/
+            });
             $timeout(function(){ 
                 $('span.thumbsdown').css("color", "#F32525");
                 $('.thumbsup').css("color", "#ED6D05");
             },200);
         };
-        /*$rootScope.dislikeCancel = function() {
+        $rootScope.dislikeCancel = function() {
             //console.log("dismissing");
             $scope.$dislikemodalInstance.dismiss('cancel');
+            $('span.thumbsdown').css("color", "#ED6D05");
         };
         $rootScope.dislikesuggestionsubmit = function(suggestion){
             console.log("suggestion",suggestion);
@@ -687,7 +688,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.dislikesuggestionSuccess = 0;
                 $rootScope.dislikeCancel();
             },500);
-        };*/
+            $('span.thumbsdown').css("color", "#ED6D05");
+        };
         
        $timeout(function(){
             //$('#chatTabs a:last').tab('show');
