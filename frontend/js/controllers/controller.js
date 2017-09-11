@@ -12,6 +12,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $.jStorage.set("csrftoken",response.data.csrf_token);
                 //console.log(response.data);
             });
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position){
+                    $scope.$apply(function(){
+                        $scope.position = position;
+                        console.log(position);
+                    });
+                });
+            }
         });
         
 
@@ -227,6 +235,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.autocompletelist = response.data.data;
                 });
             }
+            var languageid = $.jStorage.get("language");
+            $scope.formData = {"text": chatText,"language":languageid };
+            apiService.translate($scope.formData).then( function (response) {
+                //$(".chatinput").val(response.data.data);
+                console.log(response.data.data);
+            });
         };
         $rootScope.showFAQAns = function(e) {
             $(e).parent().parent().parent().find('.faqans').slideDown();
@@ -252,74 +266,98 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             if(value2[id].link != "" )
             {
                 var linkdata="";
+                var prev_res = false;
+                
                 final_link = value2[id].link.split("<br>");
-                _.each(final_link, function(value, key) {
-                    var languageid = $.jStorage.get("language");
-                    $scope.formData = {"text": value,"language":languageid };
-                    var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
-                    linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
-                    
-                    // value2.queslink = $sce.trustAsHtml(value2.queslink);
-                    // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-                    // $timeout(function(){
-                    //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                    //     $rootScope.showMsgLoader=false;
-                    //     $rootScope.scrollChatWindow();
-                    // },2000);
-                    // apiService.translate($scope.formData).then( function (response) {
-                    //     console.log(response);
-                    //     if(response.xhrStatus == "complete")
-                    //     {
-                    //         var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
-                    //         linkdata += "<p class='portalapp' "+dummy+">"+response.data.data+"</p>";
-                    //         console.log(linkdata);
-                    //         console.log(response.data.data);
-                    //         if(key == (final_link.length-1))
-                    //     {
-                    //         console.log(key+"-key,length:"+final_link.length);
-                    //         value2.queslink=linkdata;
-                    //         console.log(value2.queslink);
-                    //         value2.queslink = $sce.trustAsHtml(value2.queslink);
-            
-                    //         msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-                    //         $timeout(function(){
-                    //             $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                    //             $rootScope.showMsgLoader=false;
-                    //             $rootScope.scrollChatWindow();
-                    //         },2000);
-                    //     }
-                    //         return;
-                    //     }
-                        
-                    // }).finally(function() {
-                        
-                    // });
-                    
+                var languageid = $.jStorage.get("language");
+                $scope.formData = {"items": final_link,"language":languageid,arr_index:id };
+                apiService.translatelink($scope.formData).then( function (response) {
+                    value2.queslink=response.data.data.linkdata;
+                    value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                    $timeout(function(){
+                        $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                        $rootScope.showMsgLoader=false;
+                        $rootScope.scrollChatWindow();
+                    },2000);
                 });
-                value2.queslink=linkdata;
+                // _.each(final_link, function(value, key) {
+                //     var languageid = $.jStorage.get("language");
+                //     $scope.formData = {"text": value,"language":languageid };
+                //     // var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                //     // linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
+                    
+                //     // value2.queslink = $sce.trustAsHtml(value2.queslink);
+                //     // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                //     // $timeout(function(){
+                //     //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                //     //     $rootScope.showMsgLoader=false;
+                //     //     $rootScope.scrollChatWindow();
+                //     // },2000);
+                //     console.log(key,"k");
+                //     if(key == 0)
+                //         prev_res = true;
+                //     else
+                //         prev_res = false;
+                //     console.log(prev_res);
+                //     if(prev_res)
+                //     {    
+                //         apiService.translate($scope.formData).then( function (response) {
+                //             //console.log(response);
+                //             prev_res = true;
+                //             if(response.xhrStatus == "complete")
+                //             {
+                //                 var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                //                 linkdata += "<p class='portalapp' "+dummy+">"+response.data.data+"</p>";
+                //                 console.log(linkdata);
+                //                 console.log(response.data.data);
+                //                 if(key == (final_link.length-1))
+                //                 {
+                //                     //console.log(key+"-key,length:"+final_link.length);
+                //                     value2.queslink=linkdata;
+                //                     console.log(value2.queslink);
+                //                     value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
+                //                     msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                //                     $timeout(function(){
+                //                         $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                //                         $rootScope.showMsgLoader=false;
+                //                         $rootScope.scrollChatWindow();
+                //                     },2000);
+                //                     console.log($rootScope.chatlist);
+                //                 }
+                //                 return;
+                //             }
+                            
+                //         }).finally(function() {
+                            
+                //         });
+                //     }
+                // });
+                //value2.queslink=linkdata;
             }
             
             else
             {    
                 value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
-                // value2.queslink = $sce.trustAsHtml(value2.queslink);
+                value2.queslink = $sce.trustAsHtml(value2.queslink);
             
-                // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-                // $timeout(function(){
-                //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                //     $rootScope.showMsgLoader=false;
-                //     $rootScope.scrollChatWindow();
-                // },2000);
+                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                $timeout(function(){
+                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                    $rootScope.showMsgLoader=false;
+                    $rootScope.scrollChatWindow();
+                },2000);
             }
             
-            value2.queslink = $sce.trustAsHtml(value2.queslink);
+            // value2.queslink = $sce.trustAsHtml(value2.queslink);
             
-            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-            $timeout(function(){
-                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                $rootScope.showMsgLoader=false;
-                $rootScope.scrollChatWindow();
-            },2000);
+            // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+            // $timeout(function(){
+            //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+            //     $rootScope.showMsgLoader=false;
+            //     $rootScope.scrollChatWindow();
+            // },2000);
             // $el = $( "ul.chat li" ).last();
             // console.log($el);
             // $compile($el)($scope);
@@ -342,11 +380,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 				    answer1 = answer1[0];
                 else if(type==1)
                     answer1 = answer1[1];
+                answer1 = answer1.replace("\n", "<br />", "g");
                 value3.queslink=answer1;
                 
             }
+            value3.queslink = $sce.trustAsHtml(value3.queslink);
             //$compile(linkdata)($scope);
-            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faq"};
+            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
             $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;
             //$.jStorage.set("chatlist",$rootScope.chatlist);

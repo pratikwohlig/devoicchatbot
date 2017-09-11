@@ -62,5 +62,12 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 data: formData,
             });
         },
+        translatelink: function (formData,callback) {
+            return $http({
+                url: adminurl3+'Translate/translatelink',
+                method: 'POST',
+                data: formData,
+            });
+        },
     };
 });
