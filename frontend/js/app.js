@@ -17,7 +17,7 @@ var myApp = angular.module('myApp', [
 
 
 // Define all the routes below
-myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
+myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider) {
     var tempateURL = "views/template/template.html"; //Default Template URL
     //$httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -27,6 +27,14 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     //$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
 
     //  $httpProvider.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
+    $sceDelegateProvider.resourceUrlWhitelist([
+    // Allow same origin resource loads.
+        'self',
+        // Allow loading from our assets domain. **.
+        'http://plnkr.co/edit/COnvjvoaYV643oQ46p9B?p=preview'
+    ]);
+    $sceDelegateProvider.resourceUrlBlacklist([
+    '']);
     // for http request with session
     $stateProvider
         .state('home', {
