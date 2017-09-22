@@ -74,25 +74,32 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.isLoggedin = true;
         $scope.login = function(username,password,language)
         {
-            /*
+
+            
             $scope.formData = {username:username,password:sha256_digest(password),csrfmiddlewaretoken:token};
             
             apiService.login($scope.formData).then(function (callback){
                 //console.log(callback);
-            });*/
-            $.jStorage.flush();
-            if(username == "admin@exponentiadata.com" && password == "admin")
-            {
-                $.jStorage.set("id", 1);
-                $.jStorage.set("name", "Admin");
-                $.jStorage.set("language", language.id);
-                $.jStorage.set("email", username);
-                $.jStorage.set("isLoggedin", true);
-                $rootScope.isLoggedin = true;
-            }
-            else {
-                $scope.loginerror = -1;
-            }
+                if(callback.data.data.status == "0")
+                {
+                    $.jStorage.flush();
+                    //if(username == "admin@exponentiadata.com" && password == "admin")
+                    {
+                        $.jStorage.set("id", 1);
+                        $.jStorage.set("name", "Admin");
+                        $.jStorage.set("language", language.id);
+                        $.jStorage.set("email", username);
+                        $.jStorage.set("isLoggedin", true);
+                        $rootScope.isLoggedin = true;
+                    }
+                    
+                }
+                else 
+                {
+                    $scope.loginerror = -1;
+                }
+            });
+            
         };
         $scope.logout = function()
         {
