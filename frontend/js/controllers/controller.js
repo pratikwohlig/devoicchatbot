@@ -681,6 +681,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.autocompletelist = [];
                 //$rootScope.pushMsg("",$(".chatinput").val());
                 $(".chatinput").val("");
+                $rootScope.autolistid = "";
+                $rootScope.chatText = "";
             }
             if(e.which == 8)
             {
