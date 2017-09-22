@@ -21,9 +21,9 @@
                                 <h1 class="text-center">Login to Chat</h1><br>
                                 <form id="login_form" name="login_form">
                                     <div class="form-group">
-                                        <input class="form-control username" id="username" type="email" name="username" placeholder="Username" ng-model="user.name" required>
+                                        <input class="form-control username" id="username" type="text" name="username" placeholder="Username" ng-model="user.name" required>
                                         <div class="pull-right" ng-repeat="(field,value) in login_form.username.$error" ng-show="login_form.username.$touched">
-                                            <span class="label label-danger" ng-if="field=='email' && value">Please Enter Valid Email</span>
+                                            <span class="label label-danger" ng-if="field=='text' && value">Please Enter Username</span>
                                         </div>
                                         <input class="form-control userpassword" type="password" name="userpassword" id="userpassword" placeholder="Password" ng-model="user.password" required>
                                         <div class="pull-right" ng-repeat="(field,value) in login_form.userpassword.$error" ng-show="login_form.userpassword.$touched">
