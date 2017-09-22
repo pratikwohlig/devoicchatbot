@@ -76,7 +76,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
 
             
-            $scope.formData = {username:username,password:sha256_digest(password),csrfmiddlewaretoken:token};
+            $scope.formData = {username:username,password:password};
             
             apiService.login($scope.formData).then(function (callback){
                 //console.log(callback);
