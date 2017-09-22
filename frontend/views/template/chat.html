@@ -23,7 +23,7 @@
                                     <div class="form-group">
                                         <input class="form-control username" id="username" type="text" name="username" placeholder="Username" ng-model="user.name" required>
                                         <div class="pull-right" ng-repeat="(field,value) in login_form.username.$error" ng-show="login_form.username.$touched">
-                                            <span class="label label-danger" ng-if="field=='text' && value">Please Enter Username</span>
+                                            <span class="label label-danger" ng-if="field=='required' && value">Please Enter Username</span>
                                         </div>
                                         <input class="form-control userpassword" type="password" name="userpassword" id="userpassword" placeholder="Password" ng-model="user.password" required>
                                         <div class="pull-right" ng-repeat="(field,value) in login_form.userpassword.$error" ng-show="login_form.userpassword.$touched">
