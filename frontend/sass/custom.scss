@@ -1,6 +1,6 @@
 *, :before, :after { box-sizing: border-box; }
 
-html{ margin-top: 1px; height: 100%; }
+html{ margin-top: 1px; height: 100%;overflow: hidden !important; }
 body { 
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
