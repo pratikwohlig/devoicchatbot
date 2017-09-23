@@ -4,7 +4,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
-        
+        $rootScope.isLoggedin = false;
+        if($.jStorage.get("isLoggedin"))
+            $rootScope.isLoggedin = true;
         angular.element(document).ready(function () {
             apiService.get_session({}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
@@ -69,9 +71,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.selectedLanguage = $rootScope.languagelist[0];
         $scope.formSubmitted = false;
         $scope.loginerror=0;
-        $rootScope.isLoggedin = false;
-        if($.jStorage.get("isLoggedin"))
-            $rootScope.isLoggedin = true;
+        
 
         if(!$rootScope.firstMsg)
         {
