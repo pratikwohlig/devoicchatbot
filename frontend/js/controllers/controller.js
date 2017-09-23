@@ -77,43 +77,43 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.login = function(username,password,language)
         {
 
-            $.jStorage.flush();
-            if(username == "admin@exponentiadata.com" && password == "admin")
-            {
-                $.jStorage.set("id", 1);
-                $.jStorage.set("name", "Admin");
-                $.jStorage.set("language", language.id);
-                $.jStorage.set("email", username);
-                $.jStorage.set("isLoggedin", true);
-                $rootScope.isLoggedin = true;
-            }
-            else 
-            {
-                $scope.loginerror = -1;
-            }
+            // $.jStorage.flush();
+            // if(username == "admin@exponentiadata.com" && password == "admin")
+            // {
+            //     $.jStorage.set("id", 1);
+            //     $.jStorage.set("name", "Admin");
+            //     $.jStorage.set("language", language.id);
+            //     $.jStorage.set("email", username);
+            //     $.jStorage.set("isLoggedin", true);
+            //     $rootScope.isLoggedin = true;
+            // }
+            // else 
+            // {
+            //     $scope.loginerror = -1;
+            // }
             $scope.formData = {userid:username,password:password};
             
-            // apiService.login($scope.formData).then(function (callback){
-            //     //console.log(callback);
-            //     if(callback.data.data.status == "0")
-            //     {
-            //         $.jStorage.flush();
-            //         //if(username == "admin@exponentiadata.com" && password == "admin")
-            //         {
-            //             $.jStorage.set("id", 1);
-            //             $.jStorage.set("name", "Admin");
-            //             $.jStorage.set("language", language.id);
-            //             $.jStorage.set("email", username);
-            //             $.jStorage.set("isLoggedin", true);
-            //             $rootScope.isLoggedin = true;
-            //         }
+            apiService.login($scope.formData).then(function (callback){
+                //console.log(callback);
+                if(callback.data.data.status == "0")
+                {
+                    $.jStorage.flush();
+                    //if(username == "admin@exponentiadata.com" && password == "admin")
+                    {
+                        $.jStorage.set("id", 1);
+                        $.jStorage.set("name", "Admin");
+                        $.jStorage.set("language", language.id);
+                        $.jStorage.set("email", username);
+                        $.jStorage.set("isLoggedin", true);
+                        $rootScope.isLoggedin = true;
+                    }
                     
-            //     }
-            //     else 
-            //     {
-            //         $scope.loginerror = -1;
-            //     }
-            // });
+                }
+                else 
+                {
+                    $scope.loginerror = -1;
+                }
+            });
             
         };
         $scope.logout = function()
