@@ -72,6 +72,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.isLoggedin = false;
         if($.jStorage.get("isLoggedin"))
             $rootScope.isLoggedin = true;
+
+        if(!$rootScope.firstMsg)
+        {
+            $rootScope.firstMsg = true;
+            msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+            $rootScope.pushSystemMsg(0,msg);  
+        }
         $scope.login = function(username,password,language)
         {
 
@@ -402,6 +409,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.scrollChatWindow();
             });
         };
+        
         $rootScope.showChatwindow = function () {
             // newlist = $.jStorage.get("chatlist");
             // if(!newlist || newlist == null)
@@ -413,12 +421,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //     $rootScope.firstMsg = true;
             // }
             //$.jStorage.set("showchat",true);
-            if(!$rootScope.firstMsg)
-            {
-                $rootScope.firstMsg = true;
-                msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
-                $rootScope.pushSystemMsg(0,msg);  
-            }
+            
             $('#chat_panel').slideDown("slow");
             //$('#chat_panel').find('.panel-body').slideDown("fast");
             //$('#chat_panel').find('.panel-footer').slideDown("slow");
@@ -482,10 +485,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$rootScope.showMsgLoader=true;
             $rootScope.scrollChatWindow();
         };
-        if($.jStorage.get("showchat"))
-            $rootScope.showChatwindow();
-        else
-            $rootScope.minimizeChatwindow();
+        // if($.jStorage.get("showchat"))
+        //     $rootScope.showChatwindow();
+        // else
+        //     $rootScope.minimizeChatwindow();
 
         $rootScope.ratecardSubmit = function(coldata,rowdata) {
             console.log(coldata,rowdata);
