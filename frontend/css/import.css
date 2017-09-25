@@ -9970,7 +9970,7 @@ header {
   font-style: normal; }
 
 #chat_panel {
-  display: none;
+  display: block;
   font-family: 'Helvetica Neue','Roboto';
   height: 500px;
   position: relative;
@@ -10088,11 +10088,16 @@ li.ui-menu-item {
 .loader_msg {
   color: #fff; }
 
+.beta {
+  font-weight: bold;
+  font-style: italic;
+  color: #3d3939; }
+
 #chat_window_1 {
   position: fixed;
   bottom: 0;
-  right: 12px;
-  width: 42%; }
+  right: 0px;
+  width: 100%; }
 
 .profileDetail span {
   font-weight: bold;
@@ -10423,7 +10428,8 @@ ol.quesList {
 
 html {
   margin-top: 1px;
-  height: 100%; }
+  height: 100%;
+  overflow: hidden !important; }
 
 body {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -10439,7 +10445,7 @@ body {
   clear: both; }
 
 .login {
-  margin-top: 30%; }
+  margin-top: 15%; }
 
 .c-hamburger {
   display: block;
@@ -10887,18 +10893,14 @@ div.scriptData {
       min-height: 0px; }
   .clickImage {
     height: 135px !important; }
-  #chat_window_1 {
-    width: 50%; }
-    #chat_window_1 .panel-body {
-      height: 420px !important; } }
+  #chat_window_1 .panel-body {
+    height: 420px !important; } }
 
 @media screen and (max-width: 800px) {
   .clickImage {
     height: 80px !important; }
-  #chat_window_1 {
-    width: 50%; }
-    #chat_window_1 .panel-body {
-      height: 355px !important; } }
+  #chat_window_1 .panel-body {
+    height: 355px !important; } }
 
 @media only screen and (max-width: 414px) {
   #chat_window_1 {
