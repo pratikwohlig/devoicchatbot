@@ -128,6 +128,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg); 
         };
+        $rootScope.isLoggedin = true;
         $rootScope.autocompletelist = [];
         $rootScope.chatOpen = false;
         $rootScope.showTimeoutmsg = false;
