@@ -10259,7 +10259,7 @@ button.headerbtns:focus {
   box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
   float: right;
-  right: 0; }
+  right: 12px; }
 
 .chatbody .panel-footer {
   width: 100% !important;
@@ -10293,7 +10293,7 @@ button.headerbtns:focus {
   color: #000;
   box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
-  left: 0;
+  left: 12px;
   font-family: "Open Sans"; }
 
 .logoutbutton {
@@ -10311,8 +10311,8 @@ button.headerbtns:focus {
   /*color: #777777;*/ }
 
 .chat-img img {
-  width: 30px !important;
-  height: 30px !important; }
+  width: 45px !important;
+  height: 45px !important; }
 
 .instruction-slider {
   position: relative;
@@ -10364,7 +10364,7 @@ ol.quesList {
   color: #fff; }
 
 .faqans {
-  color: #fff !important; }
+  color: #000 !important; }
 
 .panel-body {
   overflow-y: auto;

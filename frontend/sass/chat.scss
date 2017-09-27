@@ -305,7 +305,7 @@ background-color: #fafafa;
     box-shadow: -1px 1px 1px 0px rgba(0,0,0,0.4);
     display: table;
     float: right;
-    right: 0;
+    right: 12px;
 }
 .chatbody .panel-footer { width:100% !important; background-color: #1B1918; }
 .left .chat-body:before{
@@ -336,7 +336,7 @@ background-color: #fafafa;
     color:#000;
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.4);
     display: table;
-    left: 0;
+    left: 12px;
     font-family:"Open Sans";
 }
 .logoutbutton {
@@ -351,8 +351,8 @@ background-color: #fafafa;
     /*color: #777777;*/
 }
 .chat-img img{
-width:30px!important;
-height:30px!important;
+width:45px!important;
+height:45px!important;
 }
 .instruction-slider {
     position: relative;
@@ -399,7 +399,7 @@ ol.quesList { padding-left:15px; }
 .quesList li {
     color:#fff;
 }
-.faqans { color: #fff !important; }
+.faqans { color: #000 !important; }
 .panel-body
 {
     overflow-y: auto;

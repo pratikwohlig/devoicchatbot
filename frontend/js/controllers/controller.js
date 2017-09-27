@@ -67,6 +67,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {id:"ta" , name:"Tamil"},
         ];
         $rootScope.selectedLanguage = $rootScope.languagelist[0];
+        $.jStorage.set("language", $rootScope.selectedLanguage.id);
         $scope.formSubmitted = false;
         $scope.loginerror=0;
         $rootScope.isLoggedin = false;
@@ -202,7 +203,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         
         $rootScope.getCategoryQuestions = function(category) {
             categoryid = category._id;
-            
+            $rootScope.links = [];
             $scope.formData = { category:categoryid };
             //console.log(category.name);
             apiService.getCategoryQuestions($scope.formData).then( function (response) {
@@ -212,7 +213,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $("div#all_questions").css("background","none");
                 else
                     $("div#all_questions").css("background","#EF9C6D");
-                //console.log($rootScope.links);
+                
+                $timeout(function(){
+                    var chatHeight = $(".all_questions").height();
+                    $('#faqs_dropdown').animate({scrollTop: chatHeight});
+                });
             });
         };
         $timeout(function(){
@@ -240,31 +245,34 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.chatText = "";
         $rootScope.answers = "";
         $rootScope.getAutocomplete = function(chatText) {
-            $rootScope.showTimeoutmsg = false;
-            // if($rootScope.showTimeoutmsg == false && chatText=="") 
-            // {
-            //     $timeout(function () {
-            //         $rootScope.showTimeoutmsg = true;
-            //         msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
-            //         $rootScope.pushSystemMsg(0,msg);
-            //     },60000);
-            // }
-            $rootScope.chatText = chatText;
-            if(chatText == "" || chatText == " " || chatText == null)
-                $rootScope.autocompletelist = [];
-            else {
-                $rootScope.chatdata = { string:$rootScope.chatText};
-                apiService.getautocomplete($rootScope.chatdata).then(function (response){
-                       // console.log(response.data);
-                    $rootScope.autocompletelist = response.data.data;
+            if($rootScope.answers == '')
+            {
+                $rootScope.showTimeoutmsg = false;
+                // if($rootScope.showTimeoutmsg == false && chatText=="") 
+                // {
+                //     $timeout(function () {
+                //         $rootScope.showTimeoutmsg = true;
+                //         msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
+                //         $rootScope.pushSystemMsg(0,msg);
+                //     },60000);
+                // }
+                $rootScope.chatText = chatText;
+                if(chatText == "" || chatText == " " || chatText == null)
+                    $rootScope.autocompletelist = [];
+                else {
+                    $rootScope.chatdata = { string:$rootScope.chatText};
+                    apiService.getautocomplete($rootScope.chatdata).then(function (response){
+                        // console.log(response.data);
+                        $rootScope.autocompletelist = response.data.data;
+                    });
+                }
+                var languageid = $.jStorage.get("language");
+                $scope.formData = {"text": chatText,"language":languageid };
+                apiService.translate($scope.formData).then( function (response) {
+                    //$(".chatinput").val(response.data.data);
+                    console.log(response.data.data);
                 });
             }
-            var languageid = $.jStorage.get("language");
-            $scope.formData = {"text": chatText,"language":languageid };
-            apiService.translate($scope.formData).then( function (response) {
-                //$(".chatinput").val(response.data.data);
-                console.log(response.data.data);
-            });
         };
         $rootScope.showFAQAns = function(e) {
             $(e).parent().parent().parent().find('.faqans').slideDown();
@@ -278,7 +286,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $timeout(function(){
                 $rootScope.scrollChatWindow();
             });
-            
+            $timeout(function(){
+                $rootScope.autocompletelist = [];
+            },1000);
         };
         if(!$rootScope.firstMsg)
         {
@@ -692,14 +702,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 {
                     if($(".chatinput").val() != "")
                     {
-                        console.log("null",$rootScope.autolistid);
+                        
+                        $rootScope.pushMsg("",$(".chatinput").val());
                         $(".chatinput").val("");
-                        $rootScope.pushMsg("",$rootScope.chatText);
                         $rootScope.chatText="";
                     }
                 }
                 else {
-                    $rootScope.pushMsg("",$rootScope.autolistvalue);
+                    $rootScope.pushMsg("",$(".chatinput").val());
                     
                     //$rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.chatText,$rootScope.answers);
                 }
