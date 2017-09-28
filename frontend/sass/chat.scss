@@ -306,6 +306,7 @@ background-color: #fafafa;
     display: table;
     float: right;
     right: 12px;
+    font-family:"Roboto-Light";
 }
 .chatbody .panel-footer { width:100% !important; background-color: #1B1918; }
 .left .chat-body:before{
@@ -378,6 +379,7 @@ div#all_questions {
     overflow-y: auto;
     overflow-x: hidden;
     background: #EF9C6D;
+    font-family: "Roboto-Light";
 }
 div#all_questions a { color:#fff; }
 .questions hr { background-color: #C0C0C0; }

@@ -10259,7 +10259,8 @@ button.headerbtns:focus {
   box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
   float: right;
-  right: 12px; }
+  right: 12px;
+  font-family: "Roboto-Light"; }
 
 .chatbody .panel-footer {
   width: 100% !important;
@@ -10335,7 +10336,8 @@ div#all_questions {
   height: 320px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #EF9C6D; }
+  background: #EF9C6D;
+  font-family: "Roboto-Light"; }
 
 div#all_questions a {
   color: #fff; }
@@ -10425,6 +10427,22 @@ ol.quesList {
 
 *, :before, :after {
   box-sizing: border-box; }
+
+@font-face {
+  font-family: "Roboto-Light";
+  src: url("../fonts/Roboto-Light.ttf"); }
+
+@font-face {
+  font-family: "Roboto-Bold";
+  src: url("../fonts/Roboto-Bold.ttf"); }
+
+@font-face {
+  font-family: "Roboto-Medium";
+  src: url("../fonts/Roboto-Medium.ttf"); }
+
+@font-face {
+  font-family: "Roboto-Thin";
+  src: url("../fonts/Roboto-Thin.ttf"); }
 
 html {
   margin-top: 1px;
