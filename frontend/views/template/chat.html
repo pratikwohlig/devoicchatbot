@@ -104,7 +104,7 @@
                         <div class="panel-body row"> 
                             <div class="row languagebar">
                                 <div class="col-md-12">
-                                    <select id="language_list" name="language_list"  ng-options="cat as cat.name for cat in languagelist" ng-model="selectedLanguage" class="col-md-3 pull-right"  required>
+                                    <select id="language_list" name="language_list"  ng-options="cat as cat.name for cat in languagelist" ng-init="selectedLanguage = selectedLanguage || 'en'" ng-model="selectedLanguage" class="col-md-3 pull-right"  required ng-change="changeLanguage(selectedLanguage);">
                                 
                                     </select>
                                 </div>
@@ -341,7 +341,7 @@
                                 </div>
                                     <input type="text" class="form-control chatinput"  ng-change="getAutocomplete(chatText);" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
                                     <p class="footertext">Powered By
-                                        <a href="#" class='cingularititext'><span > Cingulariti</span></a>
+                                        <a href="http://www.cingulariti.com/" target="_blank" class='cingularititext'><span > Cingulariti</span></a>
                                     </p>
                             </div>
                                 <!--<input type="hidden"  name="user_id" id="user_id"  value="{{sessionId}}" />-->
@@ -353,7 +353,7 @@
                             <div id= "suggestionList">
                                 <ul ng-if="autocompletelist.length > 0" class="{{autocompletelist.length}}  ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" id="ui-id-1">
                                     <div class="ui-menu-item-wrapper">
-                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}"  ng-repeat="list in autocompletelist" ng-click="pushMsg(list._id,list.questions);"   >
+                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}"  ng-repeat="list in autocompletelist" ng-click="pushAutoMsg(list._id,list.questions,list.answers);"   >
                                             <myfilter filter-Translate="{{list.questions}}"></myfilter>
                                         </li>
                                     </div>

@@ -174,8 +174,7 @@ myApp.directive('img', function ($compile, $parse) {
                         var translationChangeOccurred = function () {
                             attrs.$observe('filterTranslate', function(value) {
                                 var languageid = $.jStorage.get("language");
-                                value = value.replace(new RegExp('('+$(".chatinput").val()+')', 'gi'),
-                                    '<span class="highlighted">$&</span>');
+                                
                                 var formData = { "text": value,"language":languageid };
                                 //console.log(element);
                                 //element.text(value);
@@ -184,7 +183,8 @@ myApp.directive('img', function ($compile, $parse) {
                                 //console.log(value);
                                 if(languageid == "en")
                                 {
-                                    
+                                    value = value.replace(new RegExp('('+$(".chatinput").val()+')', 'gi'),
+                                    '<span class="highlighted">$&</span>');
                                     hcont=$.parseHTML(value);
                                     element.html(hcont);
                                 }

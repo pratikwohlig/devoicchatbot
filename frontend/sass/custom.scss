@@ -421,45 +421,51 @@ div.scriptData {
     {
         //width:50% ;
         .panel-body {
-            height:420px !important;
+            height:420px;
         }
     }
 }
 @media screen and (max-width: 800px) {
     .clickImage {
-        height:80px !important;
+        height:80px;
     }
     #chat_window_1 
     {
         //width:50% ;
         .panel-body {
-            height:355px !important;
+            height:355px;
         }
     }
 }
 @media only screen and (max-width: 414px) {
     #chat_window_1 
     {
-        width:90% !important;
+        width:100% !important;
+    }
+    ul.chat {
+        margin-top: 30px;
     }
 }
 @media only screen and (max-device-width:480px) and (orientation:portrait){
     /* styles for mobile browsers smaller than 480px; (iPhone) */
     #chat_window_1 
     {
-        width:90%;
+        width:100%;
         .panel-body {
             height:420px;
         }
     }
     .chatbody2 {
-        height:450px;
+        height:526px;
     }
     div#all_questions {
         height: 325px;
     }
     #chat_panel {
         height:100%;
+    }
+    ul.chat {
+        margin-top: 30px;
     }
 }
 
@@ -479,6 +485,9 @@ div.scriptData {
         }
         #chat_panel {
             height:100%;
+        }
+        ul.chat {
+            margin-top: 30px;
         }
     }
 }
@@ -501,6 +510,9 @@ div.scriptData {
         #chat_panel {
             height:100%;
         }
+        ul.chat {
+            margin-top: 30px;
+        }
     }
 }
 
@@ -520,6 +532,9 @@ div.scriptData {
         }
         #chat_panel {
             height:100%;
+        }
+        ul.chat {
+            margin-top: 30px;
         }
     }
 }

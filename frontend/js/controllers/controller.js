@@ -68,11 +68,24 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {id:"gu" , name:"Gujarati"},
             {id:"ta" , name:"Tamil"},
         ];
-        $rootScope.selectedLanguage = $rootScope.languagelist[0];
-        $.jStorage.set("language", $rootScope.selectedLanguage.id);
+        if(!$.jStorage.get("language"))
+        {
+            console.log("notset");
+            $rootScope.selectedLanguage = $rootScope.languagelist[0];
+            $.jStorage.set("language", $rootScope.selectedLanguage.id);
+        }
+        else {
+            console.log("set");
+            $rootScope.selectedLanguage = $.jStorage.get("language");
+        }
         $scope.formSubmitted = false;
         $scope.loginerror=0;
         $rootScope.isLoggedin = false;
+        $rootScope.changeLanguage = function(lang) {
+            console.log(lang);
+            $rootScope.selectedLanguage = lang;
+            $.jStorage.set("language", $rootScope.selectedLanguage.id);
+        };
         if($.jStorage.get("isLoggedin"))
             $rootScope.isLoggedin = true;
 

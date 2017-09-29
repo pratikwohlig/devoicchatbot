@@ -141,7 +141,7 @@ li.ui-menu-item {
     position: fixed;
     bottom: 0;
     right:0px;
-    width: 50%;
+    width: 100%;
 }
 .profileDetail span { 
     font-weight:bold;
@@ -396,7 +396,7 @@ p.footertext {
     font-family: "Roboto-Light";
     font-size: 13px;
     background: #f2eeee;
-
+    z-index: 9999;
 }
 .languagebar {
     position: absolute;
