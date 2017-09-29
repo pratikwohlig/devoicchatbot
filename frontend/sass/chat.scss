@@ -94,6 +94,8 @@ li.ui-menu-item {
 {
     position: relative;
     z-index: 0;
+    top: -5px;
+    font-family: "Roboto-Light";
     // float: right;
 }
 .chatbottomtext { 
@@ -139,7 +141,7 @@ li.ui-menu-item {
     position: fixed;
     bottom: 0;
     right:0px;
-    width: 100%;
+    width: 50%;
 }
 .profileDetail span { 
     font-weight:bold;
@@ -209,6 +211,19 @@ width:90%;
     height: 100px;
     width: 100px;
 }
+.ionwelcome {
+    margin-top: 8px;
+}
+.ionwelcome img {
+    width: 32px;
+    float:left;
+    margin-right:5px; 
+}
+.ionwelcome p { font-size: 13px;font-family: "Roboto-Light"; }
+.chatinput {
+    border-radius: 5px;
+    height: 24px;
+}
 .chatinputgroup {
     width: 100%;
 }
@@ -238,6 +253,7 @@ width:90%;
     color: #fff;
     background-color: #ED6D05;
     border-color: #ED6D05;
+    font-family: "Roboto-Light";
 }
 .btn-group .btn-default {
     color: #fff;
@@ -291,12 +307,17 @@ background-color: #fafafa;
     position: absolute;
     right: 0px;
 }
+.right .chat-img img {
+    width: 35px !important;
+    height: 35px !important;
+}
 .chat-body{
 /*    box-shadow: 0px 1px 1px 2px rgba(0,0,0,0.1);*/
     padding: 0.5em 1em;
-    border-radius: 2em;
+    border-radius: 8px;
     margin: 0.5em 2em 0.1em;
     position:relative;
+    top: 5px;
 }
 .right .chat-body{
     background: #EF9C6D;
@@ -305,11 +326,11 @@ background-color: #fafafa;
     box-shadow: -1px 1px 1px 0px rgba(0,0,0,0.4);
     display: table;
     float: right;
-    right: 4px;
+    right: 11px;
     font-family:"Roboto-Light";
     font-size: 12px;
 }
-.chatbody .panel-footer { width:100% !important; background-color: #1B1918; }
+.chatbody .panel-footer { width:100% !important; background-color: #1B1918;border-radius: 5px; }
 .left .chat-body:before{
     content: "";
     position: absolute;
@@ -338,7 +359,7 @@ background-color: #fafafa;
     color:#000;
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.4);
     display: table;
-    left: 4px;
+    left: 23px;
     font-family:"Open Sans";
     font-size: 12px;
 }
@@ -354,8 +375,38 @@ background-color: #fafafa;
     /*color: #777777;*/
 }
 .chat-img img{
-    width:30px!important;
-    height:30px!important;
+    width:45px!important;
+    height:45px!important;
+}
+.panel-footer .form-group { margin-bottom:0px; }
+p.footertext {
+    color: #fff;
+    margin-bottom: 0px;
+    font-family: "Roboto-Light";
+    text-align: right;
+    font-size: 11px;
+    margin-top: 4px;
+}
+#language_list {
+    border: 1px solid #ED6D05;
+    padding: 0px 2px;
+    height: 21px;
+    border-radius: 5px;
+    margin-left: 2px;
+    font-family: "Roboto-Light";
+    font-size: 13px;
+    background: #f2eeee;
+
+}
+.languagebar {
+    position: absolute;
+    right: 10px;
+    width: 100%;
+    top: 11px;
+}
+a.cingularititext {
+    color: #ED6D05;
+    text-decoration: none;
 }
 .instruction-slider {
     position: relative;
@@ -392,15 +443,25 @@ div#all_questions a { color:#fff;    font-size: 12px; }
     margin-bottom: 0px;
     padding: 4px 0;
 }
-.categorybreadcrumb > li + li:before {
+.categorybreadcrumb > li:after {
     content: "> ";
 }
 .categorybreadcrumb li:first-child a {
     color:#ED6D05;
 }
+.categorybreadcrumb li:first-child {
+    float: left;
+    padding-top: 1px;
+    font-family: "Roboto-Light";
+}
 select#faqs_category { border: 1px solid #ED6D05; 
     padding: 0px 2px;
-    height: 25px;
+    height: 21px;
+    border-radius: 5px;
+    margin-left:2px; 
+    font-family: "Roboto-Light";
+    font-size: 13px;
+    background: #f2eeee;
  }
 ol.quesList { padding-left:15px; }
 .quesList li {
@@ -409,6 +470,7 @@ ol.quesList { padding-left:15px; }
 .faqans { color: #000 !important; }
 .panel-body
 {
+    padding-top: 0px;
     overflow-y: auto;
     height: 375px;
 }
