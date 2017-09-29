@@ -10259,8 +10259,9 @@ button.headerbtns:focus {
   box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
   float: right;
-  right: 12px;
-  font-family: "Roboto-Light"; }
+  right: 4px;
+  font-family: "Roboto-Light";
+  font-size: 12px; }
 
 .chatbody .panel-footer {
   width: 100% !important;
@@ -10294,8 +10295,9 @@ button.headerbtns:focus {
   color: #000;
   box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
-  left: 12px;
-  font-family: "Open Sans"; }
+  left: 4px;
+  font-family: "Open Sans";
+  font-size: 12px; }
 
 .logoutbutton {
   background: #a9a9a9;
@@ -10312,8 +10314,8 @@ button.headerbtns:focus {
   /*color: #777777;*/ }
 
 .chat-img img {
-  width: 45px !important;
-  height: 45px !important; }
+  width: 30px !important;
+  height: 30px !important; }
 
 .instruction-slider {
   position: relative;
@@ -10340,15 +10342,17 @@ div#all_questions {
   font-family: "Roboto-Light"; }
 
 div#all_questions a {
-  color: #fff; }
+  color: #fff;
+  font-size: 12px; }
 
 .questions hr {
-  background-color: #C0C0C0; }
+  background-color: #C0C0C0;
+  margin: 10px 0; }
 
 .categorybreadcrumb {
   background-color: transparent;
-  padding-left: 0px;
-  margin-bottom: 10px; }
+  margin-bottom: 0px;
+  padding: 4px 0; }
 
 .categorybreadcrumb > li + li:before {
   content: "> "; }
@@ -10357,7 +10361,9 @@ div#all_questions a {
   color: #ED6D05; }
 
 select#faqs_category {
-  border: 1px solid #ED6D05; }
+  border: 1px solid #ED6D05;
+  padding: 0px 2px;
+  height: 25px; }
 
 ol.quesList {
   padding-left: 15px; }

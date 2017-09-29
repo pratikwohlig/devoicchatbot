@@ -175,7 +175,7 @@ myApp.directive('img', function ($compile, $parse) {
                             attrs.$observe('filterTranslate', function(value) {
                                 var languageid = $.jStorage.get("language");
                                 value = value.replace(new RegExp('('+$(".chatinput").val()+')', 'gi'),
-                                    '<span class="highlighted"> $& </span>');
+                                    '<span class="highlighted">$&</span>');
                                 var formData = { "text": value,"language":languageid };
                                 //console.log(element);
                                 //element.text(value);

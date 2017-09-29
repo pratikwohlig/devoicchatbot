@@ -1,10 +1,11 @@
-myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationService, $timeout,$rootScope,apiService,$cookies) {
+myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationService, $timeout,$rootScope,apiService,$cookies,$stateParams) {
         $scope.template = TemplateService.getHTML("content/home.html");
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
-        
+        console.log($stateParams.username);
+        console.log($stateParams.password);
         angular.element(document).ready(function () {
             apiService.get_session({}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
@@ -27,7 +28,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams) {
         
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
@@ -45,6 +46,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
             return parentUrl;
         };
+        
         //console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
         var url2 = (window.location != window.parent.location)? document.referrer: document.location.href;
         //console.log(url2);// returns blank if cross domain | returns url
@@ -257,7 +259,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //     },60000);
                 // }
                 $rootScope.chatText = chatText;
-                if(chatText == "" || chatText == " " || chatText == null)
+                if($(".chatinput").val() == "" || $(".chatinput").val() == " " || $(".chatinput").val() == null)
                     $rootScope.autocompletelist = [];
                 else {
                     $rootScope.chatdata = { string:$rootScope.chatText};
@@ -468,36 +470,76 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $(".clickImage").show( "fadeIn");
         };
         $rootScope.pushMsg = function(id,value) {
-            $rootScope.msgSelected = true;
-            $rootScope.chatmsgid = id;
-            $rootScope.chatmsg = value;
-            $rootScope.autocompletelist = [];
-            $rootScope.chatlist.push({id:"id",msg:value,position:"right",curTime: $rootScope.getDatetime()});
-            //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
-            $rootScope.getSystemMsg(id,value);
-            //$.jStorage.set("chatlist",$rootScope.chatlist);
-            $rootScope.msgSelected = false;
-            $rootScope.showMsgLoader=true;
-            $rootScope.scrollChatWindow();
+            if($rootScope.answers == "")
+            {
+                if(value != "")
+                {
+                    $rootScope.msgSelected = true;
+                    $rootScope.chatmsgid = id;
+                    $rootScope.chatmsg = value;
+                    $rootScope.autocompletelist = [];
+                    $rootScope.chatlist.push({id:"id",msg:value,position:"right",curTime: $rootScope.getDatetime()});
+                    //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
+                    $rootScope.getSystemMsg(id,value);
+                    //$.jStorage.set("chatlist",$rootScope.chatlist);
+                    $rootScope.msgSelected = false;
+                    $rootScope.showMsgLoader=true;
+                    $rootScope.scrollChatWindow();
+                    $timeout(function(){
+                        $rootScope.autocompletelist = [];
+                    },1000);
+                }
+            }
+            else 
+            {
+                $rootScope.pushAutoMsg(id,value,$rootScope.answers);
+            }
         };
         $rootScope.pushAutoMsg = function(id,value,answer) {
             $rootScope.msgSelected = true;
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             $rootScope.answers = answer;
-            console.log(answer);
             $rootScope.autocompletelist = [];
             $rootScope.chatlist.push({id:id,msg:value,position:"right",curTime: $rootScope.getDatetime()});
-            //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
-            var automsg = { Text: answer , type : "SYS_AUTO"};
-            $rootScope.pushSystemMsg(id,automsg);
-            $rootScope.showMsgLoader = false;
-            //$.jStorage.set("chatlist",$rootScope.chatlist);
+            // var automsg = { Text: answer , type : "SYS_AUTO"};
+            // $rootScope.pushSystemMsg(id,automsg);
+            // $rootScope.showMsgLoader = false;
+            // //$.jStorage.set("chatlist",$rootScope.chatlist);
+            var value3 = {};
+            if($rootScope.answers != "")
+            {
+                var answer1 =new Array();
+                answer1 = $rootScope.answers.split("(2nd)");
+                // if(type==0)
+				//     answer1 = answer1[0];
+                // else if(type==1)
+                //     answer1 = answer1[1];
+                answer1 = answer1[0];
+                answer1 = answer1.replace("\n", "<br />", "g");
+                value3.queslink=answer1;
+                
+            }
+            value3.queslink = $sce.trustAsHtml(value3.queslink);
+            //$compile(linkdata)($scope);
+            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
+            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+            $rootScope.showMsgLoader=false;
+
+
+
+
             $rootScope.msgSelected = false;
             $rootScope.chatmsgid = "";
             $rootScope.chatmsg = "";
             $rootScope.answers = "";
+            $(".chatinput").val("");
+            $rootScope.autolistid = "";
+            $rootScope.chatText = "";
             $rootScope.scrollChatWindow();
+            $timeout(function(){
+                $rootScope.autocompletelist = [];
+            },1000);
         };
         $rootScope.pushQuestionMsg = function(id,value) {
             $rootScope.msgSelected = true;
@@ -663,13 +705,16 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $(".chatinput").val(storeTarget.text());
                     $rootScope.autolistid = $(storeTarget).attr("data-id");
                     $rootScope.autolistvalue = $(storeTarget).attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
                 }
                 else
                 {
                     $('ul#ui-id-1').find("li:first").focus().addClass("active");
+                    var storeTarget	= $('ul#ui-id-1').find("li.active");
                     $(".chatinput").val($('ul#ui-id-1').find("li:first").text());
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:first").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:first").attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
 		    	}
 
                 return;
@@ -688,6 +733,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 else
                 {
                     $('ul#ui-id-1').find("li:last").focus().addClass("active");
+                    var storeTarget	= $('ul#ui-id-1').find("li.active");
                     $(".chatinput").val($('ul#ui-id-1').find("li:last").text());
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:last").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:last").attr("data-value");

@@ -49,7 +49,7 @@ var model = {
                         translate(item, {from: 'en', to: reqdata.language}).then(res => {
                             //console.log(res.text);
                             var translated=res.text;
-                            console.log(reqdata.language);
+                            //console.log(reqdata.language);
                                 translated = translated.replace("<a href=\"#\"> IN", "<a href=\"#\"> ION", "g");
                                 var dummy = "id='"+key+"' data-id='"+reqdata.arr_index+"' ng-click='pushPortalLink("+reqdata.arr_index+","+key+");'";
                                 linkdata += "<p class='portalapp' "+dummy+">"+translated+"</p>";
