@@ -10184,8 +10184,10 @@ button.headerbtns:focus {
   font-family: "Roboto-Light"; }
 
 .chatinput {
-  border-radius: 5px;
-  height: 24px; }
+  border-radius: 5px !important;
+  height: 24px;
+  width: 93% !important;
+  border: 0px !important; }
 
 .chatinputgroup {
   width: 100%; }
@@ -10977,6 +10979,27 @@ div.scriptData {
 
 #changepassword_form .form-group input {
   margin-bottom: 10px !important; }
+
+.chatbtngroup {
+  right: 42px;
+  position: absolute;
+  top: 1px; }
+
+.chatinputgroup {
+  display: inline-table;
+  width: 100%;
+  background: #fff;
+  border-radius: 5px; }
+
+.chatgo {
+  height: 22px;
+  padding: 1px 14px;
+  background: #ED6D05;
+  border: 1px solid #ED6D05;
+  border-radius: 6px !important;
+  color: #fff;
+  font-family: "Roboto-Light";
+  font-size: 13px; }
 
 @media screen and (max-width: 1200px) {
   .content {

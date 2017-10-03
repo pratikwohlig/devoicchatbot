@@ -339,7 +339,12 @@
                                         <div class="loading">Typing</div>
                                     </div>
                                 </div>
+                                <div class="input-group chatinputgroup">
                                     <input type="text" class="form-control chatinput"  ng-change="getAutocomplete(chatText);" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
+                                    <span class="input-group-btn chatbtngroup">
+                                        <button class="btn btn-default chatgo" type="button" ng-click="pushMsg(0,chatText);">Go!</button>
+                                    </span>
+                                </div><!-- /input-group -->
                                     <p class="footertext">Powered By
                                         <a href="http://www.cingulariti.com/" target="_blank" class='cingularititext'><span > Cingulariti</span></a>
                                     </p>

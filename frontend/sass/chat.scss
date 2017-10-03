@@ -221,8 +221,10 @@ width:90%;
 }
 .ionwelcome p { font-size: 13px;font-family: "Roboto-Light"; }
 .chatinput {
-    border-radius: 5px;
+    border-radius: 5px !important;
     height: 24px;
+    width:93% !important;
+    border: 0px !important;
 }
 .chatinputgroup {
     width: 100%;

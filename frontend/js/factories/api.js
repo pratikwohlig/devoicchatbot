@@ -5,6 +5,7 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
+    var serverurl = "http://adserver.i-on.in:9000/crm";
     return {
 
         // This is a demo Service for POST Method.
@@ -30,6 +31,15 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 url:loginurl,
                 method: 'POST',
                 data: formData
+            })
+        },
+        serverlogin: function(formData, callback) {
+            
+            return $http({
+                url:serverurl+"?customer="+formData.customer+"&pword="+formData.pword,
+                method: 'POST',
+                data: formData,
+                headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1" },
             })
         },
         getCategoryFAQ: function (formData, callback) {

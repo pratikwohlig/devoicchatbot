@@ -406,6 +406,27 @@ div.scriptData {
 #changepassword_form .form-group input {
     margin-bottom:10px !important;
 }
+.chatbtngroup {
+    right: 42px;
+    position: absolute;
+    top: 1px;
+}
+.chatinputgroup {
+    display: inline-table;
+    width: 100%;
+    background: #fff;
+    border-radius: 5px;
+}
+.chatgo {
+    height: 22px;
+    padding: 1px 14px;
+    background: #ED6D05;
+    border: 1px solid #ED6D05;
+    border-radius: 6px !important;
+    color: #fff;
+    font-family: "Roboto-Light";
+    font-size: 13px;
+}
 @media screen and (max-width: 1200px) {
     .content {
         min-height:0px;

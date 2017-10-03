@@ -29,7 +29,22 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
     })
 
     .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams) {
-        
+        var username=$location.search().username; 
+        var password=$location.search().password;
+        if(username && password)
+        {   
+            console.log(username);
+            console.log(password);
+            console.log("Exist");
+            var formData = {customer:username,pword:password};
+            apiService.serverlogin(formData).then(function (callback){
+
+            });
+        }
+        else
+        {
+            console.log("Doesnot");
+        }
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
         // console.log(window.parent.location);
