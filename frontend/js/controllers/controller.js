@@ -37,9 +37,25 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             console.log(password);
             console.log("Exist");
             var formData = {customer:username,pword:password};
-            apiService.serverlogin(formData).then(function (callback){
-
+            angular.element(document).ready(function () {
+                  var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                $.ajax({
+                    url: url,
+                    dataType: "json",
+                    async: true,
+                    cache: false,
+                    timeout: 3000,
+                    headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                    type: "GET",
+                    success: function (data) {
+                        $.jStorage.set("customerDetails",data.customerDetails);
+                        $.jStorage.set("guidance",data.guidance);
+                    },
+                });
             });
+            // apiService.serverlogin(formData).then(function (callback){
+
+            // });
         }
         else
         {
@@ -85,19 +101,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         ];
         if(!$.jStorage.get("language"))
         {
-            console.log("notset");
             $rootScope.selectedLanguage = $rootScope.languagelist[0];
             $.jStorage.set("language", $rootScope.selectedLanguage.id);
         }
-        else {
-            console.log("set");
+        else 
+        {
             $rootScope.selectedLanguage = $.jStorage.get("language");
         }
         $scope.formSubmitted = false;
         $scope.loginerror=0;
         $rootScope.isLoggedin = false;
         $rootScope.changeLanguage = function(lang) {
-            console.log(lang);
             $rootScope.selectedLanguage = lang;
             $.jStorage.set("language", $rootScope.selectedLanguage.id);
         };
