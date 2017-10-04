@@ -39,7 +39,7 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 url:serverurl+"?customer="+formData.customer+"&pword="+formData.pword,
                 method: 'POST',
                 data: formData,
-                headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1" },
+                headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
             })
         },
         getCategoryFAQ: function (formData, callback) {
