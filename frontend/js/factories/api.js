@@ -37,7 +37,7 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
             
             return $http({
                 url:serverurl+"?customer="+formData.customer+"&pword="+formData.pword,
-                method: 'POST',
+                method: 'GET',
                 data: formData,
                 headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
             })
