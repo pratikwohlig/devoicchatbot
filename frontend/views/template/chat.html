@@ -155,7 +155,7 @@
                                                         <li ng-repeat="faqlist in chatRes.FAQ">
                                                         <div class="viewquesans">
                                                             <div class="faqques">
-                                                                <p class="lastmsg" ><a href="#" >
+                                                                <p class="lastmsg" ><a href="#" data-category="{{faqlist.Category}}">
                                                                 <!-- <span ng-bind-html = "faqlist.Questions|newlines" > -->
                                                                     <span comp-translate="{{faqlist.Questions}}"></span>
                                                                 <!-- </span> -->

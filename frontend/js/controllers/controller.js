@@ -314,11 +314,22 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $scope.formData = {"text": chatText,"language":languageid };
                 apiService.translate($scope.formData).then( function (response) {
                     //$(".chatinput").val(response.data.data);
-                    console.log(response.data.data);
+                    //console.log(response.data.data);
                 });
             }
         };
         $rootScope.showFAQAns = function(e) {
+            var category = $(e).attr("data-category");
+            $("#faqs_category option:contains(" + category + ")").attr('selected', 'selected');
+            var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == category; });
+            var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == category; });
+            // console.log(v);
+            // console.log($rootScope.selectedCategory);
+            // //$("#faqs_category").val("Single2").trigger('change');
+            // console.log(category);
+            $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+            $rootScope.getCategoryQuestions(v_obj);
+            $(".faqans").slideUp("slow");
             $(e).parent().parent().parent().find('.faqans').slideDown();
             //$rootScope.scrollChatWindow();
         };
