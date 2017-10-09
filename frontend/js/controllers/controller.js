@@ -180,7 +180,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.firstMsg=false;
         $rootScope.chatmsg = "";
         $rootScope.chatmsgid = "";
-        
+        $rootScope.autocategory = "";
+        $rootScope.autolink = "";
         $rootScope.msgSelected = false;
         $rootScope.chatlist = [];
         // var mylist = $.jStorage.get("chatlist");
@@ -550,10 +551,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
             else 
             {
-                $rootScope.pushAutoMsg(id,value,$rootScope.answers);
+                $rootScope.pushAutoMsg(id,value,$rootScope.answers,$rootScope.autocategory,$rootScope.autolink);
             }
         };
-        $rootScope.pushAutoMsg = function(id,value,answer) {
+        $rootScope.pushAutoMsg = function(id,value,answer,autocat,autolink) {
             $rootScope.msgSelected = true;
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
@@ -564,25 +565,130 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // $rootScope.pushSystemMsg(id,automsg);
             // $rootScope.showMsgLoader = false;
             // //$.jStorage.set("chatlist",$rootScope.chatlist);
-            var value3 = {};
-            if($rootScope.answers != "")
+            
+            // console.log($rootScope.selectedCategory);
+            // //$("#faqs_category").val("Single2").trigger('change');
+            // console.log(category);
+            if(autocat == "")
             {
-                var answer1 =new Array();
-                answer1 = $rootScope.answers.split("(2nd)");
-                // if(type==0)
-				//     answer1 = answer1[0];
-                // else if(type==1)
-                //     answer1 = answer1[1];
-                answer1 = answer1[0];
-                answer1 = answer1.replace("\n", "<br />", "g");
-                value3.queslink=answer1;
-                
+                console.log("No cat");
+                queslink=$rootScope.answers;
+                queslink = $sce.trustAsHtml(queslink);
+                msg2={"Text":angular.copy(queslink),type:"SYS_AUTO"};
+                $timeout(function(){
+                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                    $rootScope.showMsgLoader=false;
+                    $rootScope.scrollChatWindow();
+                },2000);
             }
-            value3.queslink = $sce.trustAsHtml(value3.queslink);
-            //$compile(linkdata)($scope);
-            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
-            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-            $rootScope.showMsgLoader=false;
+            else 
+            {
+                var category = autocat;
+                $("#faqs_category option:contains(" + category + ")").attr('selected', 'selected');
+                var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == category; });
+                var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == category; });
+                if($rootScope.selectedCategory == v_obj)
+                {
+
+                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                    //$rootScope.getCategoryQuestions(v_obj);
+                    var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
+                    var value2 = $rootScope.links;
+                    if($rootScope.autolink != "" )
+                    {
+                        var linkdata="";
+                        var prev_res = false;
+                        console.log("First link");
+                        final_link = $rootScope.autolink.split("<br>");
+                        var languageid = $.jStorage.get("language");
+                        $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                        apiService.translatelink($scope.formData).then( function (response) {
+                            value2.queslink=response.data.data.linkdata;
+                            value2.queslink = $sce.trustAsHtml(value2.queslink);
+                            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                            $timeout(function(){
+                                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                $rootScope.showMsgLoader=false;
+                                $rootScope.scrollChatWindow();
+                            },2000);
+                        });
+                    }
+                    
+                    else
+                    {    
+                        console.log("2nd link");
+                        value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                        value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
+                        msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                        $timeout(function(){
+                            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                            $rootScope.showMsgLoader=false;
+                            $rootScope.scrollChatWindow();
+                        },2000);
+                    }
+                }
+                else
+                {
+                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                    $rootScope.getCategoryQuestions(v_obj);
+                    var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
+                    var value2 = $rootScope.links;
+                    if($rootScope.autolink != "" )
+                    {
+                        var linkdata="";
+                        var prev_res = false;
+                        console.log("First link");
+                        final_link = $rootScope.autolink.split("<br>");
+                        var languageid = $.jStorage.get("language");
+                        $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                        apiService.translatelink($scope.formData).then( function (response) {
+                            value2.queslink=response.data.data.linkdata;
+                            value2.queslink = $sce.trustAsHtml(value2.queslink);
+                            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                            $timeout(function(){
+                                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                $rootScope.showMsgLoader=false;
+                                $rootScope.scrollChatWindow();
+                            },2000);
+                        });
+                    }
+                    
+                    else
+                    {    
+                        console.log("2nd link");
+                        value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                        value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
+                        msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                        $timeout(function(){
+                            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                            $rootScope.showMsgLoader=false;
+                            $rootScope.scrollChatWindow();
+                        },2000);
+                    }
+                }
+            }
+            
+            // var value3 = {};
+            // if($rootScope.answers != "")
+            // {
+            //     var answer1 =new Array();
+            //     answer1 = $rootScope.answers.split("(2nd)");
+            //     // if(type==0)
+			// 	//     answer1 = answer1[0];
+            //     // else if(type==1)
+            //     //     answer1 = answer1[1];
+            //     answer1 = answer1[0];
+            //     answer1 = answer1.replace("\n", "<br />", "g");
+            //     value3.queslink=answer1;
+                
+            // }
+            // value3.queslink = $sce.trustAsHtml(value3.queslink);
+            // //$compile(linkdata)($scope);
+            // msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
+            // $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+            // $rootScope.showMsgLoader=false;
 
 
 
@@ -764,6 +870,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.autolistid = $(storeTarget).attr("data-id");
                     $rootScope.autolistvalue = $(storeTarget).attr("data-value");
                     $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
                 }
                 else
                 {
@@ -773,6 +881,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:first").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:first").attr("data-value");
                     $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
 		    	}
 
                 return;
@@ -787,6 +897,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.autolistid = $(storeTarget).attr("data-id");
                     $rootScope.autolistvalue = $(storeTarget).attr("data-value");
                     $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
                 }
                 else
                 {
@@ -796,6 +908,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:last").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:last").attr("data-value");
                     $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
 		    	}
 
                 return;

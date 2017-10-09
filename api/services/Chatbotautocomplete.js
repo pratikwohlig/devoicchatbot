@@ -8,9 +8,15 @@ var schema = new Schema({
     que_ans: {
         type: String,
     },
-   final: {
+    final: {
+        type:String,
+    },
+    category: {
        type:String,
-   }, 
+    }, 
+    link: {
+       type:String,
+   },
 });
 
 schema.plugin(deepPopulate, {
@@ -30,7 +36,7 @@ var model = {
         searchstring = "/"+searchstring+"/";
         Chatbotautocomplete.find({
             questions:{ $regex: '.*' + data.string + '.*',$options:"i" }
-        }, { answers: 1, questions: 1 }).limit(4).exec(function (err, found) {
+        }, { answers: 1, questions: 1,category:1,link:1 }).limit(4).exec(function (err, found) {
             if (err) {
                 callback(err, null);
             } 

@@ -340,7 +340,7 @@
                                     </div>
                                 </div>
                                 <div class="input-group chatinputgroup">
-                                    <input type="text" class="form-control chatinput"  ng-change="getAutocomplete(chatText);" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech />
+                                    <input type="text" class="form-control chatinput"  ng-change="getAutocomplete(chatText);" ng-model="chatText" id="userMsg" placeholder="Type your message here..." autofocus  typeahead="list for list in autocompletelist" ng-keyup="onKeyUp($event)" x-webkit-speech autocomplete="off" />
                                     <span class="input-group-btn chatbtngroup">
                                         <button class="btn btn-default chatgo" type="button" ng-click="pushMsg(0,chatText);">Go!</button>
                                     </span>
@@ -358,7 +358,7 @@
                             <div id= "suggestionList">
                                 <ul ng-if="autocompletelist.length > 0" class="{{autocompletelist.length}}  ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" id="ui-id-1">
                                     <div class="ui-menu-item-wrapper">
-                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}"  ng-repeat="list in autocompletelist" ng-click="pushAutoMsg(list._id,list.questions,list.answers);"   >
+                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}" data-category="{{list.category}}" data-link="{{list.link}}"  ng-repeat="list in autocompletelist" ng-click="pushAutoMsg(list._id,list.questions,list.answers,list.category,list.link);"   >
                                             <myfilter filter-Translate="{{list.questions}}"></myfilter>
                                         </li>
                                     </div>
