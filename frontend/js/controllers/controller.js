@@ -327,8 +327,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // console.log($rootScope.selectedCategory);
             // //$("#faqs_category").val("Single2").trigger('change');
             // console.log(category);
-            $rootScope.selectedCategory = $rootScope.categorylist[v_index];
-            $rootScope.getCategoryQuestions(v_obj);
+            if($rootScope.selectedCategory == v_obj)
+            {}
+            else
+            {
+                $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                $rootScope.getCategoryQuestions(v_obj);
+            }
             $(".faqans").slideUp("slow");
             $(e).parent().parent().parent().find('.faqans').slideDown();
             //$rootScope.scrollChatWindow();
