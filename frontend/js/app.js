@@ -64,7 +64,15 @@ myApp.run(['$http', '$cookies', function ($http, $cookies) {
     // $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     //$http.defaults.headers.common = "Auth";
     
-
+    $(document).on('click', '.chat-body .changedthbg', function(){ 
+        var stage = $(this).attr("data-bgstage");
+        console.log(stage);
+        $(".stage"+stage).css('background-color','#eee');
+        $(".stage"+stage).css('color','#111195');
+        
+        $(this).css('background-color', '#ED6D05');
+        $(this).css('color', '#fff');
+    });  
 }]);
 
 // For Language JS

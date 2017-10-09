@@ -10446,7 +10446,19 @@ ol.quesList {
 .panel-body {
   padding-top: 0px;
   overflow-y: auto;
-  height: 375px; }
+  height: 340px; }
+
+.process_buttons {
+  background: #eee;
+  padding-top: 5px;
+  padding-bottom: 5px; }
+
+.process_btngroup .processbtn {
+  background: #fff;
+  padding: 3px;
+  border-radius: 7px;
+  color: #ED6A0B;
+  border: 1px solid #ED6A0B; }
 
 .chatbody2 {
   height: 455px;

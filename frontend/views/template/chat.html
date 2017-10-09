@@ -63,7 +63,7 @@
                             <div class="col-md-12">
                                 <ul class="breadcrumb categorybreadcrumb">
                                     <li><a href="#" id="faq"> FAQ </a></li>
-                                    <select id="faqs_category"  ng-change="getCategoryQuestions(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" class="col-md-7"  >
+                                    <select id="faqs_category"  ng-change="getCategoryQuestions(selectedCategory);" ng-options="cat as cat.name for cat in categorylist" ng-model="selectedCategory" class="col-md-8"  >
                                     
                                     </select> 
                                     <!-- <li class="tmpcategory" ng-if="selectedCategory.id != 'default'" ><span comp-translate ="{{selectedCategory.name}}"></span></li> -->
@@ -175,6 +175,20 @@
                                                         </div>
                                                         </li>
                                                     </ol>
+                                                </div>
+                                                <div class="chatType" ng-if="list.msg.tiledlist[0].type==='DTHyperlink'">
+                                                    
+                                                    <ng-bind-html ng-if="chatRes.Text != ''" ng-bind-html="chatRes.Text|newlines">
+                                                        <p class="lastmsg" >
+                                                            {{chatRes.Text}}     
+                                                        </p>
+                                                    </ng-bind-html>
+                                                    <!-- <div class="dthyperlink lastmsg" ng-repeat="dthlink in chatRes.DTHyperlink" data-id="{{dthlink}}" data-url-id="innerLink" data-line="{{chatRes.line_no[$index]}}" data-col="{{chatRes.col_no[$index]}}" ng-click="getDthlinkRes(chatRes.col_no[$index],chatRes.line_no[$index],dthlink);">
+                                                        {{dthlink}}
+                                                    </div> -->
+                                                    <div class="dthyperlink lastmsg changedthbg stage{{chatRes.bgstage}}" ng-repeat="dthlink in chatRes.DT" data-id="{{dthlink}}" data-url-id="innerLink" data-stage="{{chatRes.Stage}}" data-bgstage="{{chatRes.bgstage}}" ng-if="chatRes.DT.length > 0" data-index="{{$index}}"  ng-click="getDthlinkRes(chatRes.Stage,dthlink);" >
+                                                        {{dthlink}}
+                                                    </div>
                                                 </div>
                                                 <!--<div class="chatType" ng-if="list.msg.tiledlist[0].type==='rate card'">
                                                     <p class="lastmsg" >
@@ -311,6 +325,15 @@
                                                 </ng-bind-html> 
                                             </p>
                                         </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_QUERY'))">
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</a></li>
+                                                <li><a href="#" ng-click="getProcessTree('Slow_Browsing');">Slow Browsing</a></li>
+                                                <li><a href="#" ng-click="getProcessTree('Connectivity_Problem');">Connectivity Problem</a></li>
+                                                <li><a href="#" ng-click="getProcessTree('Ping_Issues');">Ping Issues</a></li>
+                                                <li><a href="#" ng-click="getProcessTree('Hardware');">Hardware</a></li>
+                                            </ul>
+                                        </div>
                                         <p class="lastmsg">
                                             <small class="chatTime">
                                                 <span class="glyphicon glyphicon-time">
@@ -322,6 +345,23 @@
                                 </li>    
                             </ul>
                             
+                        </div>
+                        <div class="process_buttons row">
+                            <div class="process_btngroup col-md-12">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
+                                        Technical Queries 
+                                    </button>
+                                    <!-- <ul class="dropdown-menu">
+                                        <li><a href="#" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</a></li>
+                                        <li><a href="#" ng-click="getProcessTree('Slow_Browsing');">Slow Browsing</a></li>
+                                        <li><a href="#" ng-click="getProcessTree('Connectivity_Problem');">Connectivity Problem</a></li>
+                                        <li><a href="#" ng-click="getProcessTree('Ping_Issues');">Ping Issues</a></li>
+                                        <li><a href="#" ng-click="getProcessTree('Hardware');">Hardware</a></li>
+                                     </ul>  -->
+                                </div>  
+                                
+                            </div>
                         </div>
                         <div class="panel-footer row">
                             <div class="form-group">
