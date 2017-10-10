@@ -4,8 +4,6 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
-        console.log($stateParams.username);
-        console.log($stateParams.password);
         angular.element(document).ready(function () {
             apiService.get_session({}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
@@ -33,27 +31,38 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         var password=$location.search().password;
         if(username && password)
         {   
-            console.log(username);
-            console.log(password);
-            console.log("Exist");
-            var formData = {customer:username,pword:password};
-            angular.element(document).ready(function () {
-                  var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
-                $.ajax({
-                    url: url,
-                    dataType: "json",
-                    async: true,
-                    cache: false,
-                    timeout: 3000,
-                    headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
-                    type: "GET",
-                    success: function (data) {
-                        console.log(data,"crm");
-                        $.jStorage.set("customerDetails",data.customerDetails);
-                        $.jStorage.set("guidance",data.guidance);
-                    },
+            if($.jStorage.get("username") && $.jStorage.get("username")==username)
+            {
+                
+            }
+            else
+            {
+
+            
+                console.log(username);
+                console.log(password);
+                console.log("Exist");
+                var formData = {customer:username,pword:password};
+                angular.element(document).ready(function () {
+                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        async: true,
+                        cache: false,
+                        timeout: 3000,
+                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                        type: "GET",
+                        success: function (data) {
+                            console.log(data,"crm");
+                            $.jStorage.set("customerDetails",data.customerDetails);
+                            $.jStorage.set("guidance",data.guidance);
+                            $.jStorage.set("username",username);
+                            location.reload();
+                        },
+                    });
                 });
-            });
+            }
             // apiService.serverlogin(formData).then(function (callback){
 
             // });
@@ -61,6 +70,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         else
         {
             console.log("Doesnot");
+            $.jStorage.set("customerDetails",{});
+            $.jStorage.set("guidance",{});
+            $.jStorage.set("username","");
         }
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
@@ -369,9 +381,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             $rootScope.firstMsg = true;
             var cust = $.jStorage.get("customerDetails");
-            var cust_name = ""
-            if(cust)
-                cust_name = cust.Name
+            var cust_name = "";
+            if(cust.Name)
+                cust_name = cust.Name;
+            console.log(cust_name);
             var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
