@@ -914,7 +914,22 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         	$rootScope.pushSystemMsg(0,data.data);
                             $rootScope.showMsgLoader = false;
                             
-                            
+                            if(value.category && value.category != '')
+                            {
+                                var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == value.category; });
+                                var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == value.category; });
+                                // console.log(v);
+                                // console.log($rootScope.selectedCategory);
+                                // //$("#faqs_category").val("Single2").trigger('change');
+                                // console.log(category);
+                                if($rootScope.selectedCategory == v_obj)
+                                {}
+                                else
+                                {
+                                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                                    $rootScope.getCategoryQuestions(v_obj);
+                                }
+                            }
                             return false;
                         }
                         // if(value.type=="rate card")
