@@ -10300,6 +10300,9 @@ button.headerbtns:focus {
   border-bottom-right-radius: 1.3em;
   border-bottom-right-radius: 1.3em; }
 
+.linkimg img {
+  width: 125px; }
+
 .chatbody .panel-footer {
   width: 100% !important;
   background-color: #1B1918;

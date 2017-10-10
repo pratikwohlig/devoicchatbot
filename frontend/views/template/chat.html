@@ -185,11 +185,14 @@
                                                 </div>
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='DTHyperlink'">
                                                     
-                                                    <ng-bind-html ng-if="chatRes.Text != ''" ng-bind-html="chatRes.Text|newlines">
+                                                     <ng-bind-html class="linkimg" ng-if="chatRes.Text != ''" ng-bind-html="trustedHtml(chatRes.Text);">
                                                         <p class="lastmsg" >
                                                             {{chatRes.Text}}     
                                                         </p>
-                                                    </ng-bind-html>
+                                                    </ng-bind-html> 
+                                                    <!-- <p class="lastmsg">
+                                                        
+                                                    </p> -->
                                                     <!-- <div class="dthyperlink lastmsg" ng-repeat="dthlink in chatRes.DTHyperlink" data-id="{{dthlink}}" data-url-id="innerLink" data-line="{{chatRes.line_no[$index]}}" data-col="{{chatRes.col_no[$index]}}" ng-click="getDthlinkRes(chatRes.col_no[$index],chatRes.line_no[$index],dthlink);">
                                                         {{dthlink}}
                                                     </div> -->

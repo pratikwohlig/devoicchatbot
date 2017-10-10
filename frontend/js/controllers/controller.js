@@ -74,6 +74,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $.jStorage.set("guidance",{});
             $.jStorage.set("username","");
         }
+        $rootScope.trustedHtml = function (plainText) {
+            return $sce.trustAsHtml(plainText);
+        };
         var url = $location.absUrl().split('?')[0];
         // console.log(url);
         // console.log(window.parent.location);
