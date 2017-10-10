@@ -10367,10 +10367,7 @@ p.footertext {
   z-index: 9999; }
 
 .languagebar {
-  position: absolute;
-  right: 10px;
-  width: 100%;
-  top: 11px; }
+  margin-top: 10px; }
 
 a.cingularititext {
   color: #ED6D05;
@@ -10460,6 +10457,19 @@ ol.quesList {
   color: #ED6A0B;
   border: 1px solid #ED6A0B; }
 
+ul.querybtns li {
+  list-style-type: none;
+  margin-bottom: 5px; }
+
+ul.querybtns {
+  padding-left: 0px !important; }
+
+button.btn.q_btn {
+  background: #ED6D05;
+  color: #fff;
+  border-radius: 5px;
+  width: 210px; }
+
 .chatbody2 {
   height: 455px;
   border-left: 1px solid #000; }
@@ -10469,7 +10479,7 @@ ol.quesList {
   background-color: #F5F5F5; }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
   background-color: #F5F5F5;
   /*transition: all 0.8s ease;
      -webkit-transition: all 0.8s ease;

@@ -64,6 +64,9 @@ myApp.run(['$http', '$cookies', function ($http, $cookies) {
     // $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     //$http.defaults.headers.common = "Auth";
     
+    $(document).on('click', '.q_btn', function(){ 
+        $(this).css('box-shadow','inset 0 3px 5px rgba(0, 0, 0, 0.125)');
+    });
     $(document).on('click', '.chat-body .changedthbg', function(){ 
         var stage = $(this).attr("data-bgstage");
         console.log(stage);

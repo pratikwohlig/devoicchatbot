@@ -51,6 +51,15 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 dataType:"json"
             });
         },
+        outquery: function (formData, callback) {
+            return $http({
+                url: adminurl2 + 'outquery/'+formData.user_id+"/",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                data: $.param(formData),
+                dataType:"json"
+            });
+        },
         get_session: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'get_session/',

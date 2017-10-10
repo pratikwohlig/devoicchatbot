@@ -48,6 +48,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
                     type: "GET",
                     success: function (data) {
+                        console.log(data,"crm");
                         $.jStorage.set("customerDetails",data.customerDetails);
                         $.jStorage.set("guidance",data.guidance);
                     },
@@ -105,7 +106,6 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         if(!$.jStorage.get("language"))
         {
-            console.log("not set");
             $rootScope.selectedLanguage = $rootScope.languagelist[0];
             $.jStorage.set("language", $rootScope.selectedLanguage.id);
         }
@@ -113,13 +113,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             
             $rootScope.selectedLanguage = $.jStorage.get("language");
-            //$("#language_list").val($rootScope.selectedLanguage).trigger('change');
+            $("#language_list").val($rootScope.selectedLanguage).trigger('change');
+            
             var v_obj = _.find($rootScope.languagelist, function(o) { return o.id == $rootScope.selectedLanguage; });
+            $rootScope.selectedLanguage=v_obj;
+            
+            var v_index = _.findIndex($rootScope.languagelist, function(o) { return o.id == $rootScope.selectedLanguage.id; });
             var langname = v_obj.name;
-            $("#language_list option:contains(" + langname + ")").attr('selected', 'selected');
-            console.log(v_obj.name);
-            //$rootScope.changeLanguage($rootScope.selectedLanguage);
-            //console.log($rootScope.selectedLanguage);
+            $("#language_list option:contains(" + langname + ")").prop('selected', true);
+            //$('#language_list').find('option:nth-child('+v_index+')').prop('selected', true);            
         }
         $scope.formSubmitted = false;
         $scope.loginerror=0;
@@ -180,7 +182,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatOpen = false;
             $rootScope.links = [];
             $rootScope.firstMsg = true;
-            var msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+            var cust = $.jStorage.get("customerDetails");
+            console.log(cust.Name);
+            var msg = {Text:"Hi "+cust.Name+", How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg); 
         };
         $rootScope.isLoggedin = true;
@@ -364,7 +368,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         if(!$rootScope.firstMsg)
         {
             $rootScope.firstMsg = true;
-            msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+            var cust = $.jStorage.get("customerDetails");
+            var msg = {Text:"Hi "+cust.Name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
+            //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
         }
         $scope.trustedHtml = function (plainText) {
@@ -761,7 +767,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData = { user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                
             
-            apiService.getCategoryFAQ(formData).then(function (data){
+            apiService.outquery(formData).then(function (data){
                     
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="text")
