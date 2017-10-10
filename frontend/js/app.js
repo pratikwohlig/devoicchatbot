@@ -71,7 +71,7 @@ myApp.run(['$http', '$cookies', function ($http, $cookies) {
         var stage = $(this).attr("data-bgstage");
         console.log(stage);
         $(".stage"+stage).css('background-color','#eee');
-        $(".stage"+stage).css('color','#111195');
+        $(".stage"+stage).css('color','#ED6D05');
         
         $(this).css('background-color', '#ED6D05');
         $(this).css('color', '#fff');

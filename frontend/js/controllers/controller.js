@@ -182,9 +182,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatOpen = false;
             $rootScope.links = [];
             $rootScope.firstMsg = true;
-            var cust = $.jStorage.get("customerDetails");
-            console.log(cust.Name);
-            var msg = {Text:"Hi "+cust.Name+", How may I help you ?",type:"SYS_FIRST"};
+            // var cust = $.jStorage.get("customerDetails");
+            // console.log(cust.Name);
+            var msg = {Text:"Hi , How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg); 
         };
         $rootScope.isLoggedin = true;
@@ -369,7 +369,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             $rootScope.firstMsg = true;
             var cust = $.jStorage.get("customerDetails");
-            var msg = {Text:"Hi "+cust.Name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
+            var cust_name = ""
+            if(cust)
+                cust_name = cust.Name
+            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
         }

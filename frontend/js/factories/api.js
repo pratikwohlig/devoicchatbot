@@ -60,6 +60,17 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 dataType:"json"
             });
         },
+        getDthlinkRes:function(formData,callback){
+            return    $http({
+                url:adminurl2+'outDTL/'+formData.user_id+"/",
+                //url: adminUrl3 + 'Chatbotautolist/getDthlink',
+                method: 'POST',
+                data:$.param(formData),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+            });
+            
+            
+        },
         get_session: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'get_session/',

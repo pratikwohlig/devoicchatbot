@@ -9988,11 +9988,13 @@ ul#chatTabs {
   float: left; }
 
 .chatbody {
-  background: #FAFAFA; }
+  background: #F6F6F6; }
 
 .chatTime {
   width: 100%;
-  float: left; }
+  float: left;
+  font-size: 9px;
+  margin-top: 3px; }
 
 .panel-footer {
   padding-bottom: 0px;
@@ -10099,7 +10101,7 @@ li.ui-menu-item {
   position: fixed;
   bottom: 0;
   right: 0px;
-  width: 100%; }
+  width: 45%; }
 
 .profileDetail span {
   font-weight: bold;
@@ -10184,10 +10186,15 @@ button.headerbtns:focus {
   font-family: "Roboto-Light"; }
 
 .chatinput {
-  border-radius: 5px !important;
+  border-radius: 30px !important;
   height: 24px;
-  width: 93% !important;
+  width: 85% !important;
   border: 0px !important; }
+
+.bubbleload {
+  width: 50px;
+  margin-left: 50px;
+  margin-top: 5px; }
 
 .chatinputgroup {
   width: 100%; }
@@ -10224,7 +10231,7 @@ button.headerbtns:focus {
   border-color: transparent; }
 
 .panel-body {
-  background-color: #fafafa; }
+  background-color: #F6F6F6; }
 
 .chat {
   list-style: none;
@@ -10248,8 +10255,9 @@ button.headerbtns:focus {
   cursor: pointer;
   text-decoration: underline;
   background: #eee;
-  color: #1e90ff;
-  font-style: italic;
+  color: #ED6D05;
+  text-decoration: none;
+  text-align: center;
   padding: 0.5em 0.5em;
   margin-bottom: 0.2em;
   border-radius: 5px; }
@@ -10287,7 +10295,10 @@ button.headerbtns:focus {
   float: right;
   right: 11px;
   font-family: "Roboto-Light";
-  font-size: 12px; }
+  font-size: 12px;
+  border-top-left-radius: 1.3em;
+  border-bottom-right-radius: 1.3em;
+  border-bottom-right-radius: 1.3em; }
 
 .chatbody .panel-footer {
   width: 100% !important;
@@ -10300,10 +10311,7 @@ button.headerbtns:focus {
   top: 0px;
   left: -10px;
   width: 0;
-  height: 0;
-  border: 5px solid #B7A9A2;
-  border-left-color: transparent;
-  border-bottom-color: transparent; }
+  height: 0; }
 
 .right .chat-body:before {
   content: "";
@@ -10311,10 +10319,7 @@ button.headerbtns:focus {
   top: 0px;
   right: -10px;
   width: 0;
-  height: 0;
-  border: 5px solid #EF9C6D;
-  border-right-color: transparent;
-  border-bottom-color: transparent; }
+  height: 0; }
 
 .left .chat-body {
   border-top-left-radius: 0em;
@@ -10324,7 +10329,10 @@ button.headerbtns:focus {
   display: table;
   left: 23px;
   font-family: "Open Sans";
-  font-size: 12px; }
+  font-size: 12px;
+  border-top-right-radius: 1.3em;
+  border-bottom-left-radius: 1.3em;
+  border-bottom-right-radius: 1.3em; }
 
 .logoutbutton {
   background: #a9a9a9;
@@ -10386,7 +10394,7 @@ a.cingularititext {
   font-size: 10px; }
 
 .panel .slidedown .glyphicon, .chat .glyphicon {
-  margin-right: 5px; }
+  margin-right: 0px; }
 
 div#all_questions {
   margin-top: 10px;
@@ -10930,7 +10938,7 @@ div.scriptData {
 
 #chat_panel {
   margin-bottom: 0;
-  background: #FAFAFA; }
+  background: #F6F6F6; }
 
 .timeline {
   list-style: none;
@@ -11011,14 +11019,14 @@ div.scriptData {
   display: inline-table;
   width: 100%;
   background: #fff;
-  border-radius: 5px; }
+  border-radius: 30px; }
 
 .chatgo {
   height: 22px;
   padding: 1px 14px;
   background: #ED6D05;
   border: 1px solid #ED6D05;
-  border-radius: 6px !important;
+  border-radius: 30px !important;
   color: #fff;
   font-family: "Roboto-Light";
   font-size: 13px; }

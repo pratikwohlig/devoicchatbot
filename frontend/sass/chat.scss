@@ -24,10 +24,12 @@ ul#chatTabs {
     width: auto;
     float: left;
 }
-.chatbody { background:#FAFAFA; }
+.chatbody { background:#F6F6F6; }
 .chatTime {     
     width: 100%;
     float: left; 
+    font-size: 9px;
+    margin-top: 3px;
 }
 .panel-footer {
     padding-bottom: 0px;
@@ -141,7 +143,7 @@ li.ui-menu-item {
     position: fixed;
     bottom: 0;
     right:0px;
-    width: 100%;
+    width: 45%;
 }
 .profileDetail span { 
     font-weight:bold;
@@ -221,10 +223,16 @@ width:90%;
 }
 .ionwelcome p { font-size: 13px;font-family: "Roboto-Light"; }
 .chatinput {
-    border-radius: 5px !important;
+    border-radius: 30px !important;
     height: 24px;
-    width:93% !important;
+    width:85% !important;
     border: 0px !important;
+}
+.bubbleload 
+{
+    width: 50px;
+    margin-left: 50px;
+    margin-top: 5px;
 }
 .chatinputgroup {
     width: 100%;
@@ -264,7 +272,7 @@ width:90%;
 }
 
 .panel-body{
-background-color: #fafafa;
+background-color: #F6F6F6;
 }
 .chat
 {
@@ -291,8 +299,10 @@ background-color: #fafafa;
     cursor: pointer;
     text-decoration: underline;
     background: #eee;
-    color: #1e90ff;
-    font-style: italic;
+    color: #ED6D05;
+    // font-style: italic;
+    text-decoration: none;
+    text-align: center;
     padding: 0.5em 0.5em;
     margin-bottom: 0.2em;
     border-radius: 5px;
@@ -331,6 +341,9 @@ background-color: #fafafa;
     right: 11px;
     font-family:"Roboto-Light";
     font-size: 12px;
+    border-top-left-radius: 1.3em;
+    border-bottom-right-radius: 1.3em;
+    border-bottom-right-radius: 1.3em;
 }
 .chatbody .panel-footer { width:100% !important; background-color: #1B1918;border-radius: 5px; }
 .left .chat-body:before{
@@ -340,9 +353,9 @@ background-color: #fafafa;
     left: -10px;
     width: 0;
     height: 0;
-    border: 5px solid #B7A9A2;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
+    // border: 5px solid #B7A9A2;
+    // border-left-color: transparent;
+    // border-bottom-color: transparent;
 }
 .right .chat-body:before{
     content: "";
@@ -351,9 +364,9 @@ background-color: #fafafa;
     right: -10px;
     width: 0;
     height: 0;
-    border: 5px solid #EF9C6D;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
+    // border: 5px solid #EF9C6D;
+    // border-right-color: transparent;
+    // border-bottom-color: transparent;
 }
 .left .chat-body {
     border-top-left-radius: 0em;
@@ -364,6 +377,9 @@ background-color: #fafafa;
     left: 23px;
     font-family:"Open Sans";
     font-size: 12px;
+    border-top-right-radius: 1.3em;
+    border-bottom-left-radius: 1.3em;
+    border-bottom-right-radius: 1.3em;
 }
 .logoutbutton {
     background: #a9a9a9;
@@ -426,7 +442,7 @@ a.cingularititext {
 }
 .panel .slidedown .glyphicon, .chat .glyphicon
 {
-    margin-right: 5px;
+    margin-right: 0px;
 }
 div#all_questions {
     margin-top: 10px;
