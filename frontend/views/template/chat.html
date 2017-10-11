@@ -196,7 +196,7 @@
                                                     <!-- <div class="dthyperlink lastmsg" ng-repeat="dthlink in chatRes.DTHyperlink" data-id="{{dthlink}}" data-url-id="innerLink" data-line="{{chatRes.line_no[$index]}}" data-col="{{chatRes.col_no[$index]}}" ng-click="getDthlinkRes(chatRes.col_no[$index],chatRes.line_no[$index],dthlink);">
                                                         {{dthlink}}
                                                     </div> -->
-                                                    <div class="dthyperlink lastmsg changedthbg stage{{chatRes.bgstage}}" ng-repeat="dthlink in chatRes.DT" data-id="{{dthlink}}" data-url-id="innerLink" data-stage="{{chatRes.Stage}}" data-bgstage="{{chatRes.bgstage}}" ng-if="chatRes.DT.length > 0" data-index="{{$index}}"  ng-click="getDthlinkRes(chatRes.Stage,dthlink);" >
+                                                    <div class="dthyperlink lastmsg changedthbg stage{{chatRes.bgstage}}" ng-repeat="dthlink in chatRes.DT" data-id="{{dthlink}}" data-url-id="innerLink" data-stage="{{chatRes.Stage}}" data-bgstage="{{chatRes.bgstage}}" ng-if="chatRes.DT.length > 0" data-index="{{$index}}"  ng-click="getDthlinkRes(chatRes.Stage,dthlink,chatRes.Journey_Name);" >
                                                         {{dthlink}}
                                                     </div>
                                                 </div>

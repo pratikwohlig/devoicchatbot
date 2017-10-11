@@ -833,7 +833,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.showMsgLoader=false;
             });
         };
-        $rootScope.getDthlinkRes = function(stage,dthlink,index) {
+        $rootScope.getDthlinkRes = function(stage,dthlink,index,Journey_Name) {
             //console.log(colno,lineno,dthlink);
             //mysession = $.jStorage.get("sessiondata");
             var mysession = {};
@@ -843,6 +843,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //mysession.DTHline=lineno;
             //mysession.DTHcol=colno;
             mysession.DTHstage=stage;
+            mysession.Journey_Name = Journey_Name;
             // formData = {};
             // formData.DTHcol = colno;
             // formData.DTHline = lineno;
