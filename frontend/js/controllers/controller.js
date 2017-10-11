@@ -833,7 +833,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.showMsgLoader=false;
             });
         };
-        $rootScope.getDthlinkRes = function(stage,dthlink,index,Journey_Name) {
+        $rootScope.getDthlinkRes = function(stage,dthlink,Journey_Name) {
             //console.log(colno,lineno,dthlink);
             //mysession = $.jStorage.get("sessiondata");
             var mysession = {};
