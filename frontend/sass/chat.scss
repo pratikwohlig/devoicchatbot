@@ -349,6 +349,14 @@ background-color: #F6F6F6;
     width:125px;
     opacity:1 !important;
 } 
+button.texttoggle {
+    background-color: #ED6D05 !important;
+    border: 0px;
+    border-radius: 8px;
+}
+.faqmore {
+    margin-left: -3px;
+}
 .chatbody .panel-footer { width:100% !important; background-color: #1B1918;border-radius: 5px; }
 .left .chat-body:before{
     content: "";

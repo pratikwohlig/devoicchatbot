@@ -395,6 +395,33 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.trustedHtml = function (plainText) {
             return $sce.trustAsHtml(plainText);
         };
+        //$scope.textviewbtn = "View More";
+        $(document).on('click', '.texttoggle', function(){ 
+            var e = $(this);
+            //$(this).parent().parent().find('.faqless').toggle();
+            //$(this).parent().parent().find(".faqless").children('.faqmore').toggle("fast").promise().done(function(){
+            //$(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast").promise().done(function(){
+                if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
+                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
+                    
+                    $(e).text("View More");
+                    console.log("Notvisible");
+                }
+                else {
+                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                    $(e).text("View Less");
+                    console.log("visible");
+                }
+            //});
+            //$timeout(function() {
+                
+                    
+            //},1000);
+            
+            
+        });
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
