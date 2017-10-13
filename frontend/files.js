@@ -26,6 +26,7 @@ module.exports = [
   "bower_components/angular-promise-buttons/dist/angular-promise-buttons.js",
   "frontend/js/factories/angular-cookies.min.js",
   "bower_components/jStorage/jstorage.js",
+  "bower_components/ng-idle/angular-idle.js",
   //App.js
   'frontend/js/app.js',
 

@@ -11,14 +11,19 @@ var myApp = angular.module('myApp', [
     'ui.swiper',
     'angularPromiseButtons',
     'toastr',
+    'ngIdle',
     'ngCookies'
 ])
 
 
 
 // Define all the routes below
-myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider) {
+myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider,IdleProvider,KeepaliveProvider) {
     var tempateURL = "views/template/template.html"; //Default Template URL
+    IdleProvider.idle(1); // 1sec idle
+    IdleProvider.timeout(25); // in seconds
+    KeepaliveProvider.interval(180);
+    $.jStorage.set("timer",25);
     //$httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
@@ -56,7 +61,7 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
-myApp.run(['$http', '$cookies', function ($http, $cookies) {
+myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
 
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
@@ -76,6 +81,8 @@ myApp.run(['$http', '$cookies', function ($http, $cookies) {
         $(this).css('background-color', '#ED6D05');
         $(this).css('color', '#fff');
     });  
+    Idle.watch();
+    
 }]);
 
 // For Language JS

@@ -10481,7 +10481,7 @@ ol.quesList {
 .panel-body {
   padding-top: 0px;
   overflow-y: auto;
-  height: 340px; }
+  height: 310px; }
 
 .process_buttons {
   background: #eee;
@@ -10494,10 +10494,17 @@ ol.quesList {
   border-radius: 7px;
   color: #ED6A0B;
   border: 1px solid #ED6A0B;
-  font-family: "Roboto-Light"; }
+  font-family: "Roboto-Light";
+  border-radius: 9px; }
+
+.processbtn:focus, .processbtn:active {
+  outline: none; }
 
 ul.querybtns li {
-  list-style-type: none; }
+  list-style-type: none;
+  float: left;
+  margin-bottom: 5px;
+  margin-left: 5px; }
 
 ul.querybtns {
   padding-left: 0px !important; }
@@ -11101,7 +11108,7 @@ div.scriptData {
   #chat_window_1 {
     width: 100%; }
     #chat_window_1 .panel-body {
-      height: 420px; }
+      height: 300px; }
   .chatbody2 {
     height: 526px; }
   div#all_questions {

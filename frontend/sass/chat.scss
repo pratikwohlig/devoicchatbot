@@ -523,7 +523,7 @@ ol.quesList { padding-left:15px; }
 {
     padding-top: 0px;
     overflow-y: auto;
-    height: 340px;
+    height: 310px;
 }
 .process_buttons {
     background: #eee;
@@ -537,10 +537,16 @@ ol.quesList { padding-left:15px; }
     color: #ED6A0B;
     border: 1px solid #ED6A0B;
     font-family:"Roboto-Light";
+    border-radius: 9px;
+}
+.processbtn:focus, .processbtn:active {
+    outline: none;
 }
 ul.querybtns li {
     list-style-type: none;
-    // margin-bottom: 5px;
+    float: left;
+    margin-bottom: 5px;
+    margin-left: 5px;
 }
 ul.querybtns {
     padding-left: 0px !important;

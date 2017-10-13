@@ -408,9 +408,16 @@
                         <div class="process_buttons row">
                             <div class="process_btngroup col-md-12">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
+                                    <!-- <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
                                         Technical Queries 
-                                    </button>
+                                    </button> -->
+                                    <ul class="querybtns">
+                                        <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>
+                                        <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('slow_browsing');">Slow Browsing</button></li>
+                                        <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('connectivity_problem');">Connectivity Problem</button></li>
+                                        <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('Ping_Issue');">Ping Issues</button></li>
+                                        <li><button type="button" class="btn btn-xs processbtn "ng-click="getProcessTree('DVois_Hardware_Issue');">Hardware</button></li>
+                                    </ul>
                                     <!-- <ul class="dropdown-menu">
                                         <li><a href="#" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</a></li>
                                         <li><a href="#" ng-click="getProcessTree('Slow_Browsing');">Slow Browsing</a></li>

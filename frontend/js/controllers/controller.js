@@ -5,6 +5,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
         angular.element(document).ready(function () {
+            
             apiService.get_session({}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
@@ -26,9 +27,46 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle) {
+       //angular.element(document).ready(function () {
+            $scope.$on('IdleStart', function() {
+                // the user appears to have gone idle
+                console.log("Idle started");
+            });
+       //});
+        $rootScope.$on('IdleTimeout', function() {
+            // var scope = angular.element(document.getElementById('changepwd')).scope();
+            // scope.logout();
+            if($.jStorage.get("timer")==25)
+            {
+                msg = {Text:"Hello! It looks like you’ve been inactive for a while. Can we help you find anything?",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                Idle.setIdle(10);
+                Idle.watch();
+                $.jStorage.set("timer",35);
+            }
+            else if($.jStorage.get("timer")==35)
+            {
+                msg = {Text:"It’s been a while since your last response. Please respond within the next few minutes or this chat will be ended.",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                Idle.setIdle(95);
+                Idle.watch();
+                $.jStorage.set("timer",95);
+            }
+            else if($.jStorage.get("timer")==95)
+            {
+                msg = {Text:"It appears that you’ve been inactive for a few minutes now. Please feel free to use our live chat service if you have any questions.",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                // Idle.setIdle(10);
+                // $.jStorage.set("timer",35);
+            }
+        });
         var username=$location.search().username; 
         var password=$location.search().password;
+        $scope.timerflag=true;
         if(username && password)
         {   
             if($.jStorage.get("username") && $.jStorage.get("username")==username)
@@ -387,7 +425,6 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var cust_name = "";
             if(cust.Name)
                 cust_name = cust.Name;
-            console.log(cust_name);
             var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
@@ -974,8 +1011,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $timeout(function(){
                     $(".chatinput").val("");
                 });
+                $scope.timerflag = false;
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
-						
+					$scope.timerflag = true;
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
@@ -1011,6 +1049,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         if(value.type=="DTHyperlink")
                         {
                            $rootScope.DthResponse(0,data.data);  
+                           $rootScope.showMsgLoader = false;
                         }
                         // else if(value.type=="Instruction")
                         // {
@@ -1036,7 +1075,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.showMsgLoader=false;
                 });
             //});
-            
+            $timeout(function(){
+                if(!$scope.timerflag)
+                {
+                    msg = {Text:"It may take us a moment to review that information .We will review your information and have an answer for you very shortly.",type:"SYS_EMPTY_RES"};
+                    $rootScope.pushSystemMsg(0,msg); 
+                    //$rootScope.showMsgLoader=false;
+                    $scope.timerflag = true;
+                }
+            },5000);
         };
         
         
