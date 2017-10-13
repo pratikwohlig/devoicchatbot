@@ -13,7 +13,7 @@
                     </a> -->
                 </div>
             </div>
-            <div class="container-fluid chatbody">
+            <div class="container-fluid chatbody" >
                 <!-- <div class="row" ng-if="!isLoggedin">
                     <div class="col-sm-6 col-sm-offset-3 col-xs-12">
                         <div class="login">
@@ -126,7 +126,7 @@
                                                 <img src="img/bubble.gif" class="img-fluid bubbleload" >
                                             </div>
                                         </div>
-                                    <div class="chat-body " >
+                                    <div class="chat-body " ng-class="{'nobg':list.msg.type=='SYS_QUERY'  || list.msg.type=='SYS_MAIL' || list.msg.type=='SYS_CALL'}">
                                         <div class="clearfix" ng-if="list.position==='right'">
                                             <p class="lastmsg" >
                                                 <!-- <ng-bind-html ng-bind-html = "list.msg">
@@ -178,7 +178,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='FAQ'">
-                                                    <p comp-translate="Sorry I did not understand.Did you mean?">:</p>
+                                                    <p comp-translate="Please select an option:">:</p>
                                                     <ol class="quesList" >
                                                         <li ng-repeat="faqlist in chatRes.FAQ">
                                                         <div class="viewquesans">
@@ -358,13 +358,40 @@
                                             </p>
                                         </div>
                                         <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_QUERY'))">
-                                            <ul class="querybtns">
-                                                <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>
-                                                <li><button type="button" class="btn q_btn" ng-click="getProcessTree('slow_browsing');">Slow Browsing</button></li>
-                                                <li><button type="button" class="btn q_btn" ng-click="getProcessTree('connectivity_problem');">Connectivity Problem</button></li>
-                                                <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Ping_Issue');">Ping Issues</button></li>
-                                                <li><button type="button" class="btn q_btn"ng-click="getProcessTree('DVois_Hardware_Issue');">Hardware</button></li>
-                                            </ul>
+                                            <div class="conversations_btn">
+                                                <div class="conversation-entry-bot__caption">
+                                                    Please choose any of the following
+                                                </div>
+                                                <ul class="querybtns">
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('slow_browsing');">Slow Browsing</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('connectivity_problem');">Connectivity Problem</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Ping_Issue');">Ping Issues</button></li>
+                                                    <li><button type="button" class="btn q_btn"ng-click="getProcessTree('DVois_Hardware_Issue');">Hardware</button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_MAIL'))">
+                                            <div class="conversations_btn">
+                                                <div class="conversation-entry-bot__caption">
+                                                    Please Select:
+                                                </div>
+                                                <ul class="querybtns">
+                                                    <li><button type="button" class="btn q_btn" ng-click="getmaillink('mah');">For Maharashtra</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getmaillink('other');">For Other</button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_CALL'))">
+                                            <div class="conversations_btn">
+                                                <div class="conversation-entry-bot__caption">
+                                                    Please Select:
+                                                </div>
+                                                <ul class="querybtns">
+                                                    <li><button type="button" class="btn q_btn" ng-click="getcallink('mah');">For Maharashtra</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getcallink('other');">For Other</button></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <p class="lastmsg">
                                             <small class="chatTime">

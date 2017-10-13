@@ -590,6 +590,43 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $('.panel-heading span.icon_minim').addClass('glyphicon-plus').removeClass('glyphicon-minus');
             $(".clickImage").show( "fadeIn");
         };
+        $scope.getmaillink= function(w){
+            if(w=='mah')
+            {
+                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>Customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+            else if(w=='other')
+            {
+                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>Customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+        };
+        $scope.getcallink= function(w){
+            if(w=='mah')
+            {
+                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>18001209636</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+            else if(w=='other')
+            {
+                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>18001035466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+            }
+        };
+        $scope.mailus = function(){
+            var msg = {type:"SYS_MAIL"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $scope.callus = function(){
+            var msg = {type:"SYS_CALL"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $(document).on('click', 'a.mailus', function(){ 
+            $scope.mailus();
+        });
+        $(document).on('click', 'a.callus', function(){ 
+            $scope.callus();
+        });
         $rootScope.pushMsg = function(id,value) {
             if($rootScope.answers == "")
             {
@@ -855,7 +892,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Sorry I could not understand",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 $rootScope.showMsgLoader=false;
             });
@@ -886,8 +923,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         $rootScope.DthResponse(0,data.data);
                     }
                 });
-            }).catch(function(reason){
-                console.log(reason);
+            }).catch(function (reason) {
+                //console.log(reason);
+                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                $rootScope.showMsgLoader=false;
             });
         };
         $rootScope.DthResponse = function(id,data) {
@@ -991,7 +1031,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
                     //console.log(reason);
-                    msg = {Text:"Sorry I could not understand",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                 });

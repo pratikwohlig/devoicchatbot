@@ -10254,13 +10254,30 @@ button.headerbtns:focus {
 .chat-body .dthyperlink {
   cursor: pointer;
   text-decoration: underline;
-  background: #eee;
+  background: #fff;
   color: #ED6D05;
   text-decoration: none;
   text-align: center;
   padding: 0.5em 0.5em;
   margin-bottom: 0.2em;
   border-radius: 5px; }
+
+.dthyperlink:hover {
+  background: #ED6D05;
+  color: #fff; }
+
+.conversations_btn {
+  width: 100%;
+  float: left;
+  min-width: 200px; }
+
+.conversation-entry-bot__caption {
+  border-radius: 43px 43px 0 0;
+  padding: 13px 25px;
+  background: #e6e6e6;
+  color: #4a4a4a;
+  font-weight: 700;
+  text-align: center; }
 
 .left .chat-img {
   margin-left: -8px;
@@ -10335,12 +10352,12 @@ button.texttoggle {
 
 .left .chat-body {
   border-top-left-radius: 0em;
-  background: #B7A9A2;
+  background: #e8ded9;
   color: #000;
   box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
   left: 23px;
-  font-family: "Open Sans";
+  font-family: "Roboto-Light";
   font-size: 12px;
   border-top-right-radius: 1.3em;
   border-bottom-left-radius: 1.3em;
@@ -10351,10 +10368,11 @@ button.texttoggle {
   color: #000 !important; }
 
 .faqques a {
-  color: #fff !important; }
+  color: #EF9C6D !important; }
 
 .left .chat-body a {
-  color: #fff; }
+  color: #EF9C6D;
+  font-weight: 600; }
 
 .chat li .chat-body p {
   margin: 0;
@@ -10455,7 +10473,7 @@ ol.quesList {
   padding-left: 15px; }
 
 .quesList li {
-  color: #fff; }
+  color: #EF9C6D; }
 
 .faqans {
   color: #000 !important; }
@@ -10475,20 +10493,33 @@ ol.quesList {
   padding: 3px;
   border-radius: 7px;
   color: #ED6A0B;
-  border: 1px solid #ED6A0B; }
+  border: 1px solid #ED6A0B;
+  font-family: "Roboto-Light"; }
 
 ul.querybtns li {
-  list-style-type: none;
-  margin-bottom: 5px; }
+  list-style-type: none; }
 
 ul.querybtns {
   padding-left: 0px !important; }
 
+.left .chat-body.nobg {
+  background: transparent !important;
+  box-shadow: 0px 0px !important; }
+
 button.btn.q_btn {
+  background: #fff;
+  color: #ED6D05;
+  width: 100%;
+  border: 1px solid #eaeaea; }
+
+button.btn.q_btn:focus, button.btn.q_btn:active {
+  outline: transparent;
+  background: #ED6A0B;
+  color: #fff; }
+
+button.btn.q_btn:hover {
   background: #ED6D05;
-  color: #fff;
-  border-radius: 5px;
-  width: 210px; }
+  color: #fff; }
 
 .chatbody2 {
   height: 455px;
