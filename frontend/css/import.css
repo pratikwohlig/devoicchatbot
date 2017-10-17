@@ -11098,7 +11098,11 @@ div.scriptData {
   #chat_window_1 {
     width: 100% !important; }
   ul.chat {
-    margin-top: 30px; } }
+    margin-top: 30px; }
+  .conversations_btn {
+    min-width: 0px; }
+  select#faqs_category {
+    width: 100%; } }
 
 @media only screen and (max-device-width: 480px) and (orientation: portrait) {
   /* styles for mobile browsers smaller than 480px; (iPhone) */
@@ -11113,7 +11117,11 @@ div.scriptData {
   #chat_panel {
     height: 100%; }
   ul.chat {
-    margin-top: 30px; } }
+    margin-top: 30px; }
+  .conversations_btn {
+    min-width: 0px; }
+  select#faqs_category {
+    width: 100%; } }
 
 @media only screen and (device-width: 768px) {
   /* default iPad screens */

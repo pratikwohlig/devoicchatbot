@@ -466,6 +466,13 @@ div.scriptData {
     ul.chat {
         margin-top: 30px;
     }
+    .conversations_btn {
+        min-width: 0px;
+    }
+    select#faqs_category 
+    {
+        width:100%;
+    }
 }
 @media only screen and (max-device-width:480px) and (orientation:portrait){
     /* styles for mobile browsers smaller than 480px; (iPhone) */
@@ -487,6 +494,13 @@ div.scriptData {
     }
     ul.chat {
         margin-top: 30px;
+    }
+    .conversations_btn {
+        min-width: 0px;
+    }
+    select#faqs_category 
+    {
+        width:100%;
     }
 }
 
