@@ -413,7 +413,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
                 $rootScope.scrollChatWindow();
-            });
+            },1500);
             $timeout(function(){
                 $rootScope.autocompletelist = [];
             },1000);
