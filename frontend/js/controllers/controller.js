@@ -886,7 +886,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.getProcessTree = function(process) {
             formData = { user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                
-            
+            $rootScope.showMsgLoader = true;
             apiService.outquery(formData).then(function (data){
                     
                 angular.forEach(data.data.tiledlist, function(value, key) {
@@ -908,7 +908,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     // }
                     if(value.type=="DTHyperlink")
                     {
-                        $rootScope.DthResponse(0,data.data);  
+                        $rootScope.DthResponse(0,data.data); 
+                        $rootScope.showMsgLoader = false; 
                     }
                     // else if(value.type=="Instruction")
                     // {
@@ -922,6 +923,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         // data.data.tiledlist[0].FAQ = reversefaq;
                         //console.log(reversefaq);
                         $rootScope.FAQResponse(0,data.data);  
+                        $rootScope.showMsgLoader = false;
                     }
                 });
                 
@@ -953,11 +955,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData.csrfmiddlewaretoken=$rootScope.getCookie("csrftoken");
             formData.user_id=$cookies.get("session_id");
             //console.log(formData);
+            $rootScope.showMsgLoader = true;
             apiService.getDthlinkRes(formData).then(function (data){
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="DTHyperlink")
                     {
                         $rootScope.DthResponse(0,data.data);
+                        $rootScope.showMsgLoader = false;
                     }
                 });
             }).catch(function (reason) {

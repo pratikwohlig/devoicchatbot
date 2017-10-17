@@ -139,11 +139,14 @@
                                             <div class="sysChatRes"  ng-repeat="chatRes in list.msg.tiledlist">
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='text'">
                                                     <p class="lastmsg" ng-if="chatRes.Text.length < 400">
-                                                        <ng-bind-html ng-bind-html = "chatRes.Text|newlines">
+                                                        <!-- <ng-bind-html ng-bind-html = "chatRes.Text|newlines">
                                                             
                                                             {{chatRes.Text}}
                                                             
-                                                        </ng-bind-html>
+                                                        </ng-bind-html> -->
+                                                        <myTranslate ng-if="chatRes.Text !=='' && chatRes.Text" comp-translate="{{chatRes.Text}}" >
+
+                                                        </myTranslate> 
                                                     </p>
                                                     <p class="lastmsg" >
                                                         <span class="faqless" >
@@ -206,11 +209,17 @@
                                                 </div>
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='DTHyperlink'">
                                                     
-                                                     <ng-bind-html class="linkimg" ng-if="chatRes.Text != ''" ng-bind-html="trustedHtml(chatRes.Text);">
+                                                    <!-- <ng-bind-html class="linkimg" ng-if="chatRes.Text != ''" ng-bind-html="trustedHtml(chatRes.Text);">
                                                         <p class="lastmsg" >
                                                             {{chatRes.Text}}     
                                                         </p>
-                                                    </ng-bind-html> 
+                                                    </ng-bind-html>  -->
+                                                    <!-- <p class="linkimg" ng-if="chatRes.Text != ''" ng-bind-html="trustedHtml(chatRes.Text);">
+                                                        <span comp-translate="{{chatRes.Text}}"></span>
+                                                    </p> -->
+                                                    <myTranslate ng-if="chatRes.Text != ''"  comp-translate="{{chatRes.Text}}" class="linkimg">
+
+                                                    </myTranslate>
                                                     <!-- <p class="lastmsg">
                                                         
                                                     </p> -->
@@ -218,7 +227,7 @@
                                                         {{dthlink}}
                                                     </div> -->
                                                     <div class="dthyperlink lastmsg changedthbg stage{{chatRes.bgstage}}" ng-repeat="dthlink in chatRes.DT" data-id="{{dthlink}}" data-url-id="innerLink" data-stage="{{chatRes.Stage}}" data-bgstage="{{chatRes.bgstage}}" ng-if="chatRes.DT.length > 0" data-index="{{$index}}"  ng-click="getDthlinkRes(chatRes.Stage,dthlink,chatRes.Journey_Name);" >
-                                                        {{dthlink}}
+                                                        <span comp-translate="{{dthlink}}"></span>
                                                     </div>
                                                 </div>
                                                 <!--<div class="chatType" ng-if="list.msg.tiledlist[0].type==='rate card'">
@@ -337,7 +346,7 @@
                                                  <!-- <span content="{{list.msg.queslink}}" ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''">
                                                     {{list.msg.queslink}}
                                                 </span>  -->
-                                                 <myTranslate ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''" comp-translate="{{list.msg.queslink}}" class="cat_faq">
+                                                <myTranslate ng-if="list.msg.queslink !=='' && list.msg.queslink" ng-show="list.msg.queslink !=''" comp-translate="{{list.msg.queslink}}" class="cat_faq">
 
                                                 </myTranslate> 
                                             </p>
@@ -363,11 +372,11 @@
                                                     Please choose any of the following
                                                 </div>
                                                 <ul class="querybtns">
-                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>
-                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('slow_browsing');">Slow Browsing</button></li>
-                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('connectivity_problem');">Connectivity Problem</button></li>
-                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Ping_Issue');">Ping Issues</button></li>
-                                                    <li><button type="button" class="btn q_btn"ng-click="getProcessTree('DVois_Hardware_Issue');">Hardware</button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Frequent_Disconnection');"><span comp-translate="Frequent Disconnection"></span></button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('slow_browsing');"><span comp-translate="Slow Browsing"></span></button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('connectivity_problem');"><span comp-translate="Connectivity Problem"></span></button></li>
+                                                    <li><button type="button" class="btn q_btn" ng-click="getProcessTree('Ping_Issue');"><span comp-translate="Ping Issues"></span></button></li>
+                                                    <li><button type="button" class="btn q_btn"ng-click="getProcessTree('DVois_Hardware_Issue');"><span comp-translate="Hardware"></span></button></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -408,16 +417,16 @@
                         <div class="process_buttons row">
                             <div class="process_btngroup col-md-12">
                                 <div class="btn-group">
-                                    <!-- <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
+                                     <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
                                         Technical Queries 
-                                    </button> -->
-                                    <ul class="querybtns">
+                                    </button> 
+                                    <!-- <ul class="querybtns">
                                         <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>
                                         <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('slow_browsing');">Slow Browsing</button></li>
                                         <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('connectivity_problem');">Connectivity Problem</button></li>
                                         <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('Ping_Issue');">Ping Issues</button></li>
                                         <li><button type="button" class="btn btn-xs processbtn "ng-click="getProcessTree('DVois_Hardware_Issue');">Hardware</button></li>
-                                    </ul>
+                                    </ul> -->
                                     <!-- <ul class="dropdown-menu">
                                         <li><a href="#" ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</a></li>
                                         <li><a href="#" ng-click="getProcessTree('Slow_Browsing');">Slow Browsing</a></li>
@@ -451,9 +460,9 @@
                                         <button class="btn btn-default chatgo" type="button" ng-click="pushMsg(0,chatText);"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                                     </span>
                                 </div><!-- /input-group -->
-                                    <p class="footertext">Powered By
+                                    <!-- <p class="footertext">Powered By
                                         <a href="http://www.cingulariti.com/" target="_blank" class='cingularititext'><span > Cingulariti</span></a>
-                                    </p>
+                                    </p> -->
                             </div>
                                 <!--<input type="hidden"  name="user_id" id="user_id"  value="{{sessionId}}" />-->
                                 <div id="autocomplete_field"></div>

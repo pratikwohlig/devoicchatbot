@@ -9997,7 +9997,7 @@ ul#chatTabs {
   margin-top: 3px; }
 
 .panel-footer {
-  padding-bottom: 0px;
+  padding-bottom: 20px;
   position: absolute;
   bottom: 0;
   width: 100%; }
@@ -10481,7 +10481,7 @@ ol.quesList {
 .panel-body {
   padding-top: 0px;
   overflow-y: auto;
-  height: 310px; }
+  height: 335px; }
 
 .process_buttons {
   background: #eee;
@@ -10501,10 +10501,7 @@ ol.quesList {
   outline: none; }
 
 ul.querybtns li {
-  list-style-type: none;
-  float: left;
-  margin-bottom: 5px;
-  margin-left: 5px; }
+  list-style-type: none; }
 
 ul.querybtns {
   padding-left: 0px !important; }
@@ -11108,7 +11105,7 @@ div.scriptData {
   #chat_window_1 {
     width: 100%; }
     #chat_window_1 .panel-body {
-      height: 300px; }
+      height: 390px; }
   .chatbody2 {
     height: 526px; }
   div#all_questions {

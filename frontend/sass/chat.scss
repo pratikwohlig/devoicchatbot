@@ -32,7 +32,7 @@ ul#chatTabs {
     margin-top: 3px;
 }
 .panel-footer {
-    padding-bottom: 0px;
+    padding-bottom: 20px;
     position: absolute;
     bottom: 0;
     width:100%;
@@ -523,7 +523,7 @@ ol.quesList { padding-left:15px; }
 {
     padding-top: 0px;
     overflow-y: auto;
-    height: 310px;
+    height: 335px;
 }
 .process_buttons {
     background: #eee;
@@ -544,9 +544,9 @@ ol.quesList { padding-left:15px; }
 }
 ul.querybtns li {
     list-style-type: none;
-    float: left;
-    margin-bottom: 5px;
-    margin-left: 5px;
+    // float: left;
+    // margin-bottom: 5px;
+    // margin-left: 5px;
 }
 ul.querybtns {
     padding-left: 0px !important;
