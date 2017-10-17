@@ -320,6 +320,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //console.log(category.name);
             apiService.getCategoryQuestions($scope.formData).then( function (response) {
                 $rootScope.links = response.data.data;
+                
                 $rootScope.links.type = "cat_faq";
                 if(category.name == "Choose a Category")
                     $("div#all_questions").css("background","none");
@@ -695,6 +696,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             $rootScope.answers = answer;
+            console.log(answer,"ans");
             $rootScope.autocompletelist = [];
             $rootScope.chatlist.push({id:id,msg:value,position:"right",curTime: $rootScope.getDatetime()});
             // var automsg = { Text: answer , type : "SYS_AUTO"};
@@ -725,7 +727,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == category; });
                 if($rootScope.selectedCategory == v_obj)
                 {
-
+                    console.log("same cate");
                     $rootScope.selectedCategory = $rootScope.categorylist[v_index];
                     //$rootScope.getCategoryQuestions(v_obj);
                     var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
@@ -753,7 +755,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     else
                     {    
                         console.log("2nd link");
-                        value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                        //value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                        value2.queslink = $rootScope.answers;
                         value2.queslink = $sce.trustAsHtml(value2.queslink);
                     
                         msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
@@ -767,42 +770,94 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 else
                 {
                     $rootScope.selectedCategory = $rootScope.categorylist[v_index];
-                    $rootScope.getCategoryQuestions(v_obj);
-                    var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
-                    var value2 = $rootScope.links;
-                    if($rootScope.autolink != "" )
-                    {
-                        var linkdata="";
-                        var prev_res = false;
-                        console.log("First link");
-                        final_link = $rootScope.autolink.split("<br>");
-                        var languageid = $.jStorage.get("language");
-                        $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
-                        apiService.translatelink($scope.formData).then( function (response) {
-                            value2.queslink=response.data.data.linkdata;
-                            value2.queslink = $sce.trustAsHtml(value2.queslink);
-                            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
-                            $timeout(function(){
-                                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                                $rootScope.showMsgLoader=false;
-                                $rootScope.scrollChatWindow();
-                            },2000);
-                        });
-                    }
-                    
-                    else
-                    {    
-                        console.log("2nd link");
-                        value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
-                        value2.queslink = $sce.trustAsHtml(value2.queslink);
-                    
-                        msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                    //$rootScope.getCategoryQuestions(v_obj);
+                    console.log(v_obj,"cat obj");
+                    categoryid = v_obj._id;
+                    $rootScope.links = [];
+                    $scope.formData = { category:categoryid };
+                    //console.log(category.name);
+                    apiService.getCategoryQuestions($scope.formData).then( function (response) {
+                        $rootScope.links = response.data.data;
+                        
+                        $rootScope.links.type = "cat_faq";
+                        if(category.name == "Choose a Category")
+                            $("div#all_questions").css("background","none");
+                        else
+                            $("div#all_questions").css("background","#EF9C6D");
+                        
                         $timeout(function(){
-                            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
-                            $rootScope.showMsgLoader=false;
-                            $rootScope.scrollChatWindow();
-                        },2000);
-                    }
+                            var chatHeight = $(".all_questions").height();
+                            $('#faqs_dropdown').animate({scrollTop: chatHeight});
+                        });
+                        var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
+                        console.log(l_index,"index");
+                        console.log(value,"que");
+                        console.log($rootScope.links,"link");
+                        var value2 = $rootScope.links;
+                        if($rootScope.autolink != "" )
+                        {
+                            var linkdata="";
+                            var prev_res = false;
+                            console.log("First link");
+                            final_link = $rootScope.autolink.split("<br>");
+                            var languageid = $.jStorage.get("language");
+                            $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                            apiService.translatelink($scope.formData).then( function (response) {
+                                value2.queslink=response.data.data.linkdata;
+                                value2.queslink = $sce.trustAsHtml(value2.queslink);
+                                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                                $timeout(function(){
+                                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                    $rootScope.showMsgLoader=false;
+                                    $rootScope.scrollChatWindow();
+                                },2000);
+                            });
+                        }
+                        
+                        else
+                        {    
+                            console.log("2nd link",$rootScope.answers);
+                            var linkdata="";
+                            var prev_res = false;
+                            if(autolink != "")
+                            {
+                                final_link = autolink.split("<br>");
+                                var languageid = $.jStorage.get("language");
+                                $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                                apiService.translatelink($scope.formData).then( function (response) {
+                                    value2.queslink=response.data.data.linkdata;
+                                    value2.queslink = $sce.trustAsHtml(value2.queslink);
+                                    msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                                    $timeout(function(){
+                                        $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                        $rootScope.showMsgLoader=false;
+                                        $rootScope.scrollChatWindow();
+                                    },2000);
+                                });
+                                
+                            }
+                            else
+                            {    
+                                value2.queslink = answer;
+                                value2.queslink = $sce.trustAsHtml(value2.queslink);
+                            
+                                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                                $timeout(function(){
+                                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                    $rootScope.showMsgLoader=false;
+                                    $rootScope.scrollChatWindow();
+                                },2000);
+                            }
+                        
+                            // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                            // $timeout(function(){
+                            //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                            //     $rootScope.showMsgLoader=false;
+                            //     $rootScope.scrollChatWindow();
+                            // },2000);
+                        }
+                    });
+                    
                 }
             }
             
@@ -1156,15 +1211,16 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 {
                     if($(".chatinput").val() != "")
                     {
-                        
+                        console.log("No select only Enter");    
                         $rootScope.pushMsg("",$(".chatinput").val());
                         $(".chatinput").val("");
                         $rootScope.chatText="";
                     }
                 }
                 else {
-                    $rootScope.pushMsg("",$(".chatinput").val());
-                    
+                    //$rootScope.pushMsg("",$(".chatinput").val());
+                    $rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.autolistvalue,$rootScope.answers,$rootScope.autocategory,$rootScope.autolink)
+                    console.log("Select Enter");
                     //$rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.chatText,$rootScope.answers);
                 }
                 $rootScope.autocompletelist = [];
