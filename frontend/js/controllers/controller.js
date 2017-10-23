@@ -1142,7 +1142,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     //$rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
                 }
-            },10000);
+            },7000);
         };
         
         
