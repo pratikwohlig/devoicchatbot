@@ -1139,7 +1139,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $timeout(function(){
                 if(!$scope.timerflag)
                 {
-                    msg = {Text:"Give me few seconds",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Hold on, I'll have an answer shortly",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     //$rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
