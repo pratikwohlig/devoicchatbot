@@ -403,8 +403,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.selectedCategory = $rootScope.categorylist[v_index];
                 $rootScope.getCategoryQuestions(v_obj);
             }
+            
             $(".faqans").slideUp("slow");
-            $(e).parent().parent().parent().find('.faqans').slideDown();
+            if($(e).parent().parent().parent().find('.faqans').is(":visible") == false)
+                $(e).parent().parent().parent().find('.faqans').slideDown();
             //$rootScope.scrollChatWindow();
         };
         $rootScope.pushSystemMsg = function(id,value) {
