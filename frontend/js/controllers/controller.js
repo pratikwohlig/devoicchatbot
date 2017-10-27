@@ -39,7 +39,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // scope.logout();
             if($.jStorage.get("timer")==25)
             {
-                msg = {Text:"Hello! It looks like you’ve been inactive for a while. Can we help you find anything?",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Hello! it looks like you've been inactive, type  help if you need anything ",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 // end their session and redirect to login
                 Idle.setIdle(10);
@@ -1139,7 +1139,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $timeout(function(){
                 if(!$scope.timerflag)
                 {
-                    msg = {Text:"Hold on, I'll have an answer shortly",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Give me few seconds",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     //$rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
