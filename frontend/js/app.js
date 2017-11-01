@@ -16,7 +16,7 @@ var myApp = angular.module('myApp', [
 ])
 
 
-
+var isproduction = false;
 // Define all the routes below
 myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider,IdleProvider,KeepaliveProvider) {
     var tempateURL = "views/template/template.html"; //Default Template URL
