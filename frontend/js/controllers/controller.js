@@ -5,8 +5,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
         angular.element(document).ready(function () {
-            
-            apiService.get_session({}).then( function (response) {
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
                 $.jStorage.set("csrftoken",response.data.csrf_token);
@@ -941,7 +950,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     });
         // };
         $rootScope.getProcessTree = function(process) {
-            formData = { user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                
             $rootScope.showMsgLoader = true;
             apiService.outquery(formData).then(function (data){
@@ -1013,6 +1032,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData.user_id=$cookies.get("session_id");
             //console.log(formData);
             $rootScope.showMsgLoader = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            formData.customer_id = customer_id;
+            formData.customer_name = customer_name;
             apiService.getDthlinkRes(formData).then(function (data){
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="DTHyperlink")
@@ -1062,8 +1093,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         $rootScope.getSystemMsg = function(id,value){
             //console.log("id",id);
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                $scope.formData = { user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                 //var mysessiondata = $.jStorage.get("sessiondata");
                 //mysessiondata = mysessiondata.toObject();
                 //mysessiondata.data = {id:parseInt(id),Text:value};
@@ -1139,7 +1180,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $timeout(function(){
                 if(!$scope.timerflag)
                 {
-                    msg = {Text:"Give me few seconds",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     //$rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
