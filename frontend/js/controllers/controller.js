@@ -1008,7 +1008,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }).catch(function (reason) {
                 //console.log(reason);
                 msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
-                $rootScope.pushSystemMsg(0,msg); 
+                $rootScope.pushSystemMsg(0,msg);
+                $scope.timerflag = true; 
                 $rootScope.showMsgLoader=false;
             });
         };
@@ -1175,6 +1176,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
+                    $scope.timerflag = true;
                 });
             //});
             $timeout(function(){

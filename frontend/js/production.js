@@ -38864,8 +38864,8 @@ $provide.value("$locale", {
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 /**
- * @license AngularJS v1.6.6
- * (c) 2010-2017 Google, Inc. http://angularjs.org
+ * @license AngularJS v1.6.0
+ * (c) 2010-2016 Google, Inc. http://angularjs.org
  * License: MIT
  */
 (function(window, angular) {'use strict';
@@ -38888,7 +38888,6 @@ var forEach;
 var isDefined;
 var lowercase;
 var noop;
-var nodeContains;
 var htmlParser;
 var htmlSanitizeWriter;
 
@@ -39089,11 +39088,6 @@ function $SanitizeProvider() {
   htmlParser = htmlParserImpl;
   htmlSanitizeWriter = htmlSanitizeWriterImpl;
 
-  nodeContains = window.Node.prototype.contains || /** @this */ function(arg) {
-    // eslint-disable-next-line no-bitwise
-    return !!(this.compareDocumentPosition(arg) & 16);
-  };
-
   // Regular Expressions for parsing tags and attributes
   var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
     // Match everything outside of normal chars and " (quote character)
@@ -39183,78 +39177,27 @@ function $SanitizeProvider() {
     return obj;
   }
 
-  /**
-   * Create an inert document that contains the dirty HTML that needs sanitizing
-   * Depending upon browser support we use one of three strategies for doing this.
-   * Support: Safari 10.x -> XHR strategy
-   * Support: Firefox -> DomParser strategy
-   */
-  var getInertBodyElement /* function(html: string): HTMLBodyElement */ = (function(window, document) {
-    var inertDocument;
-    if (document && document.implementation) {
-      inertDocument = document.implementation.createHTMLDocument('inert');
+  var inertBodyElement;
+  (function(window) {
+    var doc;
+    if (window.document && window.document.implementation) {
+      doc = window.document.implementation.createHTMLDocument('inert');
     } else {
       throw $sanitizeMinErr('noinert', 'Can\'t create an inert html document');
     }
-    var inertBodyElement = (inertDocument.documentElement || inertDocument.getDocumentElement()).querySelector('body');
+    var docElement = doc.documentElement || doc.getDocumentElement();
+    var bodyElements = docElement.getElementsByTagName('body');
 
-    // Check for the Safari 10.1 bug - which allows JS to run inside the SVG G element
-    inertBodyElement.innerHTML = '<svg><g onload="this.parentNode.remove()"></g></svg>';
-    if (!inertBodyElement.querySelector('svg')) {
-      return getInertBodyElement_XHR;
+    // usually there should be only one body element in the document, but IE doesn't have any, so we need to create one
+    if (bodyElements.length === 1) {
+      inertBodyElement = bodyElements[0];
     } else {
-      // Check for the Firefox bug - which prevents the inner img JS from being sanitized
-      inertBodyElement.innerHTML = '<svg><p><style><img src="</style><img src=x onerror=alert(1)//">';
-      if (inertBodyElement.querySelector('svg img')) {
-        return getInertBodyElement_DOMParser;
-      } else {
-        return getInertBodyElement_InertDocument;
-      }
+      var html = doc.createElement('html');
+      inertBodyElement = doc.createElement('body');
+      html.appendChild(inertBodyElement);
+      doc.appendChild(html);
     }
-
-    function getInertBodyElement_XHR(html) {
-      // We add this dummy element to ensure that the rest of the content is parsed as expected
-      // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
-      html = '<remove></remove>' + html;
-      try {
-        html = encodeURI(html);
-      } catch (e) {
-        return undefined;
-      }
-      var xhr = new window.XMLHttpRequest();
-      xhr.responseType = 'document';
-      xhr.open('GET', 'data:text/html;charset=utf-8,' + html, false);
-      xhr.send(null);
-      var body = xhr.response.body;
-      body.firstChild.remove();
-      return body;
-    }
-
-    function getInertBodyElement_DOMParser(html) {
-      // We add this dummy element to ensure that the rest of the content is parsed as expected
-      // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
-      html = '<remove></remove>' + html;
-      try {
-        var body = new window.DOMParser().parseFromString(html, 'text/html').body;
-        body.firstChild.remove();
-        return body;
-      } catch (e) {
-        return undefined;
-      }
-    }
-
-    function getInertBodyElement_InertDocument(html) {
-      inertBodyElement.innerHTML = html;
-
-      // Support: IE 9-11 only
-      // strip custom-namespaced attributes on IE<=11
-      if (document.documentMode) {
-        stripCustomNsAttrs(inertBodyElement);
-      }
-
-      return inertBodyElement;
-    }
-  })(window, window.document);
+  })(window);
 
   /**
    * @example
@@ -39274,9 +39217,7 @@ function $SanitizeProvider() {
     } else if (typeof html !== 'string') {
       html = '' + html;
     }
-
-    var inertBodyElement = getInertBodyElement(html);
-    if (!inertBodyElement) return '';
+    inertBodyElement.innerHTML = html;
 
     //mXSS protection
     var mXSSAttempts = 5;
@@ -39286,9 +39227,12 @@ function $SanitizeProvider() {
       }
       mXSSAttempts--;
 
-      // trigger mXSS if it is going to happen by reading and writing the innerHTML
-      html = inertBodyElement.innerHTML;
-      inertBodyElement = getInertBodyElement(html);
+      // strip custom-namespaced attributes on IE<=11
+      if (window.document.documentMode) {
+        stripCustomNsAttrs(inertBodyElement);
+      }
+      html = inertBodyElement.innerHTML; //trigger mXSS
+      inertBodyElement.innerHTML = html;
     } while (html !== inertBodyElement.innerHTML);
 
     var node = inertBodyElement.firstChild;
@@ -39307,12 +39251,12 @@ function $SanitizeProvider() {
         if (node.nodeType === 1) {
           handler.end(node.nodeName.toLowerCase());
         }
-        nextNode = getNonDescendant('nextSibling', node);
+        nextNode = node.nextSibling;
         if (!nextNode) {
           while (nextNode == null) {
-            node = getNonDescendant('parentNode', node);
+            node = node.parentNode;
             if (node === inertBodyElement) break;
-            nextNode = getNonDescendant('nextSibling', node);
+            nextNode = node.nextSibling;
             if (node.nodeType === 1) {
               handler.end(node.nodeName.toLowerCase());
             }
@@ -39444,17 +39388,8 @@ function $SanitizeProvider() {
         stripCustomNsAttrs(nextNode);
       }
 
-      node = getNonDescendant('nextSibling', node);
+      node = node.nextSibling;
     }
-  }
-
-  function getNonDescendant(propName, node) {
-    // An element is clobbered if its `propName` property points to one of its descendants
-    var nextNode = node[propName];
-    if (nextNode && nodeContains.call(node, nextNode)) {
-      throw $sanitizeMinErr('elclob', 'Failed to sanitize html because the element is clobbered: {0}', node.outerHTML || node.outerText);
-    }
-    return nextNode;
   }
 }
 
@@ -39467,9 +39402,7 @@ function sanitizeText(chars) {
 
 
 // define ngSanitize module and register $sanitize service
-angular.module('ngSanitize', [])
-  .provider('$sanitize', $SanitizeProvider)
-  .info({ angularVersion: '1.6.6' });
+angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
 
 /**
  * @ngdoc filter
@@ -67737,6 +67670,540 @@ f+" > 4096 bytes)!");k.cookie=e}}c.module("ngCookies",["ng"]).provider("$cookies
     _init();
 
 })();
+/*** Directives and services for responding to idle users in AngularJS
+* @author Mike Grabski <me@mikegrabski.com>
+* @version v1.3.2
+* @link https://github.com/HackedByChinese/ng-idle.git
+* @license MIT
+*/
+(function(window, angular, undefined) {
+'use strict';
+angular.module('ngIdle', ['ngIdle.keepalive', 'ngIdle.idle', 'ngIdle.countdown', 'ngIdle.title', 'ngIdle.localStorage']);
+angular.module('ngIdle.keepalive', [])
+  .provider('Keepalive', function() {
+    var options = {
+      http: null,
+      interval: 10 * 60
+    };
+
+    this.http = function(value) {
+      if (!value) throw new Error('Argument must be a string containing a URL, or an object containing the HTTP request configuration.');
+      if (angular.isString(value)) {
+        value = {
+          url: value,
+          method: 'GET'
+        };
+      }
+
+      value.cache = false;
+
+      options.http = value;
+    };
+
+    var setInterval = this.interval = function(seconds) {
+      seconds = parseInt(seconds);
+
+      if (isNaN(seconds) || seconds <= 0) throw new Error('Interval must be expressed in seconds and be greater than 0.');
+      options.interval = seconds;
+    };
+
+    this.$get = ['$rootScope', '$log', '$interval', '$http',
+      function($rootScope, $log, $interval, $http) {
+
+        var state = {
+          ping: null
+        };
+
+        function handleResponse(response) {
+          $rootScope.$broadcast('KeepaliveResponse', response.data, response.status);
+        }
+
+        function ping() {
+          $rootScope.$broadcast('Keepalive');
+
+          if (angular.isObject(options.http)) {
+            $http(options.http)
+              .then(handleResponse)
+              .catch(handleResponse);
+          }
+        }
+
+        return {
+          _options: function() {
+            return options;
+          },
+          setInterval: setInterval,
+          start: function() {
+            $interval.cancel(state.ping);
+
+            state.ping = $interval(ping, options.interval * 1000);
+            return state.ping;
+          },
+          stop: function() {
+            $interval.cancel(state.ping);
+          },
+          ping: function() {
+            ping();
+          }
+        };
+      }
+    ];
+  });
+
+angular.module('ngIdle.idle', ['ngIdle.keepalive', 'ngIdle.localStorage'])
+  .provider('Idle', function() {
+    var options = {
+      idle: 20 * 60, // in seconds (default is 20min)
+      timeout: 30, // in seconds (default is 30sec)
+      autoResume: 'idle', // lets events automatically resume (unsets idle state/resets warning)
+      interrupt: 'mousemove keydown DOMMouseScroll mousewheel mousedown touchstart touchmove scroll',
+      windowInterrupt: null,
+      keepalive: true
+    };
+
+    /**
+     *  Sets the number of seconds a user can be idle before they are considered timed out.
+     *  @param {Number|Boolean} seconds A positive number representing seconds OR 0 or false to disable this feature.
+     */
+    var setTimeout = this.timeout = function(seconds) {
+      if (seconds === false) options.timeout = 0;
+      else if (angular.isNumber(seconds) && seconds >= 0) options.timeout = seconds;
+      else throw new Error('Timeout must be zero or false to disable the feature, or a positive integer (in seconds) to enable it.');
+    };
+
+    this.interrupt = function(events) {
+      options.interrupt = events;
+    };
+
+    this.windowInterrupt = function(events) {
+      options.windowInterrupt = events;
+    };
+
+    var setIdle = this.idle = function(seconds) {
+      if (seconds <= 0) throw new Error('Idle must be a value in seconds, greater than 0.');
+
+      options.idle = seconds;
+    };
+
+    this.autoResume = function(value) {
+      if (value === true) options.autoResume = 'idle';
+      else if (value === false) options.autoResume = 'off';
+      else options.autoResume = value;
+    };
+
+    this.keepalive = function(enabled) {
+      options.keepalive = enabled === true;
+    };
+
+    this.$get = ['$interval', '$log', '$rootScope', '$document', 'Keepalive', 'IdleLocalStorage', '$window',
+      function($interval, $log, $rootScope, $document, Keepalive, LocalStorage, $window) {
+        var state = {
+          idle: null,
+          timeout: null,
+          idling: false,
+          running: false,
+          countdown: null
+        };
+
+        var id = new Date().getTime();
+
+        function startKeepalive() {
+          if (!options.keepalive) return;
+
+          if (state.running) Keepalive.ping();
+
+          Keepalive.start();
+        }
+
+        function stopKeepalive() {
+          if (!options.keepalive) return;
+
+          Keepalive.stop();
+        }
+
+        function toggleState() {
+          state.idling = !state.idling;
+          var name = state.idling ? 'IdleStart' : 'IdleEnd';
+
+          if (state.idling) {
+            $rootScope.$broadcast(name);
+            stopKeepalive();
+            if (options.timeout) {
+              state.countdown = options.timeout;
+              countdown();
+              state.timeout = $interval(countdown, 1000, options.timeout, false);
+            }
+          } else {
+            startKeepalive();
+            $rootScope.$broadcast(name);
+          }
+
+          $interval.cancel(state.idle);
+        }
+
+        function countdown() {
+
+          // check not called when no longer idling
+          // possible with multiple tabs
+          if(!state.idling){
+            return;
+          }
+
+          // countdown has expired, so signal timeout
+          if (state.countdown <= 0) {
+            timeout();
+            return;
+          }
+
+          // countdown hasn't reached zero, so warn and decrement
+          $rootScope.$broadcast('IdleWarn', state.countdown);
+          state.countdown--;
+        }
+
+        function interrupted(anotherTab) {
+          $rootScope.$broadcast('IdleInterrupt', anotherTab);
+        }
+
+        function timeout() {
+          stopKeepalive();
+          $interval.cancel(state.idle);
+          $interval.cancel(state.timeout);
+
+          state.idling = true;
+          state.running = false;
+          state.countdown = 0;
+
+          $rootScope.$broadcast('IdleTimeout');
+        }
+
+        function changeOption(self, fn, value) {
+          var reset = self.running();
+
+          self.unwatch();
+          fn(value);
+          if (reset) self.watch();
+        }
+
+        function getExpiry() {
+          var obj = LocalStorage.get('expiry');
+
+          return obj && obj.time ? new Date(obj.time) : null;
+        }
+
+        function setExpiry(date) {
+          if (!date) LocalStorage.remove('expiry');
+          else LocalStorage.set('expiry', {id: id, time: date});
+        }
+
+        var svc = {
+          _options: function() {
+            return options;
+          },
+          _getNow: function() {
+            return new Date();
+          },
+          getIdle: function(){
+            return options.idle;
+          },
+          getTimeout: function(){
+            return options.timeout;
+          },
+          setIdle: function(seconds) {
+            changeOption(this, setIdle, seconds);
+          },
+          setTimeout: function(seconds) {
+            changeOption(this, setTimeout, seconds);
+          },
+          isExpired: function() {
+            var expiry = getExpiry();
+            return expiry !== null && expiry <= this._getNow();
+          },
+          running: function() {
+            return state.running;
+          },
+          idling: function() {
+            return state.idling;
+          },
+          watch: function(noExpiryUpdate) {
+            $interval.cancel(state.idle);
+            $interval.cancel(state.timeout);
+
+            // calculate the absolute expiry date, as added insurance against a browser sleeping or paused in the background
+            var timeout = !options.timeout ? 0 : options.timeout;
+            if (!noExpiryUpdate) setExpiry(new Date(new Date().getTime() + ((options.idle + timeout) * 1000)));
+
+
+            if (state.idling) toggleState(); // clears the idle state if currently idling
+            else if (!state.running) startKeepalive(); // if about to run, start keep alive
+
+            state.running = true;
+
+            state.idle = $interval(toggleState, options.idle * 1000, 0, false);
+          },
+          unwatch: function() {
+            $interval.cancel(state.idle);
+            $interval.cancel(state.timeout);
+
+            state.idling = false;
+            state.running = false;
+            setExpiry(null);
+
+            stopKeepalive();
+          },
+          interrupt: function(anotherTab) {
+            if (!state.running) return;
+
+            if (options.timeout && this.isExpired()) {
+              timeout();
+              return;
+            } else {
+              interrupted(anotherTab);
+            }
+
+            // note: you can no longer auto resume once we exceed the expiry; you will reset state by calling watch() manually
+            if (anotherTab || options.autoResume === 'idle' || (options.autoResume === 'notIdle' && !state.idling)) this.watch(anotherTab);
+          }
+        };
+
+        var lastMove = {
+          clientX: null,
+          clientY: null,
+          swap: function(event) {
+            var last = {clientX: this.clientX, clientY: this.clientY};
+            this.clientX = event.clientX;
+            this.clientY = event.clientY;
+            return last;
+          },
+          hasMoved: function(event) {
+            var last = this.swap(event);
+            if (this.clientX === null || event.movementX || event.movementY) return true;
+            else if (last.clientX != event.clientX || last.clientY != event.clientY) return true;
+            else return false;
+          }
+        };
+
+        $document.find('html').on(options.interrupt, function(event) {
+          if (event.type === 'mousemove' && event.originalEvent && event.originalEvent.movementX === 0 && event.originalEvent.movementY === 0) {
+            return; // Fix for Chrome desktop notifications, triggering mousemove event.
+          }
+
+          if (event.type !== 'mousemove' || lastMove.hasMoved(event)) {
+            svc.interrupt();
+          }
+        });
+
+        if(options.windowInterrupt) {
+          var eventList = options.windowInterrupt.split(' ');
+          var fn = function() {
+            svc.interrupt();
+          };
+
+          for(var i=0; i<eventList.length; i++) {
+            if ($window.addEventListener) $window.addEventListener(eventList[i], fn, false);
+            else $window.attachEvent(eventList[i], fn)
+          }
+        }
+
+        var wrap = function(event) {
+          if (event.key === 'ngIdle.expiry' && event.newValue && event.newValue !== event.oldValue) {
+            var val = angular.fromJson(event.newValue);
+            if (val.id === id) return;
+            svc.interrupt(true);
+          }
+        };
+
+        if ($window.addEventListener) $window.addEventListener('storage', wrap, false);
+        else if ($window.attachEvent) $window.attachEvent('onstorage', wrap);
+
+        return svc;
+      }
+    ];
+  });
+
+angular.module('ngIdle.countdown', ['ngIdle.idle'])
+  .directive('idleCountdown', ['Idle', function(Idle) {
+    return {
+      restrict: 'A',
+      scope: {
+        value: '=idleCountdown'
+      },
+      link: function($scope) {
+        // Initialize the scope's value to the configured timeout.
+        $scope.value = Idle.getTimeout();
+
+        $scope.$on('IdleWarn', function(e, countdown) {
+          $scope.$evalAsync(function() {
+            $scope.value = countdown;
+          });
+        });
+
+        $scope.$on('IdleTimeout', function() {
+          $scope.$evalAsync(function() {
+            $scope.value = 0;
+          });
+        });
+      }
+    };
+  }]);
+
+angular.module('ngIdle.title', [])
+  .provider('Title', function() {
+    var options = {
+      enabled: true
+    };
+
+    var setEnabled = this.enabled = function(enabled) {
+      options.enabled = enabled === true;
+    };
+
+    function padLeft(nr, n, str){
+      return new Array(n-String(nr).length+1).join(str||'0')+nr;
+    }
+
+    this.$get = ['$document', '$interpolate', function($document, $interpolate) {
+      var state = {
+        original: null,
+        idle: '{{minutes}}:{{seconds}} until your session times out!',
+        timedout: 'Your session has expired.'
+      };
+
+      return {
+        setEnabled: setEnabled,
+        isEnabled: function() {
+          return options.enabled;
+        },
+        original: function(val) {
+          if (angular.isUndefined(val)) return state.original;
+
+          state.original = val;
+        },
+        store: function(overwrite) {
+          if (overwrite || !state.original) state.original = this.value();
+        },
+        value: function(val) {
+          if (angular.isUndefined(val)) return $document[0].title;
+
+          $document[0].title = val;
+        },
+        idleMessage: function(val) {
+          if (angular.isUndefined(val)) return state.idle;
+
+          state.idle = val;
+        },
+        timedOutMessage: function(val) {
+          if (angular.isUndefined(val)) return state.timedout;
+
+          state.timedout = val;
+        },
+        setAsIdle: function(countdown) {
+          this.store();
+
+          var remaining = { totalSeconds: countdown };
+          remaining.minutes = Math.floor(countdown/60);
+          remaining.seconds = padLeft(countdown - remaining.minutes * 60, 2);
+
+          this.value($interpolate(this.idleMessage())(remaining));
+        },
+        setAsTimedOut: function() {
+          this.store();
+
+          this.value(this.timedOutMessage());
+        },
+        restore: function() {
+          if (this.original()) this.value(this.original());
+        }
+      };
+    }];
+  })
+  .directive('title', ['Title', function(Title) {
+      return {
+        restrict: 'E',
+        link: function($scope, $element, $attr) {
+          if (!Title.isEnabled() || $attr.idleDisabled) return;
+
+          Title.store(true);
+
+          $scope.$on('IdleStart', function() {
+            Title.original($element[0].innerText);
+          });
+
+          $scope.$on('IdleWarn', function(e, countdown) {
+            Title.setAsIdle(countdown);
+          });
+
+          $scope.$on('IdleEnd', function() {
+            Title.restore();
+          });
+
+          $scope.$on('IdleTimeout', function() {
+            Title.setAsTimedOut();
+          });
+        }
+      };
+  }]);
+
+angular.module('ngIdle.localStorage', [])
+  .service('IdleStorageAccessor', ['$window', function($window) {
+    return {
+      get: function() {
+        return $window.localStorage;
+      }
+    }
+  }])
+  .service('IdleLocalStorage', ['IdleStorageAccessor', function(IdleStorageAccessor) {
+    function AlternativeStorage() {
+      var storageMap = {};
+
+      this.setItem = function (key, value) {
+          storageMap[key] = value;
+      };
+
+      this.getItem = function (key) {
+          if(typeof storageMap[key] !== 'undefined' ) {
+              return storageMap[key];
+          }
+          return null;
+      };
+
+      this.removeItem = function (key) {
+          storageMap[key] = undefined;
+      };
+    }
+
+    function getStorage() {
+       try {
+          var s = IdleStorageAccessor.get();
+          s.setItem('ngIdleStorage', '');
+          s.removeItem('ngIdleStorage');
+
+          return s;
+       } catch(err) {
+          return new AlternativeStorage();
+       }
+    }
+
+    // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem
+    // throw QuotaExceededError. We're going to detect this and just silently drop any calls to setItem
+    // to avoid the entire page breaking, without having to do a check at each usage of Storage.
+    var storage = getStorage();
+
+    return {
+      set: function(key, value) {
+        storage.setItem('ngIdle.'+key, angular.toJson(value));
+      },
+      get: function(key) {
+        return angular.fromJson(storage.getItem('ngIdle.'+key));
+      },
+      remove: function(key) {
+        storage.removeItem('ngIdle.'+key);
+      },
+      _wrapped: function() {
+        return storage;
+      }
+    };
+}]);
+
+})(window, window.angular);
 // Link all the JS Docs here
 var myApp = angular.module('myApp', [
     'ui.router',
@@ -67750,22 +68217,36 @@ var myApp = angular.module('myApp', [
     'ui.swiper',
     'angularPromiseButtons',
     'toastr',
+    'ngIdle',
     'ngCookies'
 ])
 
 
-
+var isproduction = false;
 // Define all the routes below
-myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
+myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider,IdleProvider,KeepaliveProvider) {
     var tempateURL = "views/template/template.html"; //Default Template URL
+    IdleProvider.idle(1); // 1sec idle
+    IdleProvider.timeout(25); // in seconds
+    KeepaliveProvider.interval(180);
+    $.jStorage.set("timer",25);
     //$httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    //$httpProvider.defaults.headers.common = "Auth";
+    //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     //$httpProvider.defaults.headers.post['X-CSRFToken'] = $.jStorage.get("csrftoken")
     //$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
-    
-  //  $httpProvider.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
+
+    //  $httpProvider.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
+    // $sceDelegateProvider.resourceUrlWhitelist([
+    // // Allow same origin resource loads.
+    //     'self',
+    //     // Allow loading from our assets domain. **.
+    //     'http://plnkr.co/edit/COnvjvoaYV643oQ46p9B?p=preview'
+    // ]);
+    // $sceDelegateProvider.resourceUrlBlacklist([
+    // '']);
     // for http request with session
     $stateProvider
         .state('home', {
@@ -67786,13 +68267,28 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
-myApp.run(['$http', '$cookies', function($http, $cookies) {
-	   
-	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-	//$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
-	$http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
-	// $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
 
+    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
+    $http.defaults.headers.put['X-CSRFToken'] = $cookies.csrftoken;
+    // $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    //$http.defaults.headers.common = "Auth";
+    
+    $(document).on('click', '.q_btn', function(){ 
+        //$(this).css('box-shadow','inset 0 3px 5px rgba(0, 0, 0, 0.125)');
+    });
+    $(document).on('click', '.chat-body .changedthbg', function(){ 
+        var stage = $(this).attr("data-bgstage");
+        console.log(stage);
+        $(".stage"+stage).css('background-color','#fff');
+        $(".stage"+stage).css('color','#ED6D05');
+        
+        $(this).css('background-color', '#ED6D05');
+        $(this).css('color', '#fff');
+    });  
+    Idle.watch();
+    
 }]);
 
 // For Language JS
@@ -67800,6 +68296,7 @@ myApp.config(function ($translateProvider) {
     $translateProvider.translations('en', LanguageEnglish);
     $translateProvider.translations('hi', LanguageHindi);
     $translateProvider.preferredLanguage('en');
+    $translateProvider.useSanitizeValueStrategy('escape');
 });
 var LanguageEnglish = {
   "ABOUT": "About",
@@ -67913,7 +68410,226 @@ myApp.directive('img', function ($compile, $parse) {
         };
     })
 
+    .directive('compTranslate', function ($compile, apiService,$sce) {
+        return {
+            restrict: 'A',
+            scope: true,
+            priority: 0,
+            compile: function (element, attrs) {
+                var originalText = element.text();
+                //var originalTooltip = attrs['tooltip'];
+                //console.log(originalText);
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.originalText = originalText;
+                        //scope.originalTooltip = originalTooltip;
+                    
+                        
+                        var translationChangeOccurred = function () {
+                            attrs.$observe('compTranslate', function(value) {
+                                var languageid = $.jStorage.get("language");
+                                var formData = { "text": value,"language":languageid };
+                                //console.log(element);
+                                //element.text(value);
+                                //element.html(apiService.translate(formdata));
+                                if(languageid == "en")
+                                {
+                                    
+                                    hcont=$.parseHTML(value);
+                                    element.html(hcont);
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //console.log(response.data.data);
+                                        element.html(response.data.data);
+                                    });
+                                }
+                                    // if (scope.originalTooltip) {
+                                //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
+                                // }
+                                $compile(element.contents())(scope);
+                                
+                            });
+                        };
+                        //translation changes by default while linking!
+                        translationChangeOccurred();
+            
+                        scope.$on('$translationLanguageChanged', translationChangeOccurred);
+                    },
+                    post: function () {
+                    }
+                };
+            }
+        };
+    })
+    .directive('filterTranslate', function ($compile, apiService,$sce) {
+        return {
+            restrict: 'A',
+            scope: true,
+            priority: 0,
+            compile: function (element, attrs) {
+                var originalText = element.text();
+                //var originalTooltip = attrs['tooltip'];
+                //console.log(originalText);
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.originalText = originalText;
+                        //scope.originalTooltip = originalTooltip;
+                    
+                        var translationChangeOccurred = function () {
+                            attrs.$observe('filterTranslate', function(value) {
+                                var languageid = $.jStorage.get("language");
+                                
+                                var formData = { "text": value,"language":languageid };
+                                //console.log(element);
+                                //element.text(value);
+                                //element.html(apiService.translate(formdata));
+                                
+                                //console.log(value);
+                                if(languageid == "en")
+                                {
+                                    value = value.replace(new RegExp('('+$(".chatinput").val()+')', 'gi'),
+                                    '<span class="highlighted">$&</span>');
+                                    hcont=$.parseHTML(value);
+                                    element.html(hcont);
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //console.log(response.data.data);
+                                        texttoreplace = response.data.data;
+                                        texttoreplace=texttoreplace.replace('<span class = \"highlighted\">', '<span class = "highlighted">'); 
+                                        texttoreplace=texttoreplace.replace('</ span>', '</span>'); 
+                                        element.html(texttoreplace);
+                                    });
+                                }
+                                    // if (scope.originalTooltip) {
+                                //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
+                                // }
+                                $compile(element.contents())(scope);
+                                
+                            });
+                        };
+                        //translation changes by default while linking!
+                        translationChangeOccurred();
+            
+                        scope.$on('$translationLanguageChanged', translationChangeOccurred);
+                    },
+                    post: function () {
+                    }
+                };
+            }
+        };
+    })
+    .directive('compTranslater', function ($compile, apiService,$sce) {
+        return {
+            restrict: 'EA',
+            scope: true,
+            priority: 0,
+            compile: function (element, attrs) {
+                var originalText = element.text();
+                //var originalTooltip = attrs['tooltip'];
+                //console.log(originalText);
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.originalText = originalText;
+                        //scope.originalTooltip = originalTooltip;
+                    
+                        var hcont = "";
+                        var translationChangeOccurred = function () {
+                            attrs.$observe('compTranslater', function(value) {
+                                var languageid = $.jStorage.get("language");
+                                contents = attrs.content;  
+                                contents=contents.replace('↵',' <br> ');  
+                                //contents=contents.replace(" ",' <br> '); 
+                                contents = contents.replace("\n","<br>");     
+                                contents = contents.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');     
+                                var formData = { "text": contents,"language":languageid };
+                                //element.text(value);
+                                //element.html(apiService.translate(formdata));
+                                if(languageid == "en")
+                                {
+                                    hcont=$.parseHTML(contents);
+                                    element.html(hcont);
+                                }
+                                else 
+                                {
+                                    apiService.translate(formData).then( function (response) {
+                                        // html =$sce.trustAsHtml(response.data.data);
+                                        // bindhtml = "<span ng-bind-html='"+html+"'>{{"+html+"}}<span>";
+                                        //hcont = $sce.trustAsHtml(response.data.data);
+                                        hcont=$.parseHTML(response.data.data);
+                                        
+                                        //hcont= $compile(hcont)(scope);
+                                        element.html(hcont);
+                                        
+                                    });
+                                // if (scope.originalTooltip) {
+                                //     attrs.$set('tooltip', translationService.translate(scope.originalTooltip));
+                                // }
+                                }
+                                $compile(element.contents())(scope);
+                                
+                            });
+                            // scope.$watch(
+                            //     function(scope) {
+                            //         return scope.$eval(attrs.compile);
+                            //         //$compile(element.contents())(scope);
+                            //     },
+                            //     function(value) {
+                            //         // when the 'compile' expression changes
+                            //         // assign it into the current DOM
+                            //         element.html(hcont);
 
+                            //         // compile the new DOM and link it to the current
+                            //         // scope.
+                            //         // NOTE: we only compile .childNodes so that
+                            //         // we don't get into infinite loop compiling ourselves
+                            //         $compile(element.contents())(scope);
+                            //     }                                    
+                            // );
+                        };
+                        //translation changes by default while linking!
+                        translationChangeOccurred();
+            
+                        scope.$on('$translationLanguageChanged', translationChangeOccurred);
+                    },
+                    post: function () {
+                    }
+                };
+            }
+        };
+    })
+
+    myApp.directive('animatefade', function($timeout) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                $timeout(function(){
+                    var fadeDuration = 2000;
+                    //var onEvent = attrs.fade || "mouseover";
+                    var targetElement = $(this);
+                    //setInterval(anim.bind(this),800);
+                    // targetElement.fadeOut(fadeDuration, function(){
+                        targetElement.fadeIn(fadeDuration);                   
+                    // });  
+                    // See how the directive alone controls the events, not the scope
+                    // element.on(onEvent, function() {
+                    //     var targetElement = $('#' + attrs.fadeTarget);
+                    //     targetElement.fadeOut(fadeDuration, function(){
+                    //         targetElement.fadeIn(fadeDuration);                   
+                    //     });                
+                    // });
+                },2000);
+                
+            }
+        };
+    })
 ;
 // JavaScript Document
 myApp.filter('myFilter', function () {
@@ -67953,7 +68669,20 @@ myApp.filter('newlines', function () {
       return text.replace(/\n/g, '<br/>');
   }
 });
+myApp.filter('langtranslate', function () {
+  return function(text) {
+      //return text.replace(/\n/g, '<br/>');
+      return (text);
+  }
+});
+myApp.filter('highlight', function($sce) {
+    return function(text, phrase) {
+        if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
+        '<span class="highlighted">$1</span>')
 
+        return $sce.trustAsHtml(text)
+    }
+});
 
 myApp.service('TemplateService', function () {
     this.title = "Home";
@@ -67970,14 +68699,13 @@ myApp.service('TemplateService', function () {
         this.chatcontent = "views/template/chat.html";
         this.footer = "views/template/footer.html";
     };
-
     this.getHTML = function (page) {
         this.init();
         var data = this;
         data.content = "views/" + page;
         return data;
     };
-
+    
     this.init();
 
 });
@@ -68011,10 +68739,14 @@ myApp.factory('NavigationService', function () {
         },
     };
 });
-myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) {
+myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
     adminurl2 = "http://cingulariti.com:8097/";
+    var adminurl3 = "http://localhost/api/";
+    var adminurl3 = "http://104.46.103.162:8094/api/";
+    var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
+    var serverurl = "http://adserver.i-on.in:9000/crm";
     return {
 
         // This is a demo Service for POST Method.
@@ -68026,37 +68758,370 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer) 
             }).success(callback);
         },
         // This is a demo Service for POST Method.
+        getautocomplete: function(formData, callback) {
+            
+            return $http({
+                url:adminurl3+ "Chatbotautocomplete/getautocomplete",
+                method: 'POST',
+                data: formData
+            })
+        },
+        login: function(formData, callback) {
+            
+            return $http({
+                url:loginurl,
+                method: 'POST',
+                data: formData
+            })
+        },
+        serverlogin: function(formData, callback) {
+            
+            return $http({
+                url:serverurl+"?customer="+formData.customer+"&pword="+formData.pword,
+                method: 'GET',
+                data: formData,
+                headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
+            })
+        },
         getCategoryFAQ: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",
-                headers: {'X-CSRFToken':formData.csrfmiddlewaretoken },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                //user_id: 2471,
                 data: $.param(formData),
-                //dataType:"json"
-                //withCredentials:false
+                dataType:"json"
             });
+        },
+        outquery: function (formData, callback) {
+            return $http({
+                url: adminurl2 + 'outquery/'+formData.user_id+"/",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                data: $.param(formData),
+                dataType:"json"
+            });
+        },
+        getDthlinkRes:function(formData,callback){
+            return    $http({
+                url:adminurl2+'outDTL/'+formData.user_id+"/",
+                //url: adminUrl3 + 'Chatbotautolist/getDthlink',
+                method: 'POST',
+                data:$.param(formData),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+            });
+            
+            
         },
         get_session: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'get_session/',
                 //headers: {'X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                //user_id: 2471,
                 data: $.param(formData),
                 dataType:"json"
-                //withCredentials:false
             });
         },
-
+        getCategoryQuestions: function (formData, callback) {
+            return $http({
+                url: adminurl3+'Categoryquestions/getCategoryQuestions',
+                method: 'POST',
+                data: (formData),
+            });
+        },
+        getCategoryDropdown: function (formData, callback) {
+            return $http({
+                url: adminurl3+'Category/getCategoryDropdown',
+                method: 'POST',
+                data: {},
+            });
+        },
+        translate: function (formData,callback) {
+            return $http({
+                url: adminurl3+'Translate/translate',
+                method: 'POST',
+                data: formData,
+            });
+        },
+        translatelink: function (formData,callback) {
+            return $http({
+                url: adminurl3+'Translate/translatelink',
+                method: 'POST',
+                data: formData,
+            });
+        },
     };
 });
-myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationService, $timeout,$rootScope,apiService,$cookies) {
+myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationService, $timeout,$rootScope,apiService,$cookies,$stateParams) {
         $scope.template = TemplateService.getHTML("content/home.html");
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
+        //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
+        angular.element(document).ready(function () {
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
+                $cookies.put("csrftoken",response.data.csrf_token);
+                $cookies.put("session_id",response.data.session_id);
+                $.jStorage.set("csrftoken",response.data.csrf_token);
+                //console.log(response.data);
+            });
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position){
+                    $scope.$apply(function(){
+                        $scope.position = position;
+                        console.log(position);
+                    });
+                });
+            }
+        });
+        
 
+        
+
+    })
+
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle) {
+       //angular.element(document).ready(function () {
+            $scope.$on('IdleStart', function() {
+                // the user appears to have gone idle
+                console.log("Idle started");
+            });
+       //});
+        $rootScope.$on('IdleTimeout', function() {
+            // var scope = angular.element(document.getElementById('changepwd')).scope();
+            // scope.logout();
+            if($.jStorage.get("timer")==25)
+            {
+                msg = {Text:"Hello! it looks like you've been inactive, type  help if you need anything ",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                Idle.setIdle(10);
+                Idle.watch();
+                $.jStorage.set("timer",35);
+            }
+            else if($.jStorage.get("timer")==35)
+            {
+                msg = {Text:"It’s been a while since your last response. Please respond within the next few minutes or this chat will be ended.",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                Idle.setIdle(95);
+                Idle.watch();
+                $.jStorage.set("timer",95);
+            }
+            else if($.jStorage.get("timer")==95)
+            {
+                msg = {Text:"It appears that you’ve been inactive for a few minutes now. Please feel free to use our live chat service if you have any questions.",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                // end their session and redirect to login
+                // Idle.setIdle(10);
+                // $.jStorage.set("timer",35);
+            }
+        });
+        var username=$location.search().username; 
+        var password=$location.search().password;
+        $scope.timerflag=true;
+        if(username && password)
+        {   
+            if($.jStorage.get("username") && $.jStorage.get("username")==username)
+            {
+                
+            }
+            else
+            {
+
+            
+                console.log(username);
+                console.log(password);
+                console.log("Exist");
+                var formData = {customer:username,pword:password};
+                angular.element(document).ready(function () {
+                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        async: true,
+                        cache: false,
+                        timeout: 3000,
+                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                        type: "GET",
+                        success: function (data) {
+                            console.log(data,"crm");
+                            $.jStorage.set("customerDetails",data.customerDetails);
+                            $.jStorage.set("guidance",data.guidance);
+                            $.jStorage.set("username",username);
+                            location.reload();
+                        },
+                    });
+                });
+            }
+            // apiService.serverlogin(formData).then(function (callback){
+
+            // });
+        }
+        else
+        {
+            console.log("Doesnot");
+            $.jStorage.set("customerDetails",{});
+            $.jStorage.set("guidance",{});
+            $.jStorage.set("username","");
+        }
+        $rootScope.trustedHtml = function (plainText) {
+            return $sce.trustAsHtml(plainText);
+        };
+        var url = $location.absUrl().split('?')[0];
+        // console.log(url);
+        // console.log(window.parent.location);
+         var pId = $location.path().split("/")[3]||"Unknown";    //path will be /person/show/321/, and array looks like: ["","person","show","321",""]
+        //console.log(document.baseURI);
+        $scope.getParentUrl =function() {
+            var isInIframe = (parent !== window),
+                parentUrl = null;
+
+            if (isInIframe) {
+                parentUrl = document.referrer;
+                console.log("in iframe");
+            }
+
+            return parentUrl;
+        };
+        
+        //console.log($scope.getParentUrl());// returns blank if cross domain | if same domain returns null
+        var url2 = (window.location != window.parent.location)? document.referrer: document.location.href;
+        //console.log(url2);// returns blank if cross domain | returns url
+        //console.log(document.referrer);// returns blank if cross domain | returns url
+        // if(!window.top.location.href)
+        //     console.log("Different domain");
+        // else    
+        //     console.log("same domain");
+        //console.log(Browser.getParentUrl());
+        $rootScope.validDomain = false;
+        var referrerurl = $scope.getParentUrl();
+        if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
+            $rootScope.validDomain = true;
+        $rootScope.validDomain = true;
+        $rootScope.languagelist = [
+            {id:"en" , name:"English"},
+            {id:"hi" , name:"Hindi"},
+            {id:"mr" , name:"Marathi"},
+            {id:"gu" , name:"Gujarati"},
+            {id:"ta" , name:"Tamil"},
+        ];
+        $rootScope.changeLanguage = function(lang) {
+            $rootScope.selectedLanguage = lang;
+            $.jStorage.set("language", $rootScope.selectedLanguage.id);
+        };
+        if(!$.jStorage.get("language"))
+        {
+            $rootScope.selectedLanguage = $rootScope.languagelist[0];
+            $.jStorage.set("language", $rootScope.selectedLanguage.id);
+        }
+        else 
+        {
+            
+            $rootScope.selectedLanguage = $.jStorage.get("language");
+            $("#language_list").val($rootScope.selectedLanguage).trigger('change');
+            
+            var v_obj = _.find($rootScope.languagelist, function(o) { return o.id == $rootScope.selectedLanguage; });
+            $rootScope.selectedLanguage=v_obj;
+            
+            var v_index = _.findIndex($rootScope.languagelist, function(o) { return o.id == $rootScope.selectedLanguage.id; });
+            var langname = v_obj.name;
+            $("#language_list option:contains(" + langname + ")").prop('selected', true);
+            //$('#language_list').find('option:nth-child('+v_index+')').prop('selected', true);            
+        }
+        $scope.formSubmitted = false;
+        $scope.loginerror=0;
+        $rootScope.isLoggedin = false;
+        
+        if($.jStorage.get("isLoggedin"))
+            $rootScope.isLoggedin = true;
+
+        
+        $scope.login = function(username,password,language)
+        {
+
+            // $.jStorage.flush();
+            // if(username == "admin@exponentiadata.com" && password == "admin")
+            // {
+            //     $.jStorage.set("id", 1);
+            //     $.jStorage.set("name", "Admin");
+            //     $.jStorage.set("language", language.id);
+            //     $.jStorage.set("email", username);
+            //     $.jStorage.set("isLoggedin", true);
+            //     $rootScope.isLoggedin = true;
+            // }
+            // else 
+            // {
+            //     $scope.loginerror = -1;
+            // }
+            $scope.formData = {userid:username,password:password};
+            
+            apiService.login($scope.formData).then(function (callback){
+                //console.log(callback);
+                if(callback.data.data.status == "0")
+                {
+                    $.jStorage.flush();
+                    //if(username == "admin@exponentiadata.com" && password == "admin")
+                    {
+                        $.jStorage.set("id", 1);
+                        $.jStorage.set("name", "Admin");
+                        $.jStorage.set("language", language.id);
+                        $.jStorage.set("email", username);
+                        $.jStorage.set("isLoggedin", true);
+                        $rootScope.isLoggedin = true;
+                    }
+                    
+                }
+                else 
+                {
+                    $scope.loginerror = -1;
+                }
+            });
+            
+        };
+        $scope.logout = function()
+        {
+            $.jStorage.flush();
+            $rootScope.isLoggedin = false;
+            $rootScope.chatlist = [];
+            $.jStorage.set("showchat",false);
+            $rootScope.chatOpen = false;
+            $rootScope.links = [];
+            $rootScope.firstMsg = true;
+            // var cust = $.jStorage.get("customerDetails");
+            // console.log(cust.Name);
+            var msg = {Text:"Hi , How may I help you ?",type:"SYS_FIRST"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $rootScope.isLoggedin = true;
+        $rootScope.autocompletelist = [];
+        $rootScope.chatOpen = false;
+        $rootScope.showTimeoutmsg = false;
+        $rootScope.firstMsg=false;
+        $rootScope.chatmsg = "";
+        $rootScope.chatmsgid = "";
+        $rootScope.autocategory = "";
+        $rootScope.autolink = "";
+        $rootScope.msgSelected = false;
+        $rootScope.chatlist = [];
+        // var mylist = $.jStorage.get("chatlist");
+        // if(!mylist || mylist == null)
+        //     $rootScope.chatlist = [];
+        // else
+        //     $rootScope.chatlist = $.jStorage.get("chatlist");
+        $rootScope.autolistid="";
+        $rootScope.autolistvalue="";
+        $rootScope.showMsgLoader=false;
+        $rootScope.rate_count= 0;
         $rootScope.getCookie = function(c_name)
 		{
 			if (document.cookie.length > 0)
@@ -68072,52 +69137,64 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 			}
 			return "";
 		};
-        angular.element(document).ready(function () {
-            apiService.get_session({}).then( function (response) {
-                $cookies.put("csrftoken",response.data.csrf_token);
-                $cookies.put("session_id",response.data.session_id);
-                $.jStorage.set("csrftoken",response.data.csrf_token);
-                //console.log(response.data);
+        $rootScope.scrollChatWindow = function() {
+            $timeout(function(){
+                var chatHeight = $("ul.chat").height();
+                $('.panel-body').animate({scrollTop: chatHeight});
             });
+        };
+        $rootScope.iframeHeight = window.innerHeight-53;
+        $rootScope.categorylist = [];
+        apiService.getCategoryDropdown({}).then( function (response) {
+            $rootScope.categorylist = response.data.data;
+            $rootScope.selectedCategory = $rootScope.categorylist[0];
+            $("div#all_questions").css("background","none");
         });
-        $scope.mySlides = [
-            'http://flexslider.woothemes.com/images/kitchen_adventurer_cheesecake_brownie.jpg',
-            'http://flexslider.woothemes.com/images/kitchen_adventurer_lemon.jpg',
-            'http://flexslider.woothemes.com/images/kitchen_adventurer_donut.jpg',
-            'http://flexslider.woothemes.com/images/kitchen_adventurer_caramel.jpg'
-        ];
-        var abc = _.times(100, function (n) {
-            return n;
-        });
-        $rootScope.categorylist =  [
-            {id:"default",name:"Choose a Category"},
-            {id:"a1",name:"Account"},
-            {id:"b1",name:"Billing"},
-            {id:"br1",name:"Browser"},
-            {id:"r1",name:"Renewal"},
-            {id:"nc1",name:"New Connection"},
-        ];
+        //$rootScope.categorylist = $scope.categorydropdown.data;
+        // $rootScope.categorylist =  [
+        //     {id:"default",name:"Choose a Category"},
+        //     {id:"a1",name:"Account"},
+        //     {id:"b1",name:"Billing"},
+        //     {id:"br1",name:"Browser"},
+        //     {id:"r1",name:"Renewal"},
+        //     {id:"nc1",name:"New Connection"},
+        // ];
         $rootScope.links = [];
-        $rootScope.selectedCategory = $rootScope.categorylist[0];
+        
         $rootScope.pushLinkmsg = function(index,link) {
             //alert(link);
               
             $rootScope.pushQuestionMsg(index,link);
         };
         $rootScope.getCategoryFAQ = function(category) {
-            $scope.formData = { user_input:category.id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
             //console.log($scope.formData);
             apiService.getCategoryFAQ($scope.formData).then( function (response) {
                 $rootScope.links = response.data;
                 //console.log(response.data);
             });
         };
-        var i = 0;
-        $scope.buttonClick = function () {
-            i++;
-            console.log("This is a button Click");
+        
+        $rootScope.getCategoryQuestions = function(category) {
+            categoryid = category._id;
+            $rootScope.links = [];
+            $scope.formData = { category:categoryid };
+            //console.log(category.name);
+            apiService.getCategoryQuestions($scope.formData).then( function (response) {
+                $rootScope.links = response.data.data;
+                
+                $rootScope.links.type = "cat_faq";
+                if(category.name == "Choose a Category")
+                    $("div#all_questions").css("background","none");
+                else
+                    $("div#all_questions").css("background","#EF9C6D");
+                
+                $timeout(function(){
+                    var chatHeight = $(".all_questions").height();
+                    $('#faqs_dropdown').animate({scrollTop: chatHeight});
+                });
+            });
         };
-
         $timeout(function(){
             $(document).on('click', '.portalapp', function(){ 
                 var linktext=$(this).text();
@@ -68136,65 +69213,62 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             });
             
         });
-
-    })
-
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies) {
-        
-        $rootScope.autocompletelist = [];
-        $rootScope.chatOpen = false;
-        $rootScope.showTimeoutmsg = false;
-        $rootScope.firstMsg=false;
-        $rootScope.chatmsg = "";
-        $rootScope.chatmsgid = "";
-        
-        $rootScope.msgSelected = false;
-        $rootScope.chatlist = [];
-        // var mylist = $.jStorage.get("chatlist");
-        // if(!mylist || mylist == null)
-        //     $rootScope.chatlist = [];
-        // else
-        //     $rootScope.chatlist = $.jStorage.get("chatlist");
-        $rootScope.autolistid="";
-        $rootScope.autolistvalue="";
-        $rootScope.showMsgLoader=false;
-        $rootScope.rate_count= 0;
-        $rootScope.scrollChatWindow = function() {
-            $timeout(function(){
-                var chatHeight = $("ul.chat").height();
-                $('.panel-body').animate({scrollTop: chatHeight});
-            });
-        };
-        $rootScope.iframeHeight = window.innerHeight-53;
-        
         $rootScope.getDatetime = function() {
             //return (new Date).toLocaleFormat("%A, %B %e, %Y");
             return currentTime = new Date();
         };
         $rootScope.chatText = "";
+        $rootScope.answers = "";
         $rootScope.getAutocomplete = function(chatText) {
-            // $rootScope.showTimeoutmsg = false;
-            // if($rootScope.showTimeoutmsg == false && chatText=="") 
-            // {
-            //     $timeout(function () {
-            //         $rootScope.showTimeoutmsg = true;
-            //         msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
-            //         $rootScope.pushSystemMsg(0,msg);
-            //     },60000);
-            // }
-            // $rootScope.chatText = chatText;
-            // if(chatText == "" || chatText == " " || chatText == null)
-            //     $rootScope.autocompletelist = [];
-            // else {
-            //     $rootScope.chatdata = { string:$rootScope.chatText};
-            //     apiService.getautocomplete($rootScope.chatdata).then(function (response){
-            //            // console.log(response.data);
-            //         $rootScope.autocompletelist = response.data.data;
-            //     });
-            // }
+            if($rootScope.answers == '')
+            {
+                $rootScope.showTimeoutmsg = false;
+                // if($rootScope.showTimeoutmsg == false && chatText=="") 
+                // {
+                //     $timeout(function () {
+                //         $rootScope.showTimeoutmsg = true;
+                //         msg = {Text:"Any Confusion ? How May I help You ?",type:"SYS_INACTIVE"};
+                //         $rootScope.pushSystemMsg(0,msg);
+                //     },60000);
+                // }
+                $rootScope.chatText = chatText;
+                if($(".chatinput").val() == "" || $(".chatinput").val() == " " || $(".chatinput").val() == null)
+                    $rootScope.autocompletelist = [];
+                else {
+                    $rootScope.chatdata = { string:$rootScope.chatText};
+                    apiService.getautocomplete($rootScope.chatdata).then(function (response){
+                        // console.log(response.data);
+                        $rootScope.autocompletelist = response.data.data;
+                    });
+                }
+                var languageid = $.jStorage.get("language");
+                $scope.formData = {"text": chatText,"language":languageid };
+                apiService.translate($scope.formData).then( function (response) {
+                    //$(".chatinput").val(response.data.data);
+                    //console.log(response.data.data);
+                });
+            }
         };
         $rootScope.showFAQAns = function(e) {
-            $(e).parent().parent().parent().find('.faqans').slideDown();
+            var category = $(e).attr("data-category");
+            $("#faqs_category option:contains(" + category + ")").attr('selected', 'selected');
+            var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == category; });
+            var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == category; });
+            // console.log(v);
+            // console.log($rootScope.selectedCategory);
+            // //$("#faqs_category").val("Single2").trigger('change');
+            // console.log(category);
+            if($rootScope.selectedCategory == v_obj)
+            {}
+            else
+            {
+                $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                $rootScope.getCategoryQuestions(v_obj);
+            }
+            
+            $(".faqans").slideUp("slow");
+            if($(e).parent().parent().parent().find('.faqans').is(":visible") == false)
+                $(e).parent().parent().parent().find('.faqans').slideDown();
             //$rootScope.scrollChatWindow();
         };
         $rootScope.pushSystemMsg = function(id,value) {
@@ -68204,42 +69278,157 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
                 $rootScope.scrollChatWindow();
-            });
-            
+            },1500);
+            $timeout(function(){
+                $rootScope.autocompletelist = [];
+            },1000);
         };
+        if(!$rootScope.firstMsg)
+        {
+            $rootScope.firstMsg = true;
+            var cust = $.jStorage.get("customerDetails");
+            var cust_name = "";
+            if(cust.Name)
+                cust_name = cust.Name;
+            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
+            //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
+            $rootScope.pushSystemMsg(0,msg);  
+        }
         $scope.trustedHtml = function (plainText) {
             return $sce.trustAsHtml(plainText);
         };
+        //$scope.textviewbtn = "View More";
+        $(document).on('click', '.texttoggle', function(){ 
+            var e = $(this);
+            //$(this).parent().parent().find('.faqless').toggle();
+            //$(this).parent().parent().find(".faqless").children('.faqmore').toggle("fast").promise().done(function(){
+            //$(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast").promise().done(function(){
+                if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
+                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
+                    
+                    $(e).text("View More");
+                    console.log("Notvisible");
+                }
+                else {
+                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                    $(e).text("View Less");
+                    console.log("visible");
+                }
+            //});
+            //$timeout(function() {
+                
+                    
+            //},1000);
+            
+            
+        });
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             var value2 = $rootScope.links;
-            if(value2.tiledlist[0].link[id] != "")
+            if(value2[id].link != "" )
             {
                 var linkdata="";
-                final_link = value2.tiledlist[0].link[id].split("<br>");
-                _.each(final_link, function(value, key) {
-                    //console.log(key);
-                    var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
-                    linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
-                   //console.log(linkdata);
-                   
+                var prev_res = false;
+                
+                final_link = value2[id].link.split("<br>");
+                var languageid = $.jStorage.get("language");
+                $scope.formData = {"items": final_link,"language":languageid,arr_index:id };
+                apiService.translatelink($scope.formData).then( function (response) {
+                    value2.queslink=response.data.data.linkdata;
+                    value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                    $timeout(function(){
+                        $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                        $rootScope.showMsgLoader=false;
+                        $rootScope.scrollChatWindow();
+                    },2000);
                 });
-                value2.queslink=linkdata;
+                // _.each(final_link, function(value, key) {
+                //     var languageid = $.jStorage.get("language");
+                //     $scope.formData = {"text": value,"language":languageid };
+                //     // var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                //     // linkdata += "<p class='portalapp' "+dummy+">"+value+"</p>";
+                    
+                //     // value2.queslink = $sce.trustAsHtml(value2.queslink);
+                //     // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                //     // $timeout(function(){
+                //     //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                //     //     $rootScope.showMsgLoader=false;
+                //     //     $rootScope.scrollChatWindow();
+                //     // },2000);
+                //     console.log(key,"k");
+                //     if(key == 0)
+                //         prev_res = true;
+                //     else
+                //         prev_res = false;
+                //     console.log(prev_res);
+                //     if(prev_res)
+                //     {    
+                //         apiService.translate($scope.formData).then( function (response) {
+                //             //console.log(response);
+                //             prev_res = true;
+                //             if(response.xhrStatus == "complete")
+                //             {
+                //                 var dummy = "id='"+key+"' data-id='"+id+"' ng-click='pushPortalLink("+id+","+key+");'";
+                //                 linkdata += "<p class='portalapp' "+dummy+">"+response.data.data+"</p>";
+                //                 console.log(linkdata);
+                //                 console.log(response.data.data);
+                //                 if(key == (final_link.length-1))
+                //                 {
+                //                     //console.log(key+"-key,length:"+final_link.length);
+                //                     value2.queslink=linkdata;
+                //                     console.log(value2.queslink);
+                //                     value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
+                //                     msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                //                     $timeout(function(){
+                //                         $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                //                         $rootScope.showMsgLoader=false;
+                //                         $rootScope.scrollChatWindow();
+                //                     },2000);
+                //                     console.log($rootScope.chatlist);
+                //                 }
+                //                 return;
+                //             }
+                            
+                //         }).finally(function() {
+                            
+                //         });
+                //     }
+                // });
+                //value2.queslink=linkdata;
             }
+            
             else
             {    
-                //value2.queslink=_.replace(value2.tiledlist[0].answer[id], '../static/data_excel/', adminurl2+'static/data_excel/');
-                value2.queslink = value2.tiledlist[0].answer[id].replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
-                //value2.queslink=value2.tiledlist[0].answer[id];
+                value2.queslink = value2[id].answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                value2.queslink = $sce.trustAsHtml(value2.queslink);
+            
+                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                $timeout(function(){
+                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                    $rootScope.showMsgLoader=false;
+                    $rootScope.scrollChatWindow();
+                },2000);
             }
-                //$compile(linkdata)($scope);
-            $rootScope.chatlist.push({id:id,msg:angular.copy(value2),position:"left",curTime: $rootScope.getDatetime()});
-            $rootScope.showMsgLoader=false;
+            
+            // value2.queslink = $sce.trustAsHtml(value2.queslink);
+            
+            // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+            // $timeout(function(){
+            //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+            //     $rootScope.showMsgLoader=false;
+            //     $rootScope.scrollChatWindow();
+            // },2000);
+            // $el = $( "ul.chat li" ).last();
+            // console.log($el);
+            // $compile($el)($scope);
+            
             //$.jStorage.set("chatlist",$rootScope.chatlist);
-            $timeout(function(){
-                $rootScope.scrollChatWindow();
-            });
+            
             
         };
         $rootScope.pushPortalLink= function(id,type) {
@@ -68248,25 +69437,29 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = type;
             var value3 = $rootScope.links;
-            if(value3.tiledlist[0].answer[id] != "")
+            if(value3[id].answers != "")
             {
                 var answer1 =new Array();
-                answer1 = value3.tiledlist[0].answer[id].split("(2nd)");
+                answer1 = value3[id].answers.split("(2nd)");
                 if(type==0)
 				    answer1 = answer1[0];
                 else if(type==1)
                     answer1 = answer1[1];
+                answer1 = answer1.replace("\n", "<br />", "g");
                 value3.queslink=answer1;
                 
             }
+            value3.queslink = $sce.trustAsHtml(value3.queslink);
             //$compile(linkdata)($scope);
-            $rootScope.chatlist.push({id:id,msg:angular.copy(value3),position:"left",curTime: $rootScope.getDatetime()});
+            msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
+            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
             $rootScope.showMsgLoader=false;
             //$.jStorage.set("chatlist",$rootScope.chatlist);
             $timeout(function(){
                 $rootScope.scrollChatWindow();
             });
         };
+        
         $rootScope.showChatwindow = function () {
             // newlist = $.jStorage.get("chatlist");
             // if(!newlist || newlist == null)
@@ -68278,12 +69471,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //     $rootScope.firstMsg = true;
             // }
             //$.jStorage.set("showchat",true);
-            if(!$rootScope.firstMsg)
-            {
-                $rootScope.firstMsg = true;
-                msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
-                $rootScope.pushSystemMsg(0,msg);  
-            }
+            
             $('#chat_panel').slideDown("slow");
             //$('#chat_panel').find('.panel-body').slideDown("fast");
             //$('#chat_panel').find('.panel-footer').slideDown("slow");
@@ -68304,18 +69492,273 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $('.panel-heading span.icon_minim').addClass('glyphicon-plus').removeClass('glyphicon-minus');
             $(".clickImage").show( "fadeIn");
         };
+        $scope.getmaillink= function(w){
+            if(w=='mah')
+            {
+                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>Customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+            else if(w=='other')
+            {
+                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>Customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+        };
+        $scope.getcallink= function(w){
+            if(w=='mah')
+            {
+                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>18001209636</a>",type:"SYS_AUTO"};
+                $rootScope.pushSystemMsg(0,msg); 
+            }
+            else if(w=='other')
+            {
+                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>18001035466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+            }
+        };
+        $scope.mailus = function(){
+            var msg = {type:"SYS_MAIL"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $scope.callus = function(){
+            var msg = {type:"SYS_CALL"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $(document).on('click', 'a.mailus', function(){ 
+            $scope.mailus();
+        });
+        $(document).on('click', 'a.callus', function(){ 
+            $scope.callus();
+        });
         $rootScope.pushMsg = function(id,value) {
+            if($rootScope.answers == "")
+            {
+                if(value != "")
+                {
+                    $rootScope.msgSelected = true;
+                    $rootScope.chatmsgid = id;
+                    $rootScope.chatmsg = value;
+                    $rootScope.autocompletelist = [];
+                    $rootScope.chatlist.push({id:"id",msg:value,position:"right",curTime: $rootScope.getDatetime()});
+                    //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
+                    $rootScope.getSystemMsg(id,value);
+                    //$.jStorage.set("chatlist",$rootScope.chatlist);
+                    $rootScope.msgSelected = false;
+                    $rootScope.showMsgLoader=true;
+                    $rootScope.scrollChatWindow();
+                    $timeout(function(){
+                        $rootScope.autocompletelist = [];
+                    },1000);
+                }
+            }
+            else 
+            {
+                $rootScope.pushAutoMsg(id,value,$rootScope.answers,$rootScope.autocategory,$rootScope.autolink);
+            }
+        };
+        $rootScope.pushAutoMsg = function(id,value,answer,autocat,autolink) {
             $rootScope.msgSelected = true;
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
+            $rootScope.answers = answer;
+            console.log(answer,"ans");
             $rootScope.autocompletelist = [];
-            $rootScope.chatlist.push({id:"id",msg:value,position:"right",curTime: $rootScope.getDatetime()});
-            //console.log("msgid="+id+"chatmsg="+$rootScope.msgSelected);
-            $rootScope.getSystemMsg(id,value);
-            //$.jStorage.set("chatlist",$rootScope.chatlist);
+            $rootScope.chatlist.push({id:id,msg:value,position:"right",curTime: $rootScope.getDatetime()});
+            // var automsg = { Text: answer , type : "SYS_AUTO"};
+            // $rootScope.pushSystemMsg(id,automsg);
+            // $rootScope.showMsgLoader = false;
+            // //$.jStorage.set("chatlist",$rootScope.chatlist);
+            
+            // console.log($rootScope.selectedCategory);
+            // //$("#faqs_category").val("Single2").trigger('change');
+            // console.log(category);
+            if(autocat == "")
+            {
+                console.log("No cat");
+                queslink=$rootScope.answers;
+                queslink = $sce.trustAsHtml(queslink);
+                msg2={"Text":angular.copy(queslink),type:"SYS_AUTO"};
+                $timeout(function(){
+                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                    $rootScope.showMsgLoader=false;
+                    $rootScope.scrollChatWindow();
+                },2000);
+            }
+            else 
+            {
+                var category = autocat;
+                $("#faqs_category option:contains(" + category + ")").attr('selected', 'selected');
+                var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == category; });
+                var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == category; });
+                if($rootScope.selectedCategory == v_obj)
+                {
+                    console.log("same cate");
+                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                    //$rootScope.getCategoryQuestions(v_obj);
+                    var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
+                    var value2 = $rootScope.links;
+                    if($rootScope.autolink != "" )
+                    {
+                        var linkdata="";
+                        var prev_res = false;
+                        console.log("First link");
+                        final_link = $rootScope.autolink.split("<br>");
+                        var languageid = $.jStorage.get("language");
+                        $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                        apiService.translatelink($scope.formData).then( function (response) {
+                            value2.queslink=response.data.data.linkdata;
+                            value2.queslink = $sce.trustAsHtml(value2.queslink);
+                            msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                            $timeout(function(){
+                                $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                $rootScope.showMsgLoader=false;
+                                $rootScope.scrollChatWindow();
+                            },2000);
+                        });
+                    }
+                    
+                    else
+                    {    
+                        console.log("2nd link");
+                        //value2.queslink = $rootScope.answers.replace(new RegExp("../static/data_excel/", 'g'), adminurl2+'static/data_excel/');
+                        value2.queslink = $rootScope.answers;
+                        value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
+                        msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                        $timeout(function(){
+                            $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                            $rootScope.showMsgLoader=false;
+                            $rootScope.scrollChatWindow();
+                        },2000);
+                    }
+                }
+                else
+                {
+                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                    //$rootScope.getCategoryQuestions(v_obj);
+                    console.log(v_obj,"cat obj");
+                    categoryid = v_obj._id;
+                    $rootScope.links = [];
+                    $scope.formData = { category:categoryid };
+                    //console.log(category.name);
+                    apiService.getCategoryQuestions($scope.formData).then( function (response) {
+                        $rootScope.links = response.data.data;
+                        
+                        $rootScope.links.type = "cat_faq";
+                        if(category.name == "Choose a Category")
+                            $("div#all_questions").css("background","none");
+                        else
+                            $("div#all_questions").css("background","#EF9C6D");
+                        
+                        $timeout(function(){
+                            var chatHeight = $(".all_questions").height();
+                            $('#faqs_dropdown').animate({scrollTop: chatHeight});
+                        });
+                        var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
+                        console.log(l_index,"index");
+                        console.log(value,"que");
+                        console.log($rootScope.links,"link");
+                        var value2 = $rootScope.links;
+                        if($rootScope.autolink != "" )
+                        {
+                            var linkdata="";
+                            var prev_res = false;
+                            console.log("First link");
+                            final_link = $rootScope.autolink.split("<br>");
+                            var languageid = $.jStorage.get("language");
+                            $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                            apiService.translatelink($scope.formData).then( function (response) {
+                                value2.queslink=response.data.data.linkdata;
+                                value2.queslink = $sce.trustAsHtml(value2.queslink);
+                                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                                $timeout(function(){
+                                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                    $rootScope.showMsgLoader=false;
+                                    $rootScope.scrollChatWindow();
+                                },2000);
+                            });
+                        }
+                        
+                        else
+                        {    
+                            console.log("2nd link",$rootScope.answers);
+                            var linkdata="";
+                            var prev_res = false;
+                            if(autolink != "")
+                            {
+                                final_link = autolink.split("<br>");
+                                var languageid = $.jStorage.get("language");
+                                $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
+                                apiService.translatelink($scope.formData).then( function (response) {
+                                    value2.queslink=response.data.data.linkdata;
+                                    value2.queslink = $sce.trustAsHtml(value2.queslink);
+                                    msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
+                                    $timeout(function(){
+                                        $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                        $rootScope.showMsgLoader=false;
+                                        $rootScope.scrollChatWindow();
+                                    },2000);
+                                });
+                                
+                            }
+                            else
+                            {    
+                                value2.queslink = answer;
+                                value2.queslink = $sce.trustAsHtml(value2.queslink);
+                            
+                                msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                                $timeout(function(){
+                                    $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                                    $rootScope.showMsgLoader=false;
+                                    $rootScope.scrollChatWindow();
+                                },2000);
+                            }
+                        
+                            // msg2={"queslink":angular.copy(value2.queslink),type:"cat_faqlink"};
+                            // $timeout(function(){
+                            //     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+                            //     $rootScope.showMsgLoader=false;
+                            //     $rootScope.scrollChatWindow();
+                            // },2000);
+                        }
+                    });
+                    
+                }
+            }
+            
+            // var value3 = {};
+            // if($rootScope.answers != "")
+            // {
+            //     var answer1 =new Array();
+            //     answer1 = $rootScope.answers.split("(2nd)");
+            //     // if(type==0)
+			// 	//     answer1 = answer1[0];
+            //     // else if(type==1)
+            //     //     answer1 = answer1[1];
+            //     answer1 = answer1[0];
+            //     answer1 = answer1.replace("\n", "<br />", "g");
+            //     value3.queslink=answer1;
+                
+            // }
+            // value3.queslink = $sce.trustAsHtml(value3.queslink);
+            // //$compile(linkdata)($scope);
+            // msg2={"queslink":angular.copy(value3.queslink),type:"cat_faqlink"};
+            // $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
+            // $rootScope.showMsgLoader=false;
+
+
+
+
             $rootScope.msgSelected = false;
-            $rootScope.showMsgLoader=true;
+            $rootScope.chatmsgid = "";
+            $rootScope.chatmsg = "";
+            $rootScope.answers = "";
+            $(".chatinput").val("");
+            $rootScope.autolistid = "";
+            $rootScope.chatText = "";
             $rootScope.scrollChatWindow();
+            $timeout(function(){
+                $rootScope.autocompletelist = [];
+            },1000);
         };
         $rootScope.pushQuestionMsg = function(id,value) {
             $rootScope.msgSelected = true;
@@ -68328,64 +69771,161 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$rootScope.showMsgLoader=true;
             $rootScope.scrollChatWindow();
         };
-        if($.jStorage.get("showchat"))
-            $rootScope.showChatwindow();
-        else
-            $rootScope.minimizeChatwindow();
-
+        // if($.jStorage.get("showchat"))
+        //     $rootScope.showChatwindow();
+        // else
+        //     $rootScope.minimizeChatwindow();
+        $rootScope.showQuerybtn = function() {
+            var msg = {type:"SYS_QUERY"};
+            $rootScope.pushSystemMsg(0,msg); 
+        }; 
         $rootScope.ratecardSubmit = function(coldata,rowdata) {
             console.log(coldata,rowdata);
         };
-        $rootScope.getDthlinkRes = function(colno,lineno,dthlink) {
-            console.log(colno,lineno,dthlink);
-            mysession = $.jStorage.get("sessiondata");
-            console.log(mysession);
-            mysession.DTHlink=dthlink;
-            mysession.DTHline=lineno;
-            mysession.DTHcol=colno;
-            formData = mysession;
-            console.log(formData);
-            apiService.getDthlinkRes(formData).then(function (data){
-                angular.forEach(data.data.data.tiledlist, function(value, key) {
+        // $rootScope.getDthlinkRes = function(colno,lineno,dthlink) {
+        //     //console.log(colno,lineno,dthlink);
+        //     mysession = $.jStorage.get("sessiondata");
+        //     //console.log(mysession);
+        //     mysession.DTHlink=dthlink;
+        //     mysession.DTHline=lineno;
+        //     mysession.DTHcol=colno;
+        //     formData = mysession;
+        //     //console.log(formData);
+        //     apiService.getDthlinkRes(formData).then(function (data){
+        //         angular.forEach(data.data.tiledlist, function(value, key) {
+        //             if(value.type=="DTHyperlink")
+        //             {
+        //                 $rootScope.DthResponse(0,data.data);
+                        
+                        
+        //             }
+        //         });
+        //     });
+        // };
+        $rootScope.getProcessTree = function(process) {
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+               
+            $rootScope.showMsgLoader = true;
+            apiService.outquery(formData).then(function (data){
+                    
+                angular.forEach(data.data.tiledlist, function(value, key) {
+                    if(value.type=="text")
+                    {
+                        $rootScope.pushSystemMsg(0,data.data);
+                        $rootScope.showMsgLoader = false;
+                        
+                        
+                        return false;
+                    }
+                    // if(value.type=="rate card")
+                    // {
+                    //     $rootScope.pushSystemMsg(0,data.data.data);
+                    //     $rootScope.showMsgLoader = false;
+                        
+                        
+                    //     return false;
+                    // }
                     if(value.type=="DTHyperlink")
                     {
-                        $rootScope.DthResponse(0,data.data.data);
-                        
-                        $("#topic").text(data.data.data.tiledlist[0].topic);
-                        $.jStorage.set("sessiondata",data.data.data.session_obj_data);
+                        $rootScope.DthResponse(0,data.data); 
+                        $rootScope.showMsgLoader = false; 
+                    }
+                    // else if(value.type=="Instruction")
+                    // {
+                    // 	$rootScope.InstructionResponse(0,data.data.data);  
+                    // }
+                    if(value.type=="FAQ")
+                    {
+                        // var reversefaq = new Array();
+                        // //console.log(data.data.tiledlist[0].FAQ);
+                        // reversefaq = _.reverse(data.data.tiledlist[0].FAQ);
+                        // data.data.tiledlist[0].FAQ = reversefaq;
+                        //console.log(reversefaq);
+                        $rootScope.FAQResponse(0,data.data);  
+                        $rootScope.showMsgLoader = false;
                     }
                 });
+                
+
+                //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
+            }).catch(function (reason) {
+                //console.log(reason);
+                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                $rootScope.showMsgLoader=false;
+            });
+        };
+        $rootScope.getDthlinkRes = function(stage,dthlink,Journey_Name) {
+            //console.log(colno,lineno,dthlink);
+            //mysession = $.jStorage.get("sessiondata");
+            var mysession = {};
+            
+            //console.log(stage+"-"+dthlink);
+            mysession.DTHlink=dthlink;
+            //mysession.DTHline=lineno;
+            //mysession.DTHcol=colno;
+            mysession.DTHstage=stage;
+            mysession.Journey_Name = Journey_Name;
+            // formData = {};
+            // formData.DTHcol = colno;
+            // formData.DTHline = lineno;
+            // formData.DTHlink = dthlink;
+            formData = mysession;
+            formData.csrfmiddlewaretoken=$rootScope.getCookie("csrftoken");
+            formData.user_id=$cookies.get("session_id");
+            //console.log(formData);
+            $rootScope.showMsgLoader = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            formData.customer_id = customer_id;
+            formData.customer_name = customer_name;
+            apiService.getDthlinkRes(formData).then(function (data){
+                angular.forEach(data.data.tiledlist, function(value, key) {
+                    if(value.type=="DTHyperlink")
+                    {
+                        $rootScope.DthResponse(0,data.data);
+                        $rootScope.showMsgLoader = false;
+                    }
+                });
+            }).catch(function (reason) {
+                //console.log(reason);
+                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                $rootScope.pushSystemMsg(0,msg); 
+                $rootScope.showMsgLoader=false;
             });
         };
         $rootScope.DthResponse = function(id,data) {
+            // if(data.tiledlist[0].DT.length > 0 || data.tiledlist[0].Text != "")
+            // {
+        
+            //     if(data.tiledlist[0].DT.length > 0 || ( data.tiledlist[0].Text != "" && data.tiledlist[0].Text)  )
+            //         $rootScope.pushSystemMsg(id,data);
+            
+            // }
+            var dtstage = data.tiledlist[0].Stage;
+            var dtstage = dtstage.replace(".", "");
+            data.tiledlist[0].bgstage = dtstage;
             $rootScope.pushSystemMsg(id,data);
-            $rootScope.showMsgLoader = false; 
-            $rootScope.selectTabIndex = 0;
-            
-            //var node_data = {"node_data": {"elements": ["Guidelines", "Shifting", "Accessibility", "Charges"], "element_values": ["<br>To define general guidelines to be followed by Branches while processing Account Closure. <br><br> Branch should attempt for retention of account before closing the account as opening a new account is expensive. <br><br> Channels through which Account Closure request is received: <br> 1. Customers In Person (CIP) who walk in to the Branch <br>\n2. Representatives/Bearer of customers who walk in to the Branch <br>\n3. Mail / Drop Box <br><br> Check Documentation and Signature Protocol <br><br> Check Mode of Payment for closure Proceeds <br><br> Check for Customer Handling on receipt of request <br><br> Check Process at Branch \u2013Checks during acceptance of closure form <br><br> Check Process at Branch- Post acceptance of Closure form <br><br> ", "<br>Customer is unwilling to give us another chance  <br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance. <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront. <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.  <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>In case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.\nCustomer will pay the  necessary amount to regularize the account <br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly. <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel <br><br>\n4) Branch to journal of the attempts made to retain the customer. <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.", "<br>If customer is closing his/ her account due to inconvenient accessibility, solutions like Home Banking, Beat Pick up facility, etc. should be re-iterated. <br>\nIn case customer has an account which he/ she is not eligible for an accessibility offering he/ she is interested in, an upgraded account should be offered especially if account balances justify it (ensure that new AMB/AQBs and NMCs are communicated clearly).Customer is unwilling to give us another chance  <br><br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance.  <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront. <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.  <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d.  <br><br> This needs to be done diligently and would be subject to audits.  <br><br>\nCustomer is unwilling to give another chance: < <br><br>> Customer will pay the  necessary amount to regularize the account  <br><br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d  <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d  <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly.  <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel  <br><br> \n4) Branch to journal of the attempts made to retain the customer.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.C2", "<br>1) Customer expresses concerns on high charges, ascertain the nature of charges levied and recommend an upgraded account where required (e.g. if customer finds DD charges high, up-sell to an account with a higher free DD limit or an account offering At Par cheque facility if usage is on our locations). Communicate the AMB/AQB and NMC to customer clearly. <br><br>\n2) The account can be upgraded/downgrade as per customer requirement by retaining the same account Number  <br><br>\n3) Branch can also explain the benefits of Basic/Small Account and offer conversion to the said  account as it will address their inability to maintain the account.  <br><br>\nCustomer is unwilling to give us another chance  <br><br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance.  <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront.  <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.   <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.  <br><br>\nCustomer will pay the  necessary amount to regularize the account   <br><br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d  <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d  <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly.  <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel  <br><br>\n4) Branch to journal of the attempts made to retain the customer.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.\n"]}};
-            var ele = new Array("Process");
-            ele2 = [  
-                        "Guidelines",
-                        "Shifting",
-                        "Accessibility",
-                        "Charges"
-                    ];
-            ele=ele.concat(ele2);
-            var ele_val = new Array(data.tiledlist[0]);
-            element_values = [  
-                        "<br>To define general guidelines to be followed by Branches while processing Account Closure. <br><br> Branch should attempt for retention of account before closing the account as opening a new account is expensive. <br><br> Channels through which Account Closure request is received: <br> 1. Customers In Person (CIP) who walk in to the Branch <br>\n2. Representatives/Bearer of customers who walk in to the Branch <br>\n3. Mail / Drop Box <br><br> Check Documentation and Signature Protocol <br><br> Check Mode of Payment for closure Proceeds <br><br> Check for Customer Handling on receipt of request <br><br> Check Process at Branch \u2013Checks during acceptance of closure form <br><br> Check Process at Branch- Post acceptance of Closure form <br><br> ",
-                        "<br>Customer is unwilling to give us another chance  <br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance. <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront. <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.  <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>In case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.\nCustomer will pay the  necessary amount to regularize the account <br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly. <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel <br><br>\n4) Branch to journal of the attempts made to retain the customer. <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.",
-                        "<br>If customer is closing his/ her account due to inconvenient accessibility, solutions like Home Banking, Beat Pick up facility, etc. should be re-iterated. <br>\nIn case customer has an account which he/ she is not eligible for an accessibility offering he/ she is interested in, an upgraded account should be offered especially if account balances justify it (ensure that new AMB/AQBs and NMCs are communicated clearly).Customer is unwilling to give us another chance  <br><br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance.  <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront. <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.  <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d.  <br><br> This needs to be done diligently and would be subject to audits.  <br><br>\nCustomer is unwilling to give another chance: < <br><br>> Customer will pay the  necessary amount to regularize the account  <br><br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d  <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d  <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly.  <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel  <br><br> \n4) Branch to journal of the attempts made to retain the customer.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.C2",
-                        "<br>1) Customer expresses concerns on high charges, ascertain the nature of charges levied and recommend an upgraded account where required (e.g. if customer finds DD charges high, up-sell to an account with a higher free DD limit or an account offering At Par cheque facility if usage is on our locations). Communicate the AMB/AQB and NMC to customer clearly. <br><br>\n2) The account can be upgraded/downgrade as per customer requirement by retaining the same account Number  <br><br>\n3) Branch can also explain the benefits of Basic/Small Account and offer conversion to the said  account as it will address their inability to maintain the account.  <br><br>\nCustomer is unwilling to give us another chance  <br><br>\n1) In case of Issues expressed by the customer where he / she is willing to give the Bank another chance.  <br><br>\n2) Branch to attempt fix the problem within 48 hours or 7 days on the outside for extreme cases and revert to the customer. This TAT for revert to be communicated to the customer upfront.  <br><br>\n3) Customers to be sent a personalised letter thanking them for their time and an acknowledgement, that we value their business and have remedied whatever caused them to want to leave in the first place. A list of all reasons for closure with the action taken, to be stated.   <br><br>\n4) Once the customer has been retained, the customer letter / form duly marked \u201cNOT FOR CLOSURE \u2013 RETAINED\u201d, along with a copy of the resolution letter to be sent to CPC for filing in the customer record.  <br><br>\n5) Siebel to be updated with the same comment and closed.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.  <br><br>\nCustomer will pay the  necessary amount to regularize the account   <br><br>\nCustomer is unwilling to regularize the account after all attempts then branch user to follow the protocol as detailed in chapter \u201cAccount closure requests with debit balance/TBMS lien.\u201d  <br><br>\n1) Where the customer is not willing to continue, Branch to ensure that the complete details on Account closure form and all the checks to be made as detailed in the chapter  \u201cGeneral Guidelines to be followed for Account closure\u201d  <br><br>\n2) In case of any incomplete request, the customer needs to be apprised of the requirements and Siebel to be updated accordingly.  <br><br>\n3) If the a/c closure request is complete in all respects / once the complete request is received from the customer, the same needs to be sent to CPC, post updating the Siebel  <br><br>\n4) Branch to journal of the attempts made to retain the customer.  <br><br>\nIn case the BOM/SM/BM/ RBM / AM or the branch staff are able / Not able  to retain the customer, then protthe SR which has been created needs to be closed with the Closure Description in Siebel as, \u201cCustomer Retained\u201d. This needs to be done diligently and would be subject to audits.\n"
-                    ]
-            ele_val = ele_val.concat(element_values);
-            //_.insert(ele, "Process", [0]);
-            $rootScope.tabvalue.elements = ele;
-            $rootScope.tabvalue.element_values=ele_val;
-            //$rootScope.$emit("setTabData", $scope.node_data);
-           
-            
         };
+        
         $rootScope.FAQResponse = function (id,data) {
             $rootScope.pushSystemMsg(id,data);
             $rootScope.showMsgLoader = false; 
@@ -68406,8 +69946,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         };
         $rootScope.getSystemMsg = function(id,value){
             //console.log("id",id);
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                $scope.formData = { user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                 //var mysessiondata = $.jStorage.get("sessiondata");
                 //mysessiondata = mysessiondata.toObject();
                 //mysessiondata.data = {id:parseInt(id),Text:value};
@@ -68416,15 +69966,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $timeout(function(){
                     $(".chatinput").val("");
                 });
+                $scope.timerflag = false;
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
-						
+					$scope.timerflag = true;
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
                         	$rootScope.pushSystemMsg(0,data.data);
                             $rootScope.showMsgLoader = false;
                             
-                            
+                            if(value.category && value.category != '')
+                            {
+                                var v_index = _.findIndex($rootScope.categorylist, function(o) { return o.name == value.category; });
+                                var v_obj = _.find($rootScope.categorylist, function(o) { return o.name == value.category; });
+                                // console.log(v);
+                                // console.log($rootScope.selectedCategory);
+                                // //$("#faqs_category").val("Single2").trigger('change');
+                                // console.log(category);
+                                if($rootScope.selectedCategory == v_obj)
+                                {}
+                                else
+                                {
+                                    $rootScope.selectedCategory = $rootScope.categorylist[v_index];
+                                    $rootScope.getCategoryQuestions(v_obj);
+                                }
+                            }
                             return false;
                         }
                         // if(value.type=="rate card")
@@ -68435,10 +70001,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                             
                         //     return false;
                         // }
-                        // else if(value.type=="DTHyperlink")
-                        // {
-                        //    $rootScope.DthResponse(0,data.data.data);  
-                        // }
+                        if(value.type=="DTHyperlink")
+                        {
+                           $rootScope.DthResponse(0,data.data);  
+                           $rootScope.showMsgLoader = false;
+                        }
                         // else if(value.type=="Instruction")
                         // {
 						// 	$rootScope.InstructionResponse(0,data.data.data);  
@@ -68458,12 +70025,20 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
                     //console.log(reason);
-                    msg = {Text:"Sorry I could not understand",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                 });
             //});
-            
+            $timeout(function(){
+                if(!$scope.timerflag)
+                {
+                    msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
+                    $rootScope.pushSystemMsg(0,msg); 
+                    //$rootScope.showMsgLoader=false;
+                    $scope.timerflag = true;
+                }
+            },7000);
         };
         
         
@@ -68472,7 +70047,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
         $rootScope.onKeyUp = function(e){
             //if(e.key == "ArrowDown" || e.key == "ArrowUp")
-            if(e.which == 40 )
+            if(e.which == 40 ) // Down arrow
             {
                 if($("ul#ui-id-1 li.active").length!=0) {
                     var storeTarget	= $('ul#ui-id-1').find("li.active").next();
@@ -68481,18 +70056,25 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $(".chatinput").val(storeTarget.text());
                     $rootScope.autolistid = $(storeTarget).attr("data-id");
                     $rootScope.autolistvalue = $(storeTarget).attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
                 }
                 else
                 {
                     $('ul#ui-id-1').find("li:first").focus().addClass("active");
+                    var storeTarget	= $('ul#ui-id-1').find("li.active");
                     $(".chatinput").val($('ul#ui-id-1').find("li:first").text());
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:first").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:first").attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
 		    	}
 
                 return;
             }
-            if(e.which == 38 )
+            if(e.which == 38 ) // Up arrow
             {
                 if($("ul#ui-id-1 li.active").length!=0) {
                     var storeTarget	= $('ul#ui-id-1').find("li.active").prev();
@@ -68501,56 +70083,87 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $(".chatinput").val(storeTarget.text());
                     $rootScope.autolistid = $(storeTarget).attr("data-id");
                     $rootScope.autolistvalue = $(storeTarget).attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
                 }
                 else
                 {
                     $('ul#ui-id-1').find("li:last").focus().addClass("active");
+                    var storeTarget	= $('ul#ui-id-1').find("li.active");
                     $(".chatinput").val($('ul#ui-id-1').find("li:last").text());
                     $rootScope.autolistid = $('ul#ui-id-1').find("li:last").attr("data-id");
                     $rootScope.autolistvalue = $('ul#ui-id-1').find("li:last").attr("data-value");
+                    $rootScope.answers = $(storeTarget).attr("data-answers");
+                    $rootScope.autocategory = $(storeTarget).attr("data-category");
+                    $rootScope.autolink = $(storeTarget).attr("data-link");
 		    	}
 
                 return;
             }
-            if(e.which == 13)
+            if(e.which == 13) // Enter
             {
-                // if($rootScope.autolistid=="" || $rootScope.autolistid == null || $rootScope.autolistid == 0)
-                // {
-                //     $(".chatinput").val("");
-                //     $rootScope.pushMsg("",$rootScope.chatText);
-                // }
-                // else {
-                //     $rootScope.pushMsg($rootScope.autolistid,$rootScope.chatText);
-                // }
-                
-                $rootScope.pushMsg("",$(".chatinput").val());
+                if($rootScope.autolistid=="" || $rootScope.autolistid == null)
+                {
+                    if($(".chatinput").val() != "")
+                    {
+                        console.log("No select only Enter");    
+                        $rootScope.pushMsg("",$(".chatinput").val());
+                        $(".chatinput").val("");
+                        $rootScope.chatText="";
+                    }
+                }
+                else {
+                    //$rootScope.pushMsg("",$(".chatinput").val());
+                    $rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.autolistvalue,$rootScope.answers,$rootScope.autocategory,$rootScope.autolink)
+                    console.log("Select Enter");
+                    //$rootScope.pushAutoMsg($rootScope.autolistid,$rootScope.chatText,$rootScope.answers);
+                }
+                $rootScope.autocompletelist = [];
+                //$rootScope.pushMsg("",$(".chatinput").val());
                 $(".chatinput").val("");
+                $rootScope.autolistid = "";
+                $rootScope.chatText = "";
             }
+            if(e.which == 8)
+            {
+                
+                if($(".chatinput").val()=="")
+                {
+                    $rootScope.autocompletelist = [];
+                    $rootScope.chatText = "";
+                }
+                
+            }
+            // $rootScope.chatText = "";
+            // $rootScope.autolistid=="";
+            // $rootScope.autolistvalue = "";
         };
         $rootScope.likeChatClick = function(){
             $timeout(function(){
-                $('span.thumbsup').css("color", "#ed232b");
-                $('.thumbsdown').css("color", "#444");
+                $('span.thumbsup').css("color", "#39E61F");
+                $('.thumbsdown').css("color", "#ED6D05");
             },200);
         };
         $rootScope.$dislikemodalInstance = {};
         $rootScope.dislikesuggestionerror = 0;
         $rootScope.dislikeChatClick = function(){
-            /*$rootScope.$dislikemodalInstance = $uibModal.open({
+            $rootScope.$dislikemodalInstance = $uibModal.open({
                 scope: $rootScope,
                 animation: true,
                 size: 'sm',
                 templateUrl: 'views/modal/dislikechat.html',
                 //controller: 'CommonCtrl'
-            });*/
+            });
             $timeout(function(){ 
-                $('span.thumbsdown').css("color", "#ed232b");
-                $('.thumbsup').css("color", "#444");
+                $('span.thumbsdown').css("color", "#F32525");
+                $('.thumbsup').css("color", "#ED6D05");
             },200);
         };
-        /*$rootScope.dislikeCancel = function() {
+        $rootScope.dislikeCancel = function() {
             //console.log("dismissing");
             $scope.$dislikemodalInstance.dismiss('cancel');
+            $('span.thumbsdown').css("color", "#ED6D05");
         };
         $rootScope.dislikesuggestionsubmit = function(suggestion){
             console.log("suggestion",suggestion);
@@ -68559,12 +70172,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.dislikesuggestionSuccess = 0;
                 $rootScope.dislikeCancel();
             },500);
-        };*/
+            $('span.thumbsdown').css("color", "#ED6D05");
+        };
         
        $timeout(function(){
             //$('#chatTabs a:last').tab('show');
        },200);
     })
+    
     .controller('FormCtrl', function ($scope, TemplateService, NavigationService, $timeout, toastr, $http) {
         $scope.template = TemplateService.getHTML("content/form.html");
         TemplateService.title = "Form"; //This is the Title of the Website
