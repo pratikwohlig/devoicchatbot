@@ -16,9 +16,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 var customer_name ="";
             }
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
-                $cookies.put("csrftoken",response.data.csrf_token);
+                $cookies.put("csrftoken",response.data.csrf_token2);
                 $cookies.put("session_id",response.data.session_id);
-                $.jStorage.set("csrftoken",response.data.csrf_token);
+                $.jStorage.set("csrftoken",response.data.csrf_token2);
                 //console.log(response.data);
             });
             if (navigator.geolocation) {
