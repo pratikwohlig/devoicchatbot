@@ -20,7 +20,10 @@ div#suggestionList {
 #chatTabs li a {
     padding: 0px 10px;
 }
-
+span.chatbottomtext.disabledlike .thumbsup, span.chatbottomtext.disabledlike .thumbsdown {
+    pointer-events: none;
+    color: #ccc !important;
+}
 ul#chatTabs {
     border-bottom: 0px !important;
     width: auto;

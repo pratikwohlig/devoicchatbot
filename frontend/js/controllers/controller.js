@@ -1288,11 +1288,30 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // $rootScope.autolistid=="";
             // $rootScope.autolistvalue = "";
         };
+        $rootScope.disablefeedback = false;
         $rootScope.likeChatClick = function(){
             $timeout(function(){
                 $('span.thumbsup').css("color", "#39E61F");
                 $('.thumbsdown').css("color", "#ED6D05");
             },200);
+            msg = {Text:"Thank you very much! Talk to you soon.",type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg);
+            $rootScope.disablefeedback = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"POSITIVE" };
+            
+            apiService.outfeedback(formData).then(function (data){
+
+            });
         };
         $rootScope.$dislikemodalInstance = {};
         $rootScope.dislikesuggestionerror = 0;
@@ -1315,13 +1334,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $('span.thumbsdown').css("color", "#ED6D05");
         };
         $rootScope.dislikesuggestionsubmit = function(suggestion){
-            console.log("suggestion",suggestion);
+            //console.log("suggestion",suggestion);
             $rootScope.dislikesuggestionSuccess = 1;
             $timeout(function(){
                 $rootScope.dislikesuggestionSuccess = 0;
                 $rootScope.dislikeCancel();
             },500);
             $('span.thumbsdown').css("color", "#ED6D05");
+            msg = {Text:"Thanks! for taking the time to provide feedback, This will help me improve.",type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg);
+            $rootScope.disablefeedback = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
+            
+            apiService.outfeedback(formData).then(function (data){
+
+            });
         };
         
        $timeout(function(){

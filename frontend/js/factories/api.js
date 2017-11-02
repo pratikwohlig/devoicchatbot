@@ -60,6 +60,16 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 dataType:"json"
             });
         },
+        outfeedback:function(formData,callback){
+            return    $http({
+                url:adminurl2+'outfeedback/'+formData.user_id+"/",
+                method: 'POST',
+                data:$.param(formData),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+            });
+            
+            
+        },
         getDthlinkRes:function(formData,callback){
             return    $http({
                 url:adminurl2+'outDTL/'+formData.user_id+"/",
