@@ -38864,8 +38864,8 @@ $provide.value("$locale", {
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 /**
- * @license AngularJS v1.6.0
- * (c) 2010-2016 Google, Inc. http://angularjs.org
+ * @license AngularJS v1.6.6
+ * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
 (function(window, angular) {'use strict';
@@ -38888,6 +38888,7 @@ var forEach;
 var isDefined;
 var lowercase;
 var noop;
+var nodeContains;
 var htmlParser;
 var htmlSanitizeWriter;
 
@@ -39088,6 +39089,11 @@ function $SanitizeProvider() {
   htmlParser = htmlParserImpl;
   htmlSanitizeWriter = htmlSanitizeWriterImpl;
 
+  nodeContains = window.Node.prototype.contains || /** @this */ function(arg) {
+    // eslint-disable-next-line no-bitwise
+    return !!(this.compareDocumentPosition(arg) & 16);
+  };
+
   // Regular Expressions for parsing tags and attributes
   var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
     // Match everything outside of normal chars and " (quote character)
@@ -39177,27 +39183,78 @@ function $SanitizeProvider() {
     return obj;
   }
 
-  var inertBodyElement;
-  (function(window) {
-    var doc;
-    if (window.document && window.document.implementation) {
-      doc = window.document.implementation.createHTMLDocument('inert');
+  /**
+   * Create an inert document that contains the dirty HTML that needs sanitizing
+   * Depending upon browser support we use one of three strategies for doing this.
+   * Support: Safari 10.x -> XHR strategy
+   * Support: Firefox -> DomParser strategy
+   */
+  var getInertBodyElement /* function(html: string): HTMLBodyElement */ = (function(window, document) {
+    var inertDocument;
+    if (document && document.implementation) {
+      inertDocument = document.implementation.createHTMLDocument('inert');
     } else {
       throw $sanitizeMinErr('noinert', 'Can\'t create an inert html document');
     }
-    var docElement = doc.documentElement || doc.getDocumentElement();
-    var bodyElements = docElement.getElementsByTagName('body');
+    var inertBodyElement = (inertDocument.documentElement || inertDocument.getDocumentElement()).querySelector('body');
 
-    // usually there should be only one body element in the document, but IE doesn't have any, so we need to create one
-    if (bodyElements.length === 1) {
-      inertBodyElement = bodyElements[0];
+    // Check for the Safari 10.1 bug - which allows JS to run inside the SVG G element
+    inertBodyElement.innerHTML = '<svg><g onload="this.parentNode.remove()"></g></svg>';
+    if (!inertBodyElement.querySelector('svg')) {
+      return getInertBodyElement_XHR;
     } else {
-      var html = doc.createElement('html');
-      inertBodyElement = doc.createElement('body');
-      html.appendChild(inertBodyElement);
-      doc.appendChild(html);
+      // Check for the Firefox bug - which prevents the inner img JS from being sanitized
+      inertBodyElement.innerHTML = '<svg><p><style><img src="</style><img src=x onerror=alert(1)//">';
+      if (inertBodyElement.querySelector('svg img')) {
+        return getInertBodyElement_DOMParser;
+      } else {
+        return getInertBodyElement_InertDocument;
+      }
     }
-  })(window);
+
+    function getInertBodyElement_XHR(html) {
+      // We add this dummy element to ensure that the rest of the content is parsed as expected
+      // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
+      html = '<remove></remove>' + html;
+      try {
+        html = encodeURI(html);
+      } catch (e) {
+        return undefined;
+      }
+      var xhr = new window.XMLHttpRequest();
+      xhr.responseType = 'document';
+      xhr.open('GET', 'data:text/html;charset=utf-8,' + html, false);
+      xhr.send(null);
+      var body = xhr.response.body;
+      body.firstChild.remove();
+      return body;
+    }
+
+    function getInertBodyElement_DOMParser(html) {
+      // We add this dummy element to ensure that the rest of the content is parsed as expected
+      // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
+      html = '<remove></remove>' + html;
+      try {
+        var body = new window.DOMParser().parseFromString(html, 'text/html').body;
+        body.firstChild.remove();
+        return body;
+      } catch (e) {
+        return undefined;
+      }
+    }
+
+    function getInertBodyElement_InertDocument(html) {
+      inertBodyElement.innerHTML = html;
+
+      // Support: IE 9-11 only
+      // strip custom-namespaced attributes on IE<=11
+      if (document.documentMode) {
+        stripCustomNsAttrs(inertBodyElement);
+      }
+
+      return inertBodyElement;
+    }
+  })(window, window.document);
 
   /**
    * @example
@@ -39217,7 +39274,9 @@ function $SanitizeProvider() {
     } else if (typeof html !== 'string') {
       html = '' + html;
     }
-    inertBodyElement.innerHTML = html;
+
+    var inertBodyElement = getInertBodyElement(html);
+    if (!inertBodyElement) return '';
 
     //mXSS protection
     var mXSSAttempts = 5;
@@ -39227,12 +39286,9 @@ function $SanitizeProvider() {
       }
       mXSSAttempts--;
 
-      // strip custom-namespaced attributes on IE<=11
-      if (window.document.documentMode) {
-        stripCustomNsAttrs(inertBodyElement);
-      }
-      html = inertBodyElement.innerHTML; //trigger mXSS
-      inertBodyElement.innerHTML = html;
+      // trigger mXSS if it is going to happen by reading and writing the innerHTML
+      html = inertBodyElement.innerHTML;
+      inertBodyElement = getInertBodyElement(html);
     } while (html !== inertBodyElement.innerHTML);
 
     var node = inertBodyElement.firstChild;
@@ -39251,12 +39307,12 @@ function $SanitizeProvider() {
         if (node.nodeType === 1) {
           handler.end(node.nodeName.toLowerCase());
         }
-        nextNode = node.nextSibling;
+        nextNode = getNonDescendant('nextSibling', node);
         if (!nextNode) {
           while (nextNode == null) {
-            node = node.parentNode;
+            node = getNonDescendant('parentNode', node);
             if (node === inertBodyElement) break;
-            nextNode = node.nextSibling;
+            nextNode = getNonDescendant('nextSibling', node);
             if (node.nodeType === 1) {
               handler.end(node.nodeName.toLowerCase());
             }
@@ -39388,8 +39444,17 @@ function $SanitizeProvider() {
         stripCustomNsAttrs(nextNode);
       }
 
-      node = node.nextSibling;
+      node = getNonDescendant('nextSibling', node);
     }
+  }
+
+  function getNonDescendant(propName, node) {
+    // An element is clobbered if its `propName` property points to one of its descendants
+    var nextNode = node[propName];
+    if (nextNode && nodeContains.call(node, nextNode)) {
+      throw $sanitizeMinErr('elclob', 'Failed to sanitize html because the element is clobbered: {0}', node.outerHTML || node.outerText);
+    }
+    return nextNode;
   }
 }
 
@@ -39402,7 +39467,9 @@ function sanitizeText(chars) {
 
 
 // define ngSanitize module and register $sanitize service
-angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
+angular.module('ngSanitize', [])
+  .provider('$sanitize', $SanitizeProvider)
+  .info({ angularVersion: '1.6.6' });
 
 /**
  * @ngdoc filter
@@ -68740,7 +68807,7 @@ myApp.factory('NavigationService', function () {
     };
 });
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
-    adminurl2 = "http://cingulariti.com:8097/";
+    adminurl2 = "http://cingulariti.com:443/Dvois/";
     var adminurl3 = "http://localhost/api/";
     var adminurl3 = "http://104.46.103.162:8094/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
@@ -68800,6 +68867,16 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 data: $.param(formData),
                 dataType:"json"
             });
+        },
+        outfeedback:function(formData,callback){
+            return    $http({
+                url:adminurl2+'outfeedback/'+formData.user_id+"/",
+                method: 'POST',
+                data:$.param(formData),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+            });
+            
+            
         },
         getDthlinkRes:function(formData,callback){
             return    $http({
@@ -69861,7 +69938,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }).catch(function (reason) {
                 //console.log(reason);
                 msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
-                $rootScope.pushSystemMsg(0,msg); 
+                $rootScope.pushSystemMsg(0,msg);
+                $scope.timerflag = true; 
                 $rootScope.showMsgLoader=false;
             });
         };
@@ -70028,6 +70106,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
+                    $scope.timerflag = true;
                 });
             //});
             $timeout(function(){
@@ -70139,11 +70218,30 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // $rootScope.autolistid=="";
             // $rootScope.autolistvalue = "";
         };
+        $rootScope.disablefeedback = false;
         $rootScope.likeChatClick = function(){
             $timeout(function(){
                 $('span.thumbsup').css("color", "#39E61F");
                 $('.thumbsdown').css("color", "#ED6D05");
             },200);
+            msg = {Text:"Thank you very much! Talk to you soon.",type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg);
+            $rootScope.disablefeedback = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"POSITIVE" };
+            
+            apiService.outfeedback(formData).then(function (data){
+
+            });
         };
         $rootScope.$dislikemodalInstance = {};
         $rootScope.dislikesuggestionerror = 0;
@@ -70166,13 +70264,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $('span.thumbsdown').css("color", "#ED6D05");
         };
         $rootScope.dislikesuggestionsubmit = function(suggestion){
-            console.log("suggestion",suggestion);
+            //console.log("suggestion",suggestion);
             $rootScope.dislikesuggestionSuccess = 1;
             $timeout(function(){
                 $rootScope.dislikesuggestionSuccess = 0;
                 $rootScope.dislikeCancel();
             },500);
             $('span.thumbsdown').css("color", "#ED6D05");
+            msg = {Text:"Thanks! for taking the time to provide feedback, This will help me improve.",type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg);
+            $rootScope.disablefeedback = true;
+            var cust = $.jStorage.get("customerDetails");
+            if(cust)
+            {
+                var customer_id = cust.CustomerID;
+                var customer_name = cust.Name;
+            }
+            else {
+                var customer_id ="";
+                var customer_name ="";
+            }
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
+            
+            apiService.outfeedback(formData).then(function (data){
+
+            });
         };
         
        $timeout(function(){
