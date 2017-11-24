@@ -5,7 +5,7 @@
     font-style: normal;
 }
 .loader img {
-    width: 100px;
+    width: 70px;
 }
 #chat_panel{
     display: block;
@@ -29,7 +29,7 @@ ul#chatTabs {
     width: auto;
     float: left;
 }
-.chatbody { background:#F6F6F6; }
+.chatbody { background-color: #fff; }
 .chatTime {     
     width: 100%;
     float: left; 
@@ -277,7 +277,8 @@ width:90%;
 }
 
 .panel-body{
-background-color: #F6F6F6;
+// background-color: #F6F6F6;
+    background-color: #fff;
 }
 .chat
 {
