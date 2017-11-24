@@ -29,7 +29,7 @@ ul#chatTabs {
     width: auto;
     float: left;
 }
-.chatbody { background-color: #fff; }
+.chatbody { background-color: #fff !important; }
 .chatTime {     
     width: 100%;
     float: left; 
@@ -278,7 +278,7 @@ width:90%;
 
 .panel-body{
 // background-color: #F6F6F6;
-    background-color: #fff;
+    background-color: #fff !important;
 }
 .chat
 {

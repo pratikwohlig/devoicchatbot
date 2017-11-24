@@ -9995,7 +9995,7 @@ ul#chatTabs {
   float: left; }
 
 .chatbody {
-  background-color: #fff; }
+  background-color: #fff !important; }
 
 .chatTime {
   width: 100%;
@@ -10238,7 +10238,7 @@ button.headerbtns:focus {
   border-color: transparent; }
 
 .panel-body {
-  background-color: #fff; }
+  background-color: #fff !important; }
 
 .chat {
   list-style: none;
