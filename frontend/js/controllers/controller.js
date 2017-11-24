@@ -950,6 +950,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     });
         // };
         $rootScope.getProcessTree = function(process) {
+            $rootScope.scrollChatWindow();
             var cust = $.jStorage.get("customerDetails");
             if(cust)
             {
