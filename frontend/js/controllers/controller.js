@@ -1017,6 +1017,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.getDthlinkRes = function(stage,dthlink,Journey_Name) {
             //console.log(colno,lineno,dthlink);
             //mysession = $.jStorage.get("sessiondata");
+            $rootScope.scrollChatWindow();
             var mysession = {};
             
             //console.log(stage+"-"+dthlink);
