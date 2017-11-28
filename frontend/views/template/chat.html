@@ -111,7 +111,7 @@
                             </div>
                             
                             <ul class="chat">
-                                <li class="{{list.position}} lastchat clearfix animate_fade"   ng-repeat="list in chatlist track by $index">
+                                <li class="{{list.position}} lastchat clearfix animate_fade"   ng-repeat="list in chatlist track by $index" ng-init="$rowIndex = $index">
                                     <span class="chat-img pull-{{list.position}}">
                                         <span ng-if="list.position == 'left'">
                                             <img ng-src="img/tenali_listening.gif" alt="ION" class="img-circle " />
@@ -370,6 +370,40 @@
                                                 </ng-bind-html> 
                                             </p>
                                         </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_PINADDR'))">
+                                            <p>
+                                                <b>Here are the address(es) for this pincode: </b>
+                                                <br><br>
+                                                <p class="addresstext" ng-repeat="addr in list.msg.address">
+                                                    {{addr.address}}
+                                                    
+                                                </p>
+
+                                            </p>
+                                        </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_PINERR'))">
+                                            <span comp-translate="{{list.msg.error}}"></span>
+                                        </div>
+                                        <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_LOCATOR'))">
+                                            
+                                            <form id="locatorform" name="locatorform" class="locatorform margintop10">
+                                                <div class="form-group">
+                                                    <label for="pincode">
+                                                        
+                                                            <span comp-translate="Please Enter Pincode"></span>
+                                                        
+                                                    </label>
+                                                    <input type="text"  ng-model="m[$index].pincode" ng-pattern="/^-?[0-9][^\.]*$/" class="form-control pincode" name="pincode" id="pincode"  required autocomplete="off" placeholder="Enter Pincode" ng-minlength="6" ng-maxlength="6">
+                                                    <div class="pull-right" ng-repeat="(field,value) in locatorform.pincode.$error" ng-show="locatorform.pincode.$touched">
+                                                        <span class="label label-danger" ng-if="field=='required' && value">Please Enter Pincode</span>
+                                                        <!-- <span class="label label-danger" ng-if="!locatorform.field">Please Enter Valid Pincode</span> -->
+                                                        <span class="label label-danger" ng-if="field=='minlength' && value">Please Enter 6 Digit Pincode</span>
+                                                        <span class="label label-danger" ng-if="field=='maxlength' && value">Please Enter 6 Digit Pincode</span>
+                                                    </div> 
+                                                </div>
+                                                <input class='commonbtn' id='policy_btn' type='submit' value='Submit' ng-disabled="locatorform.$invalid"  ng-click="locatorformSubmit(m[$index]);" />
+                                            </form>
+                                        </div>
                                         <div class=" clearfix" ng-if="(list.position==='left' &&  (list.msg.type === 'SYS_QUERY'))">
                                             <div class="conversations_btn">
                                                 <div class="conversation-entry-bot__caption">
@@ -424,8 +458,11 @@
                         <div class="process_buttons row">
                             <div class="process_btngroup col-md-12">
                                 <div class="btn-group">
-                                     <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
+                                    <button type="button" class="btn btn-default processbtn dropdown-toggle" ng-click="showQuerybtn();">
                                         <span comp-translate="Technical Queries"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-default processbtn " ng-click="showPincodeform();">
+                                        <span comp-translate="Office Locator"></span>
                                     </button> 
                                     <!-- <ul class="querybtns">
                                         <li><button type="button" class="btn btn-xs processbtn " ng-click="getProcessTree('Frequent_Disconnection');">Frequent Disconnection</button></li>

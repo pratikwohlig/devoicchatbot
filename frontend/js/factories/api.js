@@ -1,7 +1,7 @@
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
     adminurl2 = "http://cingulariti.com:443/Dvois/";
     var adminurl3 = "http://localhost/api/";
-    var adminurl3 = "http://104.46.103.162:8094/api/";
+    //var adminurl3 = "http://104.46.103.162:8094/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
@@ -21,6 +21,14 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
             
             return $http({
                 url:adminurl3+ "Chatbotautocomplete/getautocomplete",
+                method: 'POST',
+                data: formData
+            })
+        },
+        officelocator: function(formData, callback) {
+            
+            return $http({
+                url:adminurl3+ "Officelocator/getaddress",
                 method: 'POST',
                 data: formData
             })

@@ -437,7 +437,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var cust_name = "";
             if(cust.Name)
                 cust_name = cust.Name;
-            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
+            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or click on any of the buttons below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
         }
@@ -922,6 +922,29 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     $rootScope.showChatwindow();
         // else
         //     $rootScope.minimizeChatwindow();
+        $rootScope.showPincodeform = function() {
+            var msg = {type:"SYS_LOCATOR"};
+            $rootScope.pushSystemMsg(0,msg); 
+        };
+        $rootScope.locatorformSubmit = function(formdata) {
+            console.log(formdata);
+            
+            apiService.officelocator(formdata).then( function (response) {
+                if(!response.data.value || response.data.data.length == 0)
+                {
+                    //alert("Currently we are unavailable at this location");
+                    var msg = {type:"SYS_PINERR",error:"Currently we are unavailable at this location"};
+                    $rootScope.pushSystemMsg(0,msg); 
+                }
+                    
+                else
+                {
+                    var msg = {type:"SYS_PINADDR",address:response.data.data,responsedata:response.data.data};
+                    $rootScope.pushSystemMsg(0,msg); 
+                    //alert(response.data.data.address);
+                }
+            });
+        };
         $rootScope.showQuerybtn = function() {
             var msg = {type:"SYS_QUERY"};
             $rootScope.pushSystemMsg(0,msg); 

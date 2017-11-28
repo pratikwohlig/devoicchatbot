@@ -373,10 +373,29 @@ width:90%;
     width:125px;
     opacity:1 !important;
 } 
+.commonbtn:active:focus, .commonbtn:active {
+    color: #fff;
+    background-color: #d4d4d4;
+    border-color: #8c8c8c;
+    -webkit-box-shadow: inset 0 0 30px #ffbc00;
+    -moz-box-shadow: inset 0 0 30px #ffbc00;
+    box-shadow: inset 0 0 30px #ffbc00;
+}
+.addresstext {
+    margin-bottom: 10px !important;
+}
+.commonbtn {
+    background-color: #ED6D05 !important;
+    border: 0px;
+    border-radius: 8px;
+    outline: none;
+    color: #fff;
+}
 button.texttoggle {
     background-color: #ED6D05 !important;
     border: 0px;
     border-radius: 8px;
+    outline: none;
 }
 .faqmore {
     margin-left: -3px;
@@ -543,7 +562,8 @@ ol.quesList { padding-left:15px; }
     color: #ED6A0B;
     border: 1px solid #ED6A0B;
     font-family:"Roboto-Light";
-    border-radius: 9px;
+    border-radius: 9px !important;
+    margin-right: 5px;
 }
 .processbtn:focus, .processbtn:active {
     outline: none;
