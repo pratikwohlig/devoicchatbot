@@ -161,6 +161,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {id:"mr" , name:"Marathi"},
             {id:"gu" , name:"Gujarati"},
             {id:"ta" , name:"Tamil"},
+            {id:"kn",name:"Kannada"},
+            {id:"te",name:"Telugu"},
         ];
         $rootScope.changeLanguage = function(lang) {
             $rootScope.selectedLanguage = lang;
