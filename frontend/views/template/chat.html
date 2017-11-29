@@ -102,13 +102,13 @@
                     </div>
                     <div class="col-md-7 chatbody2 col-xs-8">
                         <div class="panel-body row"> 
-                            <div class="row languagebar">
+                            <!-- <div class="row languagebar">
                                 <div class="col-md-12">
                                     <select id="language_list" name="language_list"  ng-options="cat as cat.name for cat in languagelist" ng-init="selectedLanguage = selectedLanguage || 'en'" ng-model="selectedLanguage" class="col-md-3 pull-right"  required ng-change="changeLanguage(selectedLanguage);">
                                 
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <ul class="chat">
                                 <li class="{{list.position}} lastchat clearfix animate_fade"   ng-repeat="list in chatlist track by $index" ng-init="$rowIndex = $index">

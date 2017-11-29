@@ -644,24 +644,24 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.getmaillink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>Customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>Customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.getcallink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>18001209636</a>",type:"SYS_AUTO"};
+                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>1800-120-9636</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>18001035466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.mailus = function(){
@@ -1033,7 +1033,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg);
                 $scope.timerflag = true; 
                 $rootScope.showMsgLoader=false;
@@ -1082,7 +1082,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 $rootScope.showMsgLoader=false;
             });
@@ -1200,7 +1200,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
                     //console.log(reason);
-                    msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
