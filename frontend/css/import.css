@@ -9975,7 +9975,7 @@ header {
 #chat_panel {
   display: block;
   font-family: 'Helvetica Neue','Roboto';
-  height: 500px;
+  height: 450px;
   position: relative;
   border: 1px solid #0b354c; }
 
@@ -10072,7 +10072,7 @@ li.ui-menu-item {
   font-family: "Roboto-Light"; }
 
 .chatbottomtext {
-  font-size: 12px;
+  font-size: 10px;
   color: #ED6D05; }
 
 .animate_fade.ng-move,
@@ -10108,7 +10108,7 @@ li.ui-menu-item {
   position: fixed;
   bottom: 0;
   right: 0px;
-  width: 45%; }
+  width: 100%; }
 
 .profileDetail span {
   font-weight: bold;
@@ -10454,7 +10454,7 @@ a.cingularititext {
 div#all_questions {
   margin-top: 10px;
   padding-top: 10px;
-  height: 320px;
+  height: 270px;
   overflow-y: auto;
   overflow-x: hidden;
   background: #EF9C6D;
@@ -10506,7 +10506,8 @@ ol.quesList {
 .panel-body {
   padding-top: 0px;
   overflow-y: auto;
-  height: 335px; }
+  overflow-x: auto;
+  height: 290px; }
 
 .process_buttons {
   background: #eee;
@@ -10523,11 +10524,16 @@ ol.quesList {
   border-radius: 9px !important;
   margin-right: 5px; }
 
+.process_btngroup {
+  padding-left: 4px;
+  padding-right: 0px; }
+
 .processbtn:focus, .processbtn:active {
   outline: none; }
 
 ul.querybtns li {
-  list-style-type: none; }
+  list-style-type: none;
+  margin-top: 0px !important; }
 
 ul.querybtns {
   padding-left: 0px !important; }
@@ -10552,7 +10558,7 @@ button.btn.q_btn:hover {
   color: #fff; }
 
 .chatbody2 {
-  height: 455px;
+  height: 405px;
   border-left: 1px solid #000; }
 
 ::-webkit-scrollbar-track {
@@ -11110,15 +11116,11 @@ div.scriptData {
     .content .tab-content {
       min-height: 0px; }
   .clickImage {
-    height: 135px !important; }
-  #chat_window_1 .panel-body {
-    height: 420px; } }
+    height: 135px !important; } }
 
 @media screen and (max-width: 800px) {
   .clickImage {
-    height: 80px; }
-  #chat_window_1 .panel-body {
-    height: 355px; } }
+    height: 80px; } }
 
 @media only screen and (max-width: 414px) {
   #chat_window_1 {
@@ -11135,11 +11137,11 @@ div.scriptData {
   #chat_window_1 {
     width: 100%; }
     #chat_window_1 .panel-body {
-      height: 390px; }
+      height: 360px; }
   .chatbody2 {
-    height: 526px; }
+    height: 475px; }
   div#all_questions {
-    height: 325px; }
+    height: 265px; }
   #chat_panel {
     height: 100%; }
   ul.chat {

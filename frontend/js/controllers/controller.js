@@ -21,14 +21,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $.jStorage.set("csrftoken",response.data.csrf_token);
                 //console.log(response.data);
             });
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position){
-                    $scope.$apply(function(){
-                        $scope.position = position;
-                        console.log(position);
-                    });
-                });
-            }
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.getCurrentPosition(function(position){
+            //         $scope.$apply(function(){
+            //             $scope.position = position;
+            //             console.log(position);
+            //         });
+            //     });
+            // }
         });
         
 
@@ -1381,7 +1381,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 var customer_id ="";
                 var customer_name ="";
             }
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
             
             apiService.outfeedback(formData).then(function (data){
 
