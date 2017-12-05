@@ -148,7 +148,7 @@ li.ui-menu-item {
     position: fixed;
     bottom: 0;
     right:0px;
-    width: 100%;
+    width: 45%;
 }
 .profileDetail span { 
     font-weight:bold;
@@ -501,6 +501,12 @@ a.cingularititext {
 .panel .slidedown .glyphicon, .chat .glyphicon
 {
     margin-right: 0px;
+}
+input#pincode {
+    border-radius: 15px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 25px;
 }
 div#all_questions {
     margin-top: 10px;
