@@ -10108,7 +10108,7 @@ li.ui-menu-item {
   position: fixed;
   bottom: 0;
   right: 0px;
-  width: 45%; }
+  width: 100%; }
 
 .profileDetail span {
   font-weight: bold;
