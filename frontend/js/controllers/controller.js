@@ -74,9 +74,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
         });
         var username=$location.search().username; 
-        var password=$location.search().password;
+        //var password=$location.search().password;
         $scope.timerflag=true;
-        if(username && password)
+        if(username)
         {   
             if($.jStorage.get("username") && $.jStorage.get("username")==username)
             {
@@ -87,11 +87,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
             
                 console.log(username);
-                console.log(password);
-                console.log("Exist");
-                var formData = {customer:username,pword:password};
+                //console.log(password);
+                //console.log("Exist");
+                //var formData = {customer:username,pword:password};
                 angular.element(document).ready(function () {
-                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    //var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    var url = 'http://adserver.i-on.in:9000/getAccountDetails?customer='+username;
+                    
                     $.ajax({
                         url: url,
                         dataType: "json",
