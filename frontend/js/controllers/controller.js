@@ -5,16 +5,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
 
         angular.element(document).ready(function () {
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
@@ -43,6 +45,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 console.log("Idle started");
             });
        //});
+        $rootScope.trustSrc = function(src) {
+            return $sce.trustAsResourceUrl(src);
+            //return $sce.getTrustedResourceUrl(src);
+        };
+       $rootScope.cust_Name="";
+       $rootScope.CustomerID="";
         $rootScope.$on('IdleTimeout', function() {
             // var scope = angular.element(document.getElementById('changepwd')).scope();
             // scope.logout();
@@ -78,8 +86,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.timerflag=true;
         if(username)
         {   
-            if($.jStorage.get("username") && $.jStorage.get("username")==username)
+            if($.jStorage.get("username"))
             {
+                if($.jStorage.get("customerDetails"))
+                {
+                    var cust_det = $.jStorage.get("customerDetails");
+                
+                    $rootScope.cust_Name = cust_det.Name;
+                    $rootScope.CustomerID = cust_det.CustomerID;
+                }
                 
             }
             else
@@ -104,10 +119,20 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         type: "GET",
                         success: function (data) {
                             console.log(data,"crm");
-                            $.jStorage.set("customerDetails",data.customerDetails);
+                            if(data.customerDetails)
+                            {
+                                $rootScope.cust_Name = data.customerDetails.Name;
+                                $rootScope.CustomerID = data.customerDetails.CustomerID;
+                                $.jStorage.set("customerDetails",data.customerDetails);
+                                location.reload();
+                            }
+                            else {
+                                
+                                
+                                
+                            }
                             $.jStorage.set("guidance",data.guidance);
                             $.jStorage.set("username",username);
-                            location.reload();
                         },
                     });
                 });
@@ -438,9 +463,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             $rootScope.firstMsg = true;
             var cust = $.jStorage.get("customerDetails");
-            var cust_name = "";
-            if(cust.Name)
-                cust_name = cust.Name;
+            // var cust_name = "";
+            // if(cust && cust.Name)
+            //     cust_name = cust.Name;
+            var cust_name = $rootScope.cust_Name;
             var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or click on any of the buttons below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
@@ -979,15 +1005,19 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.getProcessTree = function(process) {
             $rootScope.scrollChatWindow();
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+        
             formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                
             $rootScope.showMsgLoader = true;
@@ -1063,15 +1093,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //console.log(formData);
             $rootScope.showMsgLoader = true;
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             formData.customer_id = customer_id;
             formData.customer_name = customer_name;
             apiService.getDthlinkRes(formData).then(function (data){
@@ -1124,15 +1156,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.getSystemMsg = function(id,value){
             //console.log("id",id);
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
                 $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                 //var mysessiondata = $.jStorage.get("sessiondata");
@@ -1326,16 +1360,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             msg = {Text:"Thank you very much! Talk to you soon.",type:"SYS_EMPTY_RES"};
             $rootScope.pushSystemMsg(0,msg);
             $rootScope.disablefeedback = true;
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"POSITIVE" };
             
             apiService.outfeedback(formData).then(function (data){
@@ -1373,16 +1409,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             msg = {Text:"Thanks! for taking the time to provide feedback, This will help me improve.",type:"SYS_EMPTY_RES"};
             $rootScope.pushSystemMsg(0,msg);
             $rootScope.disablefeedback = true;
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
             
             apiService.outfeedback(formData).then(function (data){

@@ -10108,7 +10108,7 @@ li.ui-menu-item {
   position: fixed;
   bottom: 0;
   right: 0px;
-  width: 100%; }
+  width: 45%; }
 
 .profileDetail span {
   font-weight: bold;
@@ -10125,6 +10125,9 @@ button.headerbtns:focus {
 .autolist .highlighted {
   color: #000;
   font-weight: bold; }
+
+.applink {
+  width: 50px; }
 
 .calculator > .panel-heading {
   color: #00415d;
@@ -10336,7 +10339,7 @@ button.headerbtns:focus {
   box-shadow: inset 0 0 30px #ffbc00; }
 
 .addresstext {
-  margin-bottom: 10px !important; }
+  margin-bottom: 30px !important; }
 
 .commonbtn {
   background-color: #ED6D05 !important;

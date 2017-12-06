@@ -374,10 +374,12 @@
                                             <p>
                                                 <b>Here are the address(es) for this pincode: </b>
                                                 <br><br>
-                                                <p class="addresstext" ng-repeat="addr in list.msg.address">
-                                                    {{addr.address}}
-                                                    
-                                                </p>
+                                                <div  class="addresstext" ng-repeat="addr in list.msg.address">
+                                                    <p><b>{{addr.location}}</b> : {{addr.address}}</p>
+                                                    <div ng-if="addr.mapurl && addr.mapurl !==''">
+                                                        <iframe src="{{trustSrc(addr.mapurl)}}" allowfullscreen width="100%" height="200px" frameborder="0" class="mapiframe"></iframe>
+                                                    </div>
+                                                </div>
 
                                             </p>
                                         </div>
