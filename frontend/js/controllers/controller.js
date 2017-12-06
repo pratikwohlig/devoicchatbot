@@ -100,7 +100,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         async: true,
                         cache: false,
                         timeout: 3000,
-                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                        //headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
                         type: "GET",
                         success: function (data) {
                             console.log(data,"crm");
