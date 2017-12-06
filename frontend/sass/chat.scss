@@ -148,7 +148,7 @@ li.ui-menu-item {
     position: fixed;
     bottom: 0;
     right:0px;
-    width: 100%;
+    width: 45%;
 }
 .profileDetail span { 
     font-weight:bold;
@@ -163,6 +163,9 @@ button.headerbtns:focus { background-color: #003874; outline: none; }
     color:#000;
     font-weight:bold;
  }
+.applink {
+    width: 50px;
+}
 .calculator>.panel-heading {
             color: #00415d;
             background-color: #fff;
