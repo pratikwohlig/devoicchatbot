@@ -82,7 +82,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
         });
         var username=$location.search().username; 
-        //var password=$location.search().password;
+        var password=$location.search().password;
         $scope.timerflag=true;
         if(username)
         {   
@@ -101,13 +101,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {
 
             
-                console.log(username);
+                //console.log(username);
                 //console.log(password);
                 //console.log("Exist");
                 //var formData = {customer:username,pword:password};
                 angular.element(document).ready(function () {
-                    //var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
-                    var url = 'http://adserver.i-on.in:9001/getAccountDetails?customer='+username;
+                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    //var url = 'http://adserver.i-on.in:9001/getAccountDetails?customer='+username;
                     
                     $.ajax({
                         url: url,
@@ -115,7 +115,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         async: true,
                         cache: false,
                         timeout: 3000,
-                        //headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
                         type: "GET",
                         success: function (data) {
                             console.log(data,"crm");
