@@ -82,7 +82,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
         });
         var username=$location.search().username; 
-        var password=$location.search().password;
+        var customerid=$location.search().customerid; 
+        //var password=$location.search().password;
         $scope.timerflag=true;
         if(username)
         {   
@@ -100,41 +101,46 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             else
             {
 
-            
+                $rootScope.cust_Name = username;
+                $rootScope.CustomerID = customerid;
+                var c_d={};
+                c_d.Name=username;
+                c_d.CustomerID=customerid;
+                $.jStorage.set("customerDetails",c_d);
                 //console.log(username);
                 //console.log(password);
                 //console.log("Exist");
                 //var formData = {customer:username,pword:password};
                 angular.element(document).ready(function () {
-                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
-                    //var url = 'http://adserver.i-on.in:9001/getAccountDetails?customer='+username;
+                    // var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    // //var url = 'http://adserver.i-on.in:9001/getAccountDetails?customer='+username;
                     
-                    $.ajax({
-                        url: url,
-                        dataType: "json",
-                        async: true,
-                        cache: false,
-                        timeout: 3000,
-                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
-                        type: "GET",
-                        success: function (data) {
-                            console.log(data,"crm");
-                            if(data.customerDetails)
-                            {
-                                $rootScope.cust_Name = data.customerDetails.Name;
-                                $rootScope.CustomerID = data.customerDetails.CustomerID;
-                                $.jStorage.set("customerDetails",data.customerDetails);
-                                location.reload();
-                            }
-                            else {
+                    // $.ajax({
+                    //     url: url,
+                    //     dataType: "json",
+                    //     async: true,
+                    //     cache: false,
+                    //     timeout: 3000,
+                    //     headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                    //     type: "GET",
+                    //     success: function (data) {
+                    //         console.log(data,"crm");
+                    //         if(data.customerDetails)
+                    //         {
+                    //             $rootScope.cust_Name = data.customerDetails.Name;
+                    //             $rootScope.CustomerID = data.customerDetails.CustomerID;
+                    //             $.jStorage.set("customerDetails",data.customerDetails);
+                    //             location.reload();
+                    //         }
+                    //         else {
                                 
                                 
                                 
-                            }
-                            $.jStorage.set("guidance",data.guidance);
-                            $.jStorage.set("username",username);
-                        },
-                    });
+                    //         }
+                    //         $.jStorage.set("guidance",data.guidance);
+                    //         $.jStorage.set("username",username);
+                    //     },
+                    // });
                 });
             }
             // apiService.serverlogin(formData).then(function (callback){
