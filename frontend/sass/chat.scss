@@ -305,6 +305,9 @@ width:90%;
     cursor:pointer;
 }
 .redtext { color:red; }
+a.dthyperlink:hover {
+    color: #fff;
+}
 .chat-body .dthyperlink {
     cursor: pointer;
     text-decoration: underline;
