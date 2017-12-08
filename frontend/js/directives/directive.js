@@ -39,31 +39,31 @@ myApp.directive('img', function ($compile, $parse) {
     })
 
 
-    .directive('fancybox', function ($document) {
-        return {
-            restrict: 'EA',
-            replace: false,
-            link: function (scope, element, attr) {
-                var $element = $(element);
-                var target;
-                if (attr.rel) {
-                    target = $("[rel='" + attr.rel + "']");
-                } else {
-                    target = element;
-                }
+    // .directive('fancybox', function ($document) {
+    //     return {
+    //         restrict: 'EA',
+    //         replace: false,
+    //         link: function (scope, element, attr) {
+    //             var $element = $(element);
+    //             var target;
+    //             if (attr.rel) {
+    //                 target = $("[rel='" + attr.rel + "']");
+    //             } else {
+    //                 target = element;
+    //             }
 
-                target.fancybox({
-                    openEffect: 'fade',
-                    closeEffect: 'fade',
-                    closeBtn: true,
-                    padding: 0,
-                    helpers: {
-                        media: {}
-                    }
-                });
-            }
-        };
-    })
+    //             target.fancybox({
+    //                 openEffect: 'fade',
+    //                 closeEffect: 'fade',
+    //                 closeBtn: true,
+    //                 padding: 0,
+    //                 helpers: {
+    //                     media: {}
+    //                 }
+    //             });
+    //         }
+    //     };
+    // })
 
     .directive('autoHeight', function ($compile, $parse) {
         return {
