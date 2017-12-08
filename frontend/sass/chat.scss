@@ -293,6 +293,9 @@ width:90%;
     position: relative;
     margin-bottom: 15px;
 }
+.clearfix:after, .clearfix:before { 
+    display:none;
+}
 .clickImage{
     /*display:none;*/
     width: auto;
