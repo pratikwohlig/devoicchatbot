@@ -375,7 +375,13 @@
                                                 <b>Here are the address(es) for this pincode: </b>
                                                 <br><br>
                                                 <div  class="addresstext" ng-repeat="addr in list.msg.address">
-                                                    <p><b>{{addr.location}}</b> : {{addr.address}}</p>
+                                                    <!-- <p><b>{{addr.location}}</b> : {{addr.address}}</p> -->
+                                                    <p>
+                                                        <b>{{addr.name}}, {{addr.location}}</b> <br>
+                                                        {{addr.address}}<br>
+                                                        {{addr.city}},{{addr.state}}
+                                                        {{addr.timing}}
+                                                    </p>
                                                     <div ng-if="addr.mapurl && addr.mapurl !==''">
                                                         <iframe src="{{trustSrc(addr.mapurl)}}" allowfullscreen width="100%" height="200px" frameborder="0" class="mapiframe"></iframe>
                                                     </div>

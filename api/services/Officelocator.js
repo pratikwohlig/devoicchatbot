@@ -14,6 +14,18 @@ var schema = new Schema({
     mapurl: {
         type: String,
     },
+    name: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    timing: {
+        type: String,
+    },
 });
 
 schema.plugin(deepPopulate, {
@@ -31,7 +43,7 @@ var model = {
     getaddress: function (data, callback) {
         Officelocator.find({
             pincode:data.pincode
-        }, { address: 1, pincode: 1,location:1,mapurl:1,url:1,_id:0 }).exec(function (err, found) {
+        }, { address: 1, pincode: 1,location:1,mapurl:1,url:1,city:1,state:1,timing:1,name:1,_id:0 }).exec(function (err, found) {
             if (err) {
                 callback(err, null);
             } 
