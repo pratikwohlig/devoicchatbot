@@ -50,6 +50,15 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
             })
         },
+        outlocator: function (formData, callback) {
+            return $http({
+                url: adminurl2 + 'outlocator/'+formData.user_id+"/",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                data: $.param(formData),
+                dataType:"json"
+            });
+        },
         getCategoryFAQ: function (formData, callback) {
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",

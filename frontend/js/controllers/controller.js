@@ -961,6 +961,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.showPincodeform = function() {
             var msg = {type:"SYS_LOCATOR"};
             $rootScope.pushSystemMsg(0,msg); 
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            apiService.outlocator(formdata).then( function (response) {
+
+            });
         };
         $rootScope.locatorformSubmit = function(formdata) {
             console.log(formdata);
