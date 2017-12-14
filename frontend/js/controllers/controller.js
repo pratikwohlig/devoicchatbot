@@ -1195,6 +1195,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
                 $scope.timerflag = false;
                 $scope.sendtobackend = true;
+                $timeout(function(){
+                    if(!$scope.timerflag && $scope.sendtobackend)
+                    {
+                        msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
+                        $rootScope.pushSystemMsg(0,msg); 
+                        //$rootScope.showMsgLoader=false;
+                        $scope.timerflag = true;
+                    }
+                },7000);
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
                     $scope.timerflag = true;
                     $scope.sendtobackend = false;
@@ -1261,15 +1270,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $scope.sendtobackend = false;
                 });
             //});
-            $timeout(function(){
-                if(!$scope.timerflag && $scope.sendtobackend)
-                {
-                    msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
-                    $rootScope.pushSystemMsg(0,msg); 
-                    //$rootScope.showMsgLoader=false;
-                    $scope.timerflag = true;
-                }
-            },7000);
+            
         };
         
         
