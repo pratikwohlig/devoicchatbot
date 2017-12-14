@@ -1017,6 +1017,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         // };
         $rootScope.getProcessTree = function(process) {
             $rootScope.scrollChatWindow();
+            Idle.setIdle(10);
+            Idle.watch();
+            $.jStorage.set("timer",35);
             var cust = $.jStorage.get("customerDetails");
             // if(cust)
             // {
@@ -1170,6 +1173,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.showMsgLoader = false; 
         };
         $rootScope.getSystemMsg = function(id,value){
+            Idle.setIdle(10);
+            Idle.watch();
+            $.jStorage.set("timer",35);
             //console.log("id",id);
             var cust = $.jStorage.get("customerDetails");
             // if(cust)
