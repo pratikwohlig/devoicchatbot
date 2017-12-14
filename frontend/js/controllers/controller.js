@@ -1017,7 +1017,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         // };
         $rootScope.getProcessTree = function(process) {
             $rootScope.scrollChatWindow();
-            Idle.setIdle(10);
+            Idle.setIdle(120);
             Idle.watch();
             $.jStorage.set("timer",35);
             var cust = $.jStorage.get("customerDetails");
