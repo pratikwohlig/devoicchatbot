@@ -85,6 +85,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         var customerid=$location.search().customerid; 
         //var password=$location.search().password;
         $scope.timerflag=true;
+        $scope.sendtobackend = false;
         if(username)
         {   
             if($.jStorage.get("username"))
@@ -1033,8 +1034,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
                
             $rootScope.showMsgLoader = true;
+            $scope.sendtobackend = true;
             apiService.outquery(formData).then(function (data){
-                    
+                $scope.timerflag = true;
+                $scope.sendtobackend = false;
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="text")
                     {
@@ -1080,6 +1083,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg);
                 $scope.timerflag = true; 
+                $scope.sendtobackend = false;
                 $rootScope.showMsgLoader=false;
             });
         };
@@ -1190,8 +1194,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $(".chatinput").val("");
                 });
                 $scope.timerflag = false;
+                $scope.sendtobackend = true;
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
-					$scope.timerflag = true;
+                    $scope.timerflag = true;
+                    $scope.sendtobackend = false;
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
@@ -1252,10 +1258,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
+                    $scope.sendtobackend = false;
                 });
             //});
             $timeout(function(){
-                if(!$scope.timerflag)
+                if(!$scope.timerflag && $scope.sendtobackend)
                 {
                     msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
