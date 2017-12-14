@@ -525,9 +525,10 @@
                             <div id= "suggestionList">
                                 <ul ng-if="autocompletelist.length > 0" class="{{autocompletelist.length}}  ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" id="ui-id-1">
                                     <div class="ui-menu-item-wrapper">
-                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}" data-category="{{list.category}}" data-link="{{list.link}}"  ng-repeat="list in autocompletelist" ng-click="pushAutoMsg(list._id,list.questions,list.answers,list.category,list.link);"   >
+                                        <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}" data-category="{{list.category}}" data-link="{{list.link}}"  ng-repeat="list in autocompletelist | filter:chatText  " ng-click="pushAutoMsg(list._id,list.questions,list.answers,list.category,list.link);"  ng-bind-html="list.questions | highlight:chatText" >{{list.questions}}</li>
+                                        <!-- <li class="ui-menu-item autolist" data-id="{{list._id}}" data-value="{{list.questions}}" data-answers="{{list.answers}}" data-category="{{list.category}}" data-link="{{list.link}}"  ng-repeat="list in autocompletelist" ng-click="pushAutoMsg(list._id,list.questions,list.answers,list.category,list.link);"   >
                                             <myfilter filter-Translate="{{list.questions}}"></myfilter>
-                                        </li>
+                                        </li> -->
                                     </div>
                                 </ul>
                             </div>
