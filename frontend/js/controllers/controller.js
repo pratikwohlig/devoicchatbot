@@ -1196,6 +1196,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $scope.timerflag = false;
                 $scope.sendtobackend = true;
                 $timeout(function(){
+                    console.log($scope.timerflag,"timer");
+                    console.log($scope.sendtobackend,"send");
                     if(!$scope.timerflag && $scope.sendtobackend)
                     {
                         msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
