@@ -158,12 +158,12 @@
                                                             <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:400}}" ng-if="chatRes.Text.length > 400"></span>
                                                             <span class="faqdot" ng-if="chatRes.Text.length > 400">...</span>
                                                             <span class="faqmore" ng-if="chatRes.Text.length > 400" style="display:none;">
-                                                                <!-- <span ng-bind-html = "chatRes.Text|newlines|limitTo:400:400">
+                                                                 <span ng-bind-html = "chatRes.Text|newlines|limitTo:400:400">
                                                                     
                                                                     {{chatRes.Text}}
                                                                     
-                                                                </span> -->
-                                                                <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:400:400}}" ></span>
+                                                                </span> 
+                                                                <!-- <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:400:400}}" ></span> -->
                                                             </span>
                                                         </span>
                                                         
