@@ -138,7 +138,7 @@
                                         <div class=" clearfix" ng-if="list.position==='left' && list.msg.tiledlist ">
                                             <div class="sysChatRes"  ng-repeat="chatRes in list.msg.tiledlist">
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='text'">
-                                                    <p class="lastmsg" ng-if="chatRes.Text.length < 400">
+                                                    <p class="lastmsg" ng-if="chatRes.Text.length <= 400">
                                                         <!-- <ng-bind-html ng-bind-html = "chatRes.Text|newlines">
                                                             
                                                             {{chatRes.Text}}
