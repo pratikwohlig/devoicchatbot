@@ -3,7 +3,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
-
+        $rootScope.gotsession=false;
         angular.element(document).ready(function () {
             // var cust = $.jStorage.get("customerDetails");
             // if(cust)
@@ -18,6 +18,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
+                $rootScope.gotsession = true;
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
                 $.jStorage.set("csrftoken",response.data.csrf_token);
