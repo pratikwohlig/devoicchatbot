@@ -1,5 +1,5 @@
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
-    adminurl2 = "https://cingulariti.com:8094/";
+    adminurl2 = "https://cingulariti.com:443/";
     var adminurl3 = "http://localhost/api/";
     var adminurl3 = "https://exponentiadata.co.in:8094/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
