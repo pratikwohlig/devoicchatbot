@@ -21,6 +21,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
                 $.jStorage.set("csrftoken",response.data.csrf_token);
+                $.jStorage.set("session_id",response.data.session_id);
                 //console.log(response.data);
             });
             // if (navigator.geolocation) {
@@ -350,7 +351,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.pushQuestionMsg(index,link);
         };
         $rootScope.getCategoryFAQ = function(category) {
-            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id") };
             //console.log($scope.formData);
             apiService.getCategoryFAQ($scope.formData).then( function (response) {
                 $rootScope.links = response.data;
@@ -964,7 +965,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.pushSystemMsg(0,msg); 
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
-            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id") };
             apiService.outlocator(formdata).then( function (response) {
 
             });
@@ -1034,7 +1035,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
         
-            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id") };
                
             $rootScope.showMsgLoader = true;
             $scope.sendtobackend = true;
@@ -1108,7 +1109,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // formData.DTHlink = dthlink;
             formData = mysession;
             formData.csrfmiddlewaretoken=$rootScope.getCookie("csrftoken");
-            formData.user_id=$cookies.get("session_id");
+            formData.user_id=$.jStorage.get("session_id");
             //console.log(formData);
             $rootScope.showMsgLoader = true;
             var cust = $.jStorage.get("customerDetails");
@@ -1190,7 +1191,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id") };
                 //var mysessiondata = $.jStorage.get("sessiondata");
                 //mysessiondata = mysessiondata.toObject();
                 //mysessiondata.data = {id:parseInt(id),Text:value};
@@ -1400,7 +1401,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"POSITIVE" };
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id"),feedback:"POSITIVE" };
             
             apiService.outfeedback(formData).then(function (data){
 
@@ -1449,7 +1450,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$.jStorage.get("session_id"),feedback:"NEGATIVE" };
             
             apiService.outfeedback(formData).then(function (data){
 
