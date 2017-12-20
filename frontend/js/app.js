@@ -61,7 +61,7 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
-myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
+myApp.run(['$http', '$cookies','Idle','$rootScope', function ($http, $cookies,Idle,$rootScope) {
 
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
@@ -82,7 +82,7 @@ myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
         $(this).css('color', '#fff');
     });  
     Idle.watch();
-    
+    $rootScope.session_id="";
 }]);
 
 // For Language JS
