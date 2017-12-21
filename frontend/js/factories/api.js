@@ -51,48 +51,59 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
             })
         },
         outlocator: function (formData, callback) {
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return $http({
                 url: adminurl2 + 'outlocator/'+formData.user_id+"/",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                data: $.param(formData),
+                data: $httpParamSerializer(fd),
                 dataType:"json"
             });
         },
         getCategoryFAQ: function (formData, callback) {
+            //var fd = $.param(formData);
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                data: $.param(formData),
+                data: $httpParamSerializer(fd),
                 dataType:"json"
             });
         },
         outquery: function (formData, callback) {
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return $http({
                 url: adminurl2 + 'outquery/'+formData.user_id+"/",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                data: $.param(formData),
+                data: $httpParamSerializer(fd),
                 dataType:"json"
             });
         },
         outfeedback:function(formData,callback){
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return    $http({
                 url:adminurl2+'outfeedback/'+formData.user_id+"/",
                 method: 'POST',
-                data:$.param(formData),
+                data: $httpParamSerializer(fd),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
             });
             
             
         },
         getDthlinkRes:function(formData,callback){
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return    $http({
                 url:adminurl2+'outDTL/'+formData.user_id+"/",
                 //url: adminUrl3 + 'Chatbotautolist/getDthlink',
                 method: 'POST',
-                data:$.param(formData),
+                data: $httpParamSerializer(fd),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
             });
             

@@ -43,7 +43,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle,$httpParamSerializer) {
        //angular.element(document).ready(function () {
             $scope.$on('IdleStart', function() {
                 // the user appears to have gone idle
@@ -971,13 +971,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_name = $rootScope.cust_Name;
             
             var mysessiondata = $.jStorage.get("session_object");
-            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,session_object:mysessiondata };
+            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
             //mysessiondata = mysessiondata.toObject();
             //var mergedObject = angular.extend(formData, mysessiondata);
             //var formData = mergedObject;
             apiService.outlocator(formdata).then( function (data) {
-                // $rootScope.session_object = data.data.session_object;
-                // $.jStorage.set("session_object",data.data.session_object);
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
             });
         };
         $rootScope.locatorformSubmit = function(formdata) {
@@ -1044,7 +1044,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             var mysessiondata = $.jStorage.get("session_object");
-            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,session_object:mysessiondata };
+            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
                
             $rootScope.showMsgLoader = true;
             $scope.sendtobackend = true;
@@ -1130,7 +1130,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //mysessiondata = mysessiondata.toObject();
             //var mergedObject = angular.extend(formData, mysessiondata);
             //var formData = mergedObject;
-            formData.session_object = mysessiondata;
+            //formData.session_object = mysessiondata;
             $rootScope.showMsgLoader = true;
             var cust = $.jStorage.get("customerDetails");
             // if(cust)
@@ -1214,7 +1214,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_name = $rootScope.cust_Name;
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
                 var mysessiondata = $.jStorage.get("session_object");
-                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,session_object:mysessiondata };
+                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
                 
                 //mysessiondata = mysessiondata.toObject();
                 //var mergedObject = angular.extend($scope.formData, mysessiondata);
@@ -1426,13 +1426,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             var mysessiondata = $.jStorage.get("session_object");
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"POSITIVE",session_object:mysessiondata };
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"POSITIVE" };
             
             //mysessiondata = mysessiondata.toObject();
             // var mergedObject = angular.extend(formData, mysessiondata);
             // var formData = mergedObject;
             apiService.outfeedback(formData).then(function (data){
-
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
             });
         };
         $rootScope.$dislikemodalInstance = {};
@@ -1479,13 +1480,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             var mysessiondata = $.jStorage.get("session_object");
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"NEGATIVE",session_object:mysessiondata };
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"NEGATIVE" };
             
             //mysessiondata = mysessiondata.toObject();
             //var mergedObject = angular.extend(formData, mysessiondata);
             //var formData = mergedObject;
             apiService.outfeedback(formData).then(function (data){
-
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
             });
         };
         
