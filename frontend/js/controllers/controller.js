@@ -19,6 +19,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_name = $rootScope.cust_Name;
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 $rootScope.gotsession = true;
+                $rootScope.session_object = response.data.session_object;
+                $.jStorage.set("session_object",response.data.session_object);
                 $cookies.put("csrftoken",response.data.csrf_token);
                 $cookies.put("session_id",response.data.session_id);
                 $.jStorage.set("csrftoken",response.data.csrf_token);
@@ -1041,7 +1043,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                
             $rootScope.showMsgLoader = true;
             $scope.sendtobackend = true;
+            var mysessiondata = $.jStorage.get("session_object");
+            mysessiondata = mysessiondata.toObject();
+            var mergedObject = angular.extend(formData, mysessiondata);
+            var formData = mergedObject;
             apiService.outquery(formData).then(function (data){
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
                 $scope.timerflag = true;
                 $scope.sendtobackend = false;
                 angular.forEach(data.data.tiledlist, function(value, key) {
@@ -1113,6 +1121,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData.csrfmiddlewaretoken=$rootScope.getCookie("csrftoken");
             formData.user_id=$rootScope.session_id;
             //console.log(formData);
+            var mysessiondata = $.jStorage.get("session_object");
+            mysessiondata = mysessiondata.toObject();
+            var mergedObject = angular.extend(formData, mysessiondata);
+            var formData = mergedObject;
             $rootScope.showMsgLoader = true;
             var cust = $.jStorage.get("customerDetails");
             // if(cust)
@@ -1129,6 +1141,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             formData.customer_id = customer_id;
             formData.customer_name = customer_name;
             apiService.getDthlinkRes(formData).then(function (data){
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="DTHyperlink")
                     {
@@ -1194,11 +1208,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_name = $rootScope.cust_Name;
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
                 $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
-                //var mysessiondata = $.jStorage.get("sessiondata");
-                //mysessiondata = mysessiondata.toObject();
-                //mysessiondata.data = {id:parseInt(id),Text:value};
-				//mysessiondata.data = {id:id,Text:value};
-                //$rootScope.formData = mysessiondata;
+                var mysessiondata = $.jStorage.get("session_object");
+                mysessiondata = mysessiondata.toObject();
+                var mergedObject = angular.extend($scope.formData, mysessiondata);
+                $scope.formData = mergedObject;
                 $timeout(function(){
                     $(".chatinput").val("");
                 });
@@ -1218,6 +1231,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
                     $scope.timerflag = true;
                     $scope.sendtobackend = false;
+                    $rootScope.session_object = data.data.session_object;
+                    $.jStorage.set("session_object",data.data.session_object);
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
