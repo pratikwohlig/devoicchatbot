@@ -110,8 +110,9 @@
                                 </div>
                             </div> -->
                             
-                            <ul class="chat">
-                                <li class="{{list.position}} lastchat clearfix animate_fade"   ng-repeat="list in chatlist track by $index" ng-init="$rowIndex = $index">
+                            <ul class="chat"> 
+                                <!-- animate_fade -->
+                                <li class="{{list.position}} lastchat clearfix "   ng-repeat="list in chatlist track by $index" ng-init="$rowIndex = $index">
                                     <span class="chat-img pull-{{list.position}}">
                                         <span ng-if="list.position == 'left'">
                                             <img ng-src="img/tenali_listening.gif" alt="ION" class="img-circle " />
