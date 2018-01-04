@@ -1,0 +1,17 @@
+version: "2"
+services:
+  app:
+    container_name: devoic
+    restart: always
+    build: .
+    ports:
+      - "8094:8094"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data/db
+    ports:
+      - "27017:27017"

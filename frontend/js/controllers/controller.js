@@ -28,6 +28,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $rootScope.session_id=response.data.session_id;
                 //console.log(response.data);
             });
+            $.ajax({
+                url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
+                dataType: "json",
+                async: true,
+                cache: false,
+                timeout: 3000,
+                type: "GET",
+                success: function (data) {
+                    console.log(data,"live user");
+                    
+                },
+            });
             // if (navigator.geolocation) {
             //     navigator.geolocation.getCurrentPosition(function(position){
             //         $scope.$apply(function(){
