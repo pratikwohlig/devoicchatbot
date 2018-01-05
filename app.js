@@ -33,8 +33,6 @@ global.host = "localhost";
 global.port = "27017";
 global.url = 'mongodb://' + username + ':' + (password) + '@' + host + ':' + port + '/' + database;
 global.mongourl = url;
-console.log(mongourl);
-console.log(url);
 //mongoose.connect('mongodb://dvoicadmin:dvoicadmin_1234@localhost:27017/'+database, {
 mongoose.connect(mongourl, {
 
