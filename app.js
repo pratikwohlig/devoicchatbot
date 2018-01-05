@@ -26,13 +26,40 @@ mongoose = require('mongoose');
 
 global["database"] = "dvois";
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/' + database, {
+//'mongodb://dvoicadmin:' + encodeURI('dvoicadmin@1234') + '@localhost:27017/' + database,
+global.username = "dvoicadmin";
+global.password = "dvoicadmin_1234";
+global.host = "localhost";
+global.port = "27017";
+global.url = 'mongodb://' + username + ':' + encodeURI(password) + '@' + host + ':' + port + '/' + database;
+global.mongourl = url;
+//mongoose.connect('mongodb://dvoicadmin:dvoicadmin_1234@localhost:27017/'+database, {
+mongoose.connect(global.url, {
+
     useMongoClient: true,
 }, function (err) {
     if (err) {
         console.log(err);
     }
 });
+// var conn = mongoose.connection;
+// var fs = require('fs');
+ 
+// var Grid = require('gridfs-stream');
+// Grid.mongo = mongoose.mongo;
+//  var mongoDriver = mongoose.mongo;
+
+// var db = mongoose.connection.db;
+// var Gridfs = require('gridfs-stream');
+// var gfs = new Gridfs(database, mongoDriver);
+// conn.once('open', function () {
+//     console.log('open');
+//     var gfs = Grid(conn.db);
+ 
+//     // streaming to gridfs
+//     //filename to store in mongodb
+    
+// });
 // Ensure a "sails" can be located:
 (function () {
     var sails;

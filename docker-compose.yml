@@ -1,17 +1,60 @@
-version: "2"
+# version: "2"
+# services:
+#   app:
+#     container_name: devoic
+#     restart: always
+#     build: .
+#     ports:
+#       - "8094:8094"
+#     links:
+#       - mongo
+#   mongo:
+#     container_name: mongo
+#     image: mongo
+#     volumes:
+#       - ./data/db
+#     ports:
+#       - "27017:27017"
+
+# sails:
+#   build: .
+#   #from: node:4.0
+#   ports:
+#     - "8080:8080"
+#   volumes:
+#     - ./:/sails
+#   command: npm start
+#   environment:
+#     - NODE_ENV=dev
+
+# version: '2'
+# services:
+
+#   web:
+#     build: ./
+#     volumes:
+     
+#      - ./node_modules
+#     ports:
+#      - "1337:1337"
+#     depends_on:
+#      - mongo
+
+#   mongo:
+#     image: mongo
+#     ports:
+#      - "27017:27017"
+
+version: '2' # specify docker-compose version
+
+# Define the services/containers to be run
 services:
-  app:
-    container_name: devoic
-    restart: always
-    build: .
+  database: # name of the third service
+    image: mongo # specify image to build container from
     ports:
-      - "8094:8094"
-    links:
-      - mongo
-  mongo:
-    container_name: mongo
-    image: mongo
-    volumes:
-      - ./data/db
+      - "27017:27017" # specify port forewarding
+  angular: # name of the first service
+    build: /opt/lampp/htdocs/devoicchatbot # specify the directory of the Dockerfile
     ports:
-      - "27017:27017"
+      - "4200:8094" # specify port forewarding
+  
