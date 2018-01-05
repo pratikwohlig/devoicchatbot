@@ -42,6 +42,7 @@ mongoose.connect(global.url, {
         console.log(err);
     }
 });
+global['mongoose']=mongoose;
 // var conn = mongoose.connection;
 // var fs = require('fs');
  
