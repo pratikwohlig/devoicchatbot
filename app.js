@@ -31,7 +31,7 @@ global.username = "dvoicadmin";
 global.password = "dvoicadmin_1234";
 global.host = "localhost";
 global.port = "27017";
-global.url = 'mongodb://' + username + ':' + encodeURI(password) + '@' + host + ':' + port + '/' + database;
+global.url = 'mongodb://' + username + ':' + (password) + '@' + host + ':' + port + '/' + database;
 global.mongourl = url;
 //mongoose.connect('mongodb://dvoicadmin:dvoicadmin_1234@localhost:27017/'+database, {
 mongoose.connect(url, {
