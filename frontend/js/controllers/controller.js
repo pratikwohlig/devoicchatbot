@@ -18,7 +18,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
-                if(_.isEmpty(response))
+                if(!response.data.session_id)
                 {
                     $rootScope.gotsession = false;    
                 }
