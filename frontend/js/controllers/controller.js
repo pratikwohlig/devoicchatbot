@@ -18,14 +18,21 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
-                $rootScope.gotsession = true;
-                $rootScope.session_object = response.data.session_object;
-                $.jStorage.set("session_object",response.data.session_object);
-                $cookies.put("csrftoken",response.data.csrf_token);
-                $cookies.put("session_id",response.data.session_id);
-                $.jStorage.set("csrftoken",response.data.csrf_token);
-                $.jStorage.set("session_id",response.data.session_id);
-                $rootScope.session_id=response.data.session_id;
+                if(_.isEmpty(response))
+                {
+                    $rootScope.gotsession = false;    
+                }
+                else
+                {
+                    $rootScope.gotsession = true;
+                    $rootScope.session_object = response.data.session_object;
+                    $.jStorage.set("session_object",response.data.session_object);
+                    $cookies.put("csrftoken",response.data.csrf_token);
+                    $cookies.put("session_id",response.data.session_id);
+                    $.jStorage.set("csrftoken",response.data.csrf_token);
+                    $.jStorage.set("session_id",response.data.session_id);
+                    $rootScope.session_id=response.data.session_id;
+                }
                 //console.log(response.data);
             });
             $.ajax({
