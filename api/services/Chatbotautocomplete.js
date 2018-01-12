@@ -57,7 +57,7 @@ var model = {
         var executablePath =  process.cwd()+'\\exe\\licence_validate.exe';
         var parameters = ["exponentiadata.co.in"];
 
-        exec(executablePath, parameters, function(err, found) {
+        exec(executablePath, function(err, found) {
             console.log(err)
             console.log(found.toString());
             callback(null, JSON.parse(found));
