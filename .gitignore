@@ -125,3 +125,7 @@ backup
 *.logsendgrid.env
 sendgrid.env
 exe
+licence_validate.exe
+Certificate.json
+get_mac_address.exe
+License_key.txt

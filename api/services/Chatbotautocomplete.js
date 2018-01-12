@@ -57,45 +57,45 @@ var model = {
        // var executablePath =  process.cwd()+'\\exe\\licence_validate.exe';
         var parameters = ["exponentiadata.co.in"];
 
-        // exec(executablePath, function(err, found) {
-        //     console.log(err)
-        //     console.log(found.toString());
-        //     callback(null, JSON.parse(found));
-        // });
-        var spawn = require("child_process").spawn;
-        var process1 = spawn('cmd',['.\\exe\\licence_validate.exe'], {detached: true});
-        process1.stdout.on(parameters,function(chunk){
+        exec("licence_validate.exe exponentiadata.co.in", function(err, found) {
+            console.log(err)
+            console.log(found.toString());
+            callback(null, JSON.parse(found));
+        });
+        // var spawn = require("child_process").spawn;
+        // var process1 = spawn('cmd',['.\\exe\\licence_validate.exe'], {detached: true});
+        // process1.stdout.on(parameters,function(chunk){
 
-            console.log("data", textChunk);
-            json_data = JSON.parse(chunk);
-            //console.log("tts",json_data);
-            //console.log("chunk",chunk);
-            //util.log(chunk);
-            console.log("data", chunk);
-            callback(null, json_data);
+        //     console.log("data", textChunk);
+        //     json_data = JSON.parse(chunk);
+        //     //console.log("tts",json_data);
+        //     //console.log("chunk",chunk);
+        //     //util.log(chunk);
+        //     console.log("data", chunk);
+        //     callback(null, json_data);
             
-        });
-        process1.on('close', function (code) {
-            console.log("close",code);
-        });
+        // });
+        // process1.on('close', function (code) {
+        //     console.log("close",code);
+        // });
 		
-        process1.stderr.on('data', function (data) {
-            console.log('stderr: ' + data);
-        });
-        process1.stdout.on('error', function( err ) {
-            if (err.code == "EPIPE") {
-                console.log("error",err);
-                py.exit(0);
-            }
-			callback(err,null);
-        });
-        process1.stdout.on('end', function(){
-        	//var str = dataString.substring(1,dataString.length);
-        	console.log("end");
-        });
-        process1.stdin.write(JSON.stringify(parameters));
+        // process1.stderr.on('data', function (data) {
+        //     console.log('stderr: ' + data);
+        // });
+        // process1.stdout.on('error', function( err ) {
+        //     if (err.code == "EPIPE") {
+        //         console.log("error",err);
+        //         py.exit(0);
+        //     }
+		// 	callback(err,null);
+        // });
+        // process1.stdout.on('end', function(){
+        // 	//var str = dataString.substring(1,dataString.length);
+        // 	console.log("end");
+        // });
+        // process1.stdin.write(JSON.stringify(parameters));
 
-        process1.stdin.end();
+        // process1.stdin.end();
         // searchstring=data.string;
         // searchstring = "/"+searchstring+"/";
         // Chatbotautocomplete.find({
