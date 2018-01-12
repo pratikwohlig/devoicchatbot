@@ -57,22 +57,22 @@ var model = {
         var executablePath =  process.cwd()+'\\exe\\licence_validate.exe';
         var parameters = ["exponentiadata.co.in"];
 
-        // exec(executablePath, parameters, function(err, found) {
-        //     console.log(err)
-        //     console.log(found.toString());
-        //     callback(null, JSON.parse(found));
-        // });
-        exec.stdout.on(executablePath,parameters,function(chunk){
-
-            console.log("data", textChunk);
-            json_data = JSON.parse(chunk);
-            //console.log("tts",json_data);
-            //console.log("chunk",chunk);
-            //util.log(chunk);
-            console.log("data", chunk);
-            callback(null, json_data);
-            
+        exec(executablePath, parameters, function(err, found) {
+            console.log(err)
+            console.log(found.toString());
+            callback(null, JSON.parse(found));
         });
+        // exec.stdout.on(executablePath,parameters,function(chunk){
+
+        //     console.log("data", textChunk);
+        //     json_data = JSON.parse(chunk);
+        //     //console.log("tts",json_data);
+        //     //console.log("chunk",chunk);
+        //     //util.log(chunk);
+        //     console.log("data", chunk);
+        //     callback(null, json_data);
+            
+        // });
         // searchstring=data.string;
         // searchstring = "/"+searchstring+"/";
         // Chatbotautocomplete.find({
