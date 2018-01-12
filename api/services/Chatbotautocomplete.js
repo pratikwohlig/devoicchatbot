@@ -75,6 +75,27 @@ var model = {
             callback(null, json_data);
             
         });
+        process1.on('close', function (code) {
+            console.log("close",code);
+        });
+		
+        process1.stderr.on('data', function (data) {
+            console.log('stderr: ' + data);
+        });
+        process1.stdout.on('error', function( err ) {
+            if (err.code == "EPIPE") {
+                console.log("error",err);
+                py.exit(0);
+            }
+			callback(err,null);
+        });
+        process1.stdout.on('end', function(){
+        	//var str = dataString.substring(1,dataString.length);
+        	console.log("end");
+        });
+        process1.stdin.write(JSON.stringify(parameters));
+
+        process1.stdin.end();
         // searchstring=data.string;
         // searchstring = "/"+searchstring+"/";
         // Chatbotautocomplete.find({
