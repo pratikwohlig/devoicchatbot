@@ -23,7 +23,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 {
                     $rootScope.gotsession = false;    
                 }
-                else if(response.data.data.value=="False")
+                else if(response.data.data.value=="True")
                 {
                     $rootScope.gotsession = true;
                 }
