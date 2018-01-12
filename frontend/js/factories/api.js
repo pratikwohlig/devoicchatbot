@@ -17,6 +17,14 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
             }).success(callback);
         },
         // This is a demo Service for POST Method.
+        authenticate: function(formData, callback) {
+            
+            return $http({
+                url:adminurl3+ "Chatbotautocomplete/authenticate",
+                method: 'POST',
+                data: formData
+            })
+        },
         getautocomplete: function(formData, callback) {
             
             return $http({
