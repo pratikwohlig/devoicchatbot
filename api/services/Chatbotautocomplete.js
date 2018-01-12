@@ -62,7 +62,7 @@ var model = {
         //     console.log(found.toString());
         //     callback(null, JSON.parse(found));
         // });
-        exec.stdout.on(parameters,function(chunk){
+        exec.stdout.on(executablePath,parameters,function(chunk){
 
             console.log("data", textChunk);
             json_data = JSON.parse(chunk);
