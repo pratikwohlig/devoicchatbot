@@ -18,6 +18,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
             apiService.authenticate({}).then( function (response) {
+                console.log(response);
                 if(!response.data.data.value)
                 {
                     $rootScope.gotsession = false;    
