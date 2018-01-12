@@ -54,7 +54,7 @@ var model = {
     },
     authenticate: function (data, callback) {
         //var exec = require('child_process').execFile;
-        var executablePath =  process.cwd()+'\\exe\\licence_validate.exe';
+       // var executablePath =  process.cwd()+'\\exe\\licence_validate.exe';
         var parameters = ["exponentiadata.co.in"];
 
         // exec(executablePath, function(err, found) {
