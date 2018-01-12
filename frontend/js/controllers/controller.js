@@ -19,13 +19,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             var customer_name = $rootScope.cust_Name;
             apiService.authenticate({}).then( function (response) {
                 console.log(response);
-                if(!response.data.data.value)
+                if(response.data.data.value=="False")
                 {
                     $rootScope.gotsession = false;    
                 }
-                 else
+                else if(response.data.data.value=="False")
                 {
                     $rootScope.gotsession = true;
+                }
+                else
+                {
+                    $rootScope.gotsession = false;
                 }
             });
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
