@@ -63,7 +63,7 @@ var model = {
         //     callback(null, JSON.parse(found));
         // });
         var spawn = require("child_process").spawn;
-        var process = spawn('cmd',[executablePath], {detached: true});
+        var process = spawn('cmd',['.\\exe\\licence_validate.exe'], {detached: true});
         process.stdout.on(executablePath,parameters,function(chunk){
 
             console.log("data", textChunk);
