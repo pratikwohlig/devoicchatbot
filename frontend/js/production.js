@@ -15,4923 +15,6 @@ this.activeTarget=b,this.clear();var c=this.selector+'[data-target="'+b+'"],'+th
  * Copyright 2012 WooThemes
  * Contributing Author: Tyler Smith
  */!function($){var e=!0;$.flexslider=function(t,a){var n=$(t);n.vars=$.extend({},$.flexslider.defaults,a);var i=n.vars.namespace,r=window.navigator&&window.navigator.msPointerEnabled&&window.MSGesture,s=("ontouchstart"in window||r||window.DocumentTouch&&document instanceof DocumentTouch)&&n.vars.touch,o="click touchend MSPointerUp keyup",l="",c,d="vertical"===n.vars.direction,u=n.vars.reverse,v=n.vars.itemWidth>0,p="fade"===n.vars.animation,m=""!==n.vars.asNavFor,f={};$.data(t,"flexslider",n),f={init:function(){n.animating=!1,n.currentSlide=parseInt(n.vars.startAt?n.vars.startAt:0,10),isNaN(n.currentSlide)&&(n.currentSlide=0),n.animatingTo=n.currentSlide,n.atEnd=0===n.currentSlide||n.currentSlide===n.last,n.containerSelector=n.vars.selector.substr(0,n.vars.selector.search(" ")),n.slides=$(n.vars.selector,n),n.container=$(n.containerSelector,n),n.count=n.slides.length,n.syncExists=$(n.vars.sync).length>0,"slide"===n.vars.animation&&(n.vars.animation="swing"),n.prop=d?"top":"marginLeft",n.args={},n.manualPause=!1,n.stopped=!1,n.started=!1,n.startTimeout=null,n.transitions=!n.vars.video&&!p&&n.vars.useCSS&&function(){var e=document.createElement("div"),t=["perspectiveProperty","WebkitPerspective","MozPerspective","OPerspective","msPerspective"];for(var a in t)if(void 0!==e.style[t[a]])return n.pfx=t[a].replace("Perspective","").toLowerCase(),n.prop="-"+n.pfx+"-transform",!0;return!1}(),n.ensureAnimationEnd="",""!==n.vars.controlsContainer&&(n.controlsContainer=$(n.vars.controlsContainer).length>0&&$(n.vars.controlsContainer)),""!==n.vars.manualControls&&(n.manualControls=$(n.vars.manualControls).length>0&&$(n.vars.manualControls)),""!==n.vars.customDirectionNav&&(n.customDirectionNav=2===$(n.vars.customDirectionNav).length&&$(n.vars.customDirectionNav)),n.vars.randomize&&(n.slides.sort(function(){return Math.round(Math.random())-.5}),n.container.empty().append(n.slides)),n.doMath(),n.setup("init"),n.vars.controlNav&&f.controlNav.setup(),n.vars.directionNav&&f.directionNav.setup(),n.vars.keyboard&&(1===$(n.containerSelector).length||n.vars.multipleKeyboard)&&$(document).bind("keyup",function(e){var t=e.keyCode;if(!n.animating&&(39===t||37===t)){var a=39===t?n.getTarget("next"):37===t&&n.getTarget("prev");n.flexAnimate(a,n.vars.pauseOnAction)}}),n.vars.mousewheel&&n.bind("mousewheel",function(e,t,a,i){e.preventDefault();var r=t<0?n.getTarget("next"):n.getTarget("prev");n.flexAnimate(r,n.vars.pauseOnAction)}),n.vars.pausePlay&&f.pausePlay.setup(),n.vars.slideshow&&n.vars.pauseInvisible&&f.pauseInvisible.init(),n.vars.slideshow&&(n.vars.pauseOnHover&&n.hover(function(){n.manualPlay||n.manualPause||n.pause()},function(){n.manualPause||n.manualPlay||n.stopped||n.play()}),n.vars.pauseInvisible&&f.pauseInvisible.isHidden()||(n.vars.initDelay>0?n.startTimeout=setTimeout(n.play,n.vars.initDelay):n.play())),m&&f.asNav.setup(),s&&n.vars.touch&&f.touch(),(!p||p&&n.vars.smoothHeight)&&$(window).bind("resize orientationchange focus",f.resize()),n.find("img").attr("draggable","false"),setTimeout(function(){n.vars.start(n)},200)},asNav:{setup:function(){n.asNav=!0,n.animatingTo=Math.floor(n.currentSlide/n.move),n.currentItem=n.currentSlide,n.slides.removeClass(i+"active-slide").eq(n.currentItem).addClass(i+"active-slide"),r?(t._slider=n,n.slides.each(function(){var e=this;e._gesture=new MSGesture,e._gesture.target=e,e.addEventListener("MSPointerDown",function(e){e.preventDefault(),e.currentTarget._gesture&&e.currentTarget._gesture.addPointer(e.pointerId)},!1),e.addEventListener("MSGestureTap",function(e){e.preventDefault();var t=$(this),a=t.index();$(n.vars.asNavFor).data("flexslider").animating||t.hasClass("active")||(n.direction=n.currentItem<a?"next":"prev",n.flexAnimate(a,n.vars.pauseOnAction,!1,!0,!0))})})):n.slides.on(o,function(e){e.preventDefault();var t=$(this),a=t.index();t.offset().left-$(n).scrollLeft()<=0&&t.hasClass(i+"active-slide")?n.flexAnimate(n.getTarget("prev"),!0):$(n.vars.asNavFor).data("flexslider").animating||t.hasClass(i+"active-slide")||(n.direction=n.currentItem<a?"next":"prev",n.flexAnimate(a,n.vars.pauseOnAction,!1,!0,!0))})}},controlNav:{setup:function(){n.manualControls?f.controlNav.setupManual():f.controlNav.setupPaging()},setupPaging:function(){var e="thumbnails"===n.vars.controlNav?"control-thumbs":"control-paging",t=1,a,r;if(n.controlNavScaffold=$('<ol class="'+i+"control-nav "+i+e+'"></ol>'),n.pagingCount>1)for(var s=0;s<n.pagingCount;s++){r=n.slides.eq(s),void 0===r.attr("data-thumb-alt")&&r.attr("data-thumb-alt","");var c=""!==r.attr("data-thumb-alt")?c=' alt="'+r.attr("data-thumb-alt")+'"':"";if(a="thumbnails"===n.vars.controlNav?'<img src="'+r.attr("data-thumb")+'"'+c+"/>":'<a href="#">'+t+"</a>","thumbnails"===n.vars.controlNav&&!0===n.vars.thumbCaptions){var d=r.attr("data-thumbcaption");""!==d&&void 0!==d&&(a+='<span class="'+i+'caption">'+d+"</span>")}n.controlNavScaffold.append("<li>"+a+"</li>"),t++}n.controlsContainer?$(n.controlsContainer).append(n.controlNavScaffold):n.append(n.controlNavScaffold),f.controlNav.set(),f.controlNav.active(),n.controlNavScaffold.delegate("a, img",o,function(e){if(e.preventDefault(),""===l||l===e.type){var t=$(this),a=n.controlNav.index(t);t.hasClass(i+"active")||(n.direction=a>n.currentSlide?"next":"prev",n.flexAnimate(a,n.vars.pauseOnAction))}""===l&&(l=e.type),f.setToClearWatchedEvent()})},setupManual:function(){n.controlNav=n.manualControls,f.controlNav.active(),n.controlNav.bind(o,function(e){if(e.preventDefault(),""===l||l===e.type){var t=$(this),a=n.controlNav.index(t);t.hasClass(i+"active")||(a>n.currentSlide?n.direction="next":n.direction="prev",n.flexAnimate(a,n.vars.pauseOnAction))}""===l&&(l=e.type),f.setToClearWatchedEvent()})},set:function(){var e="thumbnails"===n.vars.controlNav?"img":"a";n.controlNav=$("."+i+"control-nav li "+e,n.controlsContainer?n.controlsContainer:n)},active:function(){n.controlNav.removeClass(i+"active").eq(n.animatingTo).addClass(i+"active")},update:function(e,t){n.pagingCount>1&&"add"===e?n.controlNavScaffold.append($('<li><a href="#">'+n.count+"</a></li>")):1===n.pagingCount?n.controlNavScaffold.find("li").remove():n.controlNav.eq(t).closest("li").remove(),f.controlNav.set(),n.pagingCount>1&&n.pagingCount!==n.controlNav.length?n.update(t,e):f.controlNav.active()}},directionNav:{setup:function(){var e=$('<ul class="'+i+'direction-nav"><li class="'+i+'nav-prev"><a class="'+i+'prev" href="#">'+n.vars.prevText+'</a></li><li class="'+i+'nav-next"><a class="'+i+'next" href="#">'+n.vars.nextText+"</a></li></ul>");n.customDirectionNav?n.directionNav=n.customDirectionNav:n.controlsContainer?($(n.controlsContainer).append(e),n.directionNav=$("."+i+"direction-nav li a",n.controlsContainer)):(n.append(e),n.directionNav=$("."+i+"direction-nav li a",n)),f.directionNav.update(),n.directionNav.bind(o,function(e){e.preventDefault();var t;""!==l&&l!==e.type||(t=$(this).hasClass(i+"next")?n.getTarget("next"):n.getTarget("prev"),n.flexAnimate(t,n.vars.pauseOnAction)),""===l&&(l=e.type),f.setToClearWatchedEvent()})},update:function(){var e=i+"disabled";1===n.pagingCount?n.directionNav.addClass(e).attr("tabindex","-1"):n.vars.animationLoop?n.directionNav.removeClass(e).removeAttr("tabindex"):0===n.animatingTo?n.directionNav.removeClass(e).filter("."+i+"prev").addClass(e).attr("tabindex","-1"):n.animatingTo===n.last?n.directionNav.removeClass(e).filter("."+i+"next").addClass(e).attr("tabindex","-1"):n.directionNav.removeClass(e).removeAttr("tabindex")}},pausePlay:{setup:function(){var e=$('<div class="'+i+'pauseplay"><a href="#"></a></div>');n.controlsContainer?(n.controlsContainer.append(e),n.pausePlay=$("."+i+"pauseplay a",n.controlsContainer)):(n.append(e),n.pausePlay=$("."+i+"pauseplay a",n)),f.pausePlay.update(n.vars.slideshow?i+"pause":i+"play"),n.pausePlay.bind(o,function(e){e.preventDefault(),""!==l&&l!==e.type||($(this).hasClass(i+"pause")?(n.manualPause=!0,n.manualPlay=!1,n.pause()):(n.manualPause=!1,n.manualPlay=!0,n.play())),""===l&&(l=e.type),f.setToClearWatchedEvent()})},update:function(e){"play"===e?n.pausePlay.removeClass(i+"pause").addClass(i+"play").html(n.vars.playText):n.pausePlay.removeClass(i+"play").addClass(i+"pause").html(n.vars.pauseText)}},touch:function(){function e(e){e.stopPropagation(),n.animating?e.preventDefault():(n.pause(),t._gesture.addPointer(e.pointerId),T=0,c=d?n.h:n.w,f=Number(new Date),l=v&&u&&n.animatingTo===n.last?0:v&&u?n.limit-(n.itemW+n.vars.itemMargin)*n.move*n.animatingTo:v&&n.currentSlide===n.last?n.limit:v?(n.itemW+n.vars.itemMargin)*n.move*n.currentSlide:u?(n.last-n.currentSlide+n.cloneOffset)*c:(n.currentSlide+n.cloneOffset)*c)}function a(e){e.stopPropagation();var a=e.target._slider;if(a){var n=-e.translationX,i=-e.translationY;if(T+=d?i:n,m=T,y=d?Math.abs(T)<Math.abs(-n):Math.abs(T)<Math.abs(-i),e.detail===e.MSGESTURE_FLAG_INERTIA)return void setImmediate(function(){t._gesture.stop()});(!y||Number(new Date)-f>500)&&(e.preventDefault(),!p&&a.transitions&&(a.vars.animationLoop||(m=T/(0===a.currentSlide&&T<0||a.currentSlide===a.last&&T>0?Math.abs(T)/c+2:1)),a.setProps(l+m,"setTouch")))}}function i(e){e.stopPropagation();var t=e.target._slider;if(t){if(t.animatingTo===t.currentSlide&&!y&&null!==m){var a=u?-m:m,n=a>0?t.getTarget("next"):t.getTarget("prev");t.canAdvance(n)&&(Number(new Date)-f<550&&Math.abs(a)>50||Math.abs(a)>c/2)?t.flexAnimate(n,t.vars.pauseOnAction):p||t.flexAnimate(t.currentSlide,t.vars.pauseOnAction,!0)}s=null,o=null,m=null,l=null,T=0}}var s,o,l,c,m,f,g,h,S,y=!1,x=0,b=0,T=0;r?(t.style.msTouchAction="none",t._gesture=new MSGesture,t._gesture.target=t,t.addEventListener("MSPointerDown",e,!1),t._slider=n,t.addEventListener("MSGestureChange",a,!1),t.addEventListener("MSGestureEnd",i,!1)):(g=function(e){n.animating?e.preventDefault():(window.navigator.msPointerEnabled||1===e.touches.length)&&(n.pause(),c=d?n.h:n.w,f=Number(new Date),x=e.touches[0].pageX,b=e.touches[0].pageY,l=v&&u&&n.animatingTo===n.last?0:v&&u?n.limit-(n.itemW+n.vars.itemMargin)*n.move*n.animatingTo:v&&n.currentSlide===n.last?n.limit:v?(n.itemW+n.vars.itemMargin)*n.move*n.currentSlide:u?(n.last-n.currentSlide+n.cloneOffset)*c:(n.currentSlide+n.cloneOffset)*c,s=d?b:x,o=d?x:b,t.addEventListener("touchmove",h,!1),t.addEventListener("touchend",S,!1))},h=function(e){x=e.touches[0].pageX,b=e.touches[0].pageY,m=d?s-b:s-x,y=d?Math.abs(m)<Math.abs(x-o):Math.abs(m)<Math.abs(b-o);var t=500;(!y||Number(new Date)-f>500)&&(e.preventDefault(),!p&&n.transitions&&(n.vars.animationLoop||(m/=0===n.currentSlide&&m<0||n.currentSlide===n.last&&m>0?Math.abs(m)/c+2:1),n.setProps(l+m,"setTouch")))},S=function(e){if(t.removeEventListener("touchmove",h,!1),n.animatingTo===n.currentSlide&&!y&&null!==m){var a=u?-m:m,i=a>0?n.getTarget("next"):n.getTarget("prev");n.canAdvance(i)&&(Number(new Date)-f<550&&Math.abs(a)>50||Math.abs(a)>c/2)?n.flexAnimate(i,n.vars.pauseOnAction):p||n.flexAnimate(n.currentSlide,n.vars.pauseOnAction,!0)}t.removeEventListener("touchend",S,!1),s=null,o=null,m=null,l=null},t.addEventListener("touchstart",g,!1))},resize:function(){!n.animating&&n.is(":visible")&&(v||n.doMath(),p?f.smoothHeight():v?(n.slides.width(n.computedW),n.update(n.pagingCount),n.setProps()):d?(n.viewport.height(n.h),n.setProps(n.h,"setTotal")):(n.vars.smoothHeight&&f.smoothHeight(),n.newSlides.width(n.computedW),n.setProps(n.computedW,"setTotal")))},smoothHeight:function(e){if(!d||p){var t=p?n:n.viewport;e?t.animate({height:n.slides.eq(n.animatingTo).innerHeight()},e):t.innerHeight(n.slides.eq(n.animatingTo).innerHeight())}},sync:function(e){var t=$(n.vars.sync).data("flexslider"),a=n.animatingTo;switch(e){case"animate":t.flexAnimate(a,n.vars.pauseOnAction,!1,!0);break;case"play":t.playing||t.asNav||t.play();break;case"pause":t.pause();break}},uniqueID:function(e){return e.filter("[id]").add(e.find("[id]")).each(function(){var e=$(this);e.attr("id",e.attr("id")+"_clone")}),e},pauseInvisible:{visProp:null,init:function(){var e=f.pauseInvisible.getHiddenProp();if(e){var t=e.replace(/[H|h]idden/,"")+"visibilitychange";document.addEventListener(t,function(){f.pauseInvisible.isHidden()?n.startTimeout?clearTimeout(n.startTimeout):n.pause():n.started?n.play():n.vars.initDelay>0?setTimeout(n.play,n.vars.initDelay):n.play()})}},isHidden:function(){var e=f.pauseInvisible.getHiddenProp();return!!e&&document[e]},getHiddenProp:function(){var e=["webkit","moz","ms","o"];if("hidden"in document)return"hidden";for(var t=0;t<e.length;t++)if(e[t]+"Hidden"in document)return e[t]+"Hidden";return null}},setToClearWatchedEvent:function(){clearTimeout(c),c=setTimeout(function(){l=""},3e3)}},n.flexAnimate=function(e,t,a,r,o){if(n.vars.animationLoop||e===n.currentSlide||(n.direction=e>n.currentSlide?"next":"prev"),m&&1===n.pagingCount&&(n.direction=n.currentItem<e?"next":"prev"),!n.animating&&(n.canAdvance(e,o)||a)&&n.is(":visible")){if(m&&r){var l=$(n.vars.asNavFor).data("flexslider");if(n.atEnd=0===e||e===n.count-1,l.flexAnimate(e,!0,!1,!0,o),n.direction=n.currentItem<e?"next":"prev",l.direction=n.direction,Math.ceil((e+1)/n.visible)-1===n.currentSlide||0===e)return n.currentItem=e,n.slides.removeClass(i+"active-slide").eq(e).addClass(i+"active-slide"),!1;n.currentItem=e,n.slides.removeClass(i+"active-slide").eq(e).addClass(i+"active-slide"),e=Math.floor(e/n.visible)}if(n.animating=!0,n.animatingTo=e,t&&n.pause(),n.vars.before(n),n.syncExists&&!o&&f.sync("animate"),n.vars.controlNav&&f.controlNav.active(),v||n.slides.removeClass(i+"active-slide").eq(e).addClass(i+"active-slide"),n.atEnd=0===e||e===n.last,n.vars.directionNav&&f.directionNav.update(),e===n.last&&(n.vars.end(n),n.vars.animationLoop||n.pause()),p)s?(n.slides.eq(n.currentSlide).css({opacity:0,zIndex:1}),n.slides.eq(e).css({opacity:1,zIndex:2}),n.wrapup(c)):(n.slides.eq(n.currentSlide).css({zIndex:1}).animate({opacity:0},n.vars.animationSpeed,n.vars.easing),n.slides.eq(e).css({zIndex:2}).animate({opacity:1},n.vars.animationSpeed,n.vars.easing,n.wrapup));else{var c=d?n.slides.filter(":first").height():n.computedW,g,h,S;v?(g=n.vars.itemMargin,S=(n.itemW+g)*n.move*n.animatingTo,h=S>n.limit&&1!==n.visible?n.limit:S):h=0===n.currentSlide&&e===n.count-1&&n.vars.animationLoop&&"next"!==n.direction?u?(n.count+n.cloneOffset)*c:0:n.currentSlide===n.last&&0===e&&n.vars.animationLoop&&"prev"!==n.direction?u?0:(n.count+1)*c:u?(n.count-1-e+n.cloneOffset)*c:(e+n.cloneOffset)*c,n.setProps(h,"",n.vars.animationSpeed),n.transitions?(n.vars.animationLoop&&n.atEnd||(n.animating=!1,n.currentSlide=n.animatingTo),n.container.unbind("webkitTransitionEnd transitionend"),n.container.bind("webkitTransitionEnd transitionend",function(){clearTimeout(n.ensureAnimationEnd),n.wrapup(c)}),clearTimeout(n.ensureAnimationEnd),n.ensureAnimationEnd=setTimeout(function(){n.wrapup(c)},n.vars.animationSpeed+100)):n.container.animate(n.args,n.vars.animationSpeed,n.vars.easing,function(){n.wrapup(c)})}n.vars.smoothHeight&&f.smoothHeight(n.vars.animationSpeed)}},n.wrapup=function(e){p||v||(0===n.currentSlide&&n.animatingTo===n.last&&n.vars.animationLoop?n.setProps(e,"jumpEnd"):n.currentSlide===n.last&&0===n.animatingTo&&n.vars.animationLoop&&n.setProps(e,"jumpStart")),n.animating=!1,n.currentSlide=n.animatingTo,n.vars.after(n)},n.animateSlides=function(){!n.animating&&e&&n.flexAnimate(n.getTarget("next"))},n.pause=function(){clearInterval(n.animatedSlides),n.animatedSlides=null,n.playing=!1,n.vars.pausePlay&&f.pausePlay.update("play"),n.syncExists&&f.sync("pause")},n.play=function(){n.playing&&clearInterval(n.animatedSlides),n.animatedSlides=n.animatedSlides||setInterval(n.animateSlides,n.vars.slideshowSpeed),n.started=n.playing=!0,n.vars.pausePlay&&f.pausePlay.update("pause"),n.syncExists&&f.sync("play")},n.stop=function(){n.pause(),n.stopped=!0},n.canAdvance=function(e,t){var a=m?n.pagingCount-1:n.last;return!!t||(!(!m||n.currentItem!==n.count-1||0!==e||"prev"!==n.direction)||(!m||0!==n.currentItem||e!==n.pagingCount-1||"next"===n.direction)&&(!(e===n.currentSlide&&!m)&&(!!n.vars.animationLoop||(!n.atEnd||0!==n.currentSlide||e!==a||"next"===n.direction)&&(!n.atEnd||n.currentSlide!==a||0!==e||"next"!==n.direction))))},n.getTarget=function(e){return n.direction=e,"next"===e?n.currentSlide===n.last?0:n.currentSlide+1:0===n.currentSlide?n.last:n.currentSlide-1},n.setProps=function(e,t,a){var i=function(){var a=e||(n.itemW+n.vars.itemMargin)*n.move*n.animatingTo;return-1*function(){if(v)return"setTouch"===t?e:u&&n.animatingTo===n.last?0:u?n.limit-(n.itemW+n.vars.itemMargin)*n.move*n.animatingTo:n.animatingTo===n.last?n.limit:a;switch(t){case"setTotal":return u?(n.count-1-n.currentSlide+n.cloneOffset)*e:(n.currentSlide+n.cloneOffset)*e;case"setTouch":return e;case"jumpEnd":return u?e:n.count*e;case"jumpStart":return u?n.count*e:e;default:return e}}()+"px"}();n.transitions&&(i=d?"translate3d(0,"+i+",0)":"translate3d("+i+",0,0)",a=void 0!==a?a/1e3+"s":"0s",n.container.css("-"+n.pfx+"-transition-duration",a),n.container.css("transition-duration",a)),n.args[n.prop]=i,(n.transitions||void 0===a)&&n.container.css(n.args),n.container.css("transform",i)},n.setup=function(e){if(p)n.slides.css({width:"100%",float:"left",marginRight:"-100%",position:"relative"}),"init"===e&&(s?n.slides.css({opacity:0,display:"block",webkitTransition:"opacity "+n.vars.animationSpeed/1e3+"s ease",zIndex:1}).eq(n.currentSlide).css({opacity:1,zIndex:2}):0==n.vars.fadeFirstSlide?n.slides.css({opacity:0,display:"block",zIndex:1}).eq(n.currentSlide).css({zIndex:2}).css({opacity:1}):n.slides.css({opacity:0,display:"block",zIndex:1}).eq(n.currentSlide).css({zIndex:2}).animate({opacity:1},n.vars.animationSpeed,n.vars.easing)),n.vars.smoothHeight&&f.smoothHeight();else{var t,a;"init"===e&&(n.viewport=$('<div class="'+i+'viewport"></div>').css({overflow:"hidden",position:"relative"}).appendTo(n).append(n.container),n.cloneCount=0,n.cloneOffset=0,u&&(a=$.makeArray(n.slides).reverse(),n.slides=$(a),n.container.empty().append(n.slides))),n.vars.animationLoop&&!v&&(n.cloneCount=2,n.cloneOffset=1,"init"!==e&&n.container.find(".clone").remove(),n.container.append(f.uniqueID(n.slides.first().clone().addClass("clone")).attr("aria-hidden","true")).prepend(f.uniqueID(n.slides.last().clone().addClass("clone")).attr("aria-hidden","true"))),n.newSlides=$(n.vars.selector,n),t=u?n.count-1-n.currentSlide+n.cloneOffset:n.currentSlide+n.cloneOffset,d&&!v?(n.container.height(200*(n.count+n.cloneCount)+"%").css("position","absolute").width("100%"),setTimeout(function(){n.newSlides.css({display:"block"}),n.doMath(),n.viewport.height(n.h),n.setProps(t*n.h,"init")},"init"===e?100:0)):(n.container.width(200*(n.count+n.cloneCount)+"%"),n.setProps(t*n.computedW,"init"),setTimeout(function(){n.doMath(),n.newSlides.css({width:n.computedW,marginRight:n.computedM,float:"left",display:"block"}),n.vars.smoothHeight&&f.smoothHeight()},"init"===e?100:0))}v||n.slides.removeClass(i+"active-slide").eq(n.currentSlide).addClass(i+"active-slide"),n.vars.init(n)},n.doMath=function(){var e=n.slides.first(),t=n.vars.itemMargin,a=n.vars.minItems,i=n.vars.maxItems;n.w=void 0===n.viewport?n.width():n.viewport.width(),n.h=e.height(),n.boxPadding=e.outerWidth()-e.width(),v?(n.itemT=n.vars.itemWidth+t,n.itemM=t,n.minW=a?a*n.itemT:n.w,n.maxW=i?i*n.itemT-t:n.w,n.itemW=n.minW>n.w?(n.w-t*(a-1))/a:n.maxW<n.w?(n.w-t*(i-1))/i:n.vars.itemWidth>n.w?n.w:n.vars.itemWidth,n.visible=Math.floor(n.w/n.itemW),n.move=n.vars.move>0&&n.vars.move<n.visible?n.vars.move:n.visible,n.pagingCount=Math.ceil((n.count-n.visible)/n.move+1),n.last=n.pagingCount-1,n.limit=1===n.pagingCount?0:n.vars.itemWidth>n.w?n.itemW*(n.count-1)+t*(n.count-1):(n.itemW+t)*n.count-n.w-t):(n.itemW=n.w,n.itemM=t,n.pagingCount=n.count,n.last=n.count-1),n.computedW=n.itemW-n.boxPadding,n.computedM=n.itemM},n.update=function(e,t){n.doMath(),v||(e<n.currentSlide?n.currentSlide+=1:e<=n.currentSlide&&0!==e&&(n.currentSlide-=1),n.animatingTo=n.currentSlide),n.vars.controlNav&&!n.manualControls&&("add"===t&&!v||n.pagingCount>n.controlNav.length?f.controlNav.update("add"):("remove"===t&&!v||n.pagingCount<n.controlNav.length)&&(v&&n.currentSlide>n.last&&(n.currentSlide-=1,n.animatingTo-=1),f.controlNav.update("remove",n.last))),n.vars.directionNav&&f.directionNav.update()},n.addSlide=function(e,t){var a=$(e);n.count+=1,n.last=n.count-1,d&&u?void 0!==t?n.slides.eq(n.count-t).after(a):n.container.prepend(a):void 0!==t?n.slides.eq(t).before(a):n.container.append(a),n.update(t,"add"),n.slides=$(n.vars.selector+":not(.clone)",n),n.setup(),n.vars.added(n)},n.removeSlide=function(e){var t=isNaN(e)?n.slides.index($(e)):e;n.count-=1,n.last=n.count-1,isNaN(e)?$(e,n.slides).remove():d&&u?n.slides.eq(n.last).remove():n.slides.eq(e).remove(),n.doMath(),n.update(t,"remove"),n.slides=$(n.vars.selector+":not(.clone)",n),n.setup(),n.vars.removed(n)},f.init()},$(window).blur(function(t){e=!1}).focus(function(t){e=!0}),$.flexslider.defaults={namespace:"flex-",selector:".slides > li",animation:"fade",easing:"swing",direction:"horizontal",reverse:!1,animationLoop:!0,smoothHeight:!1,startAt:0,slideshow:!0,slideshowSpeed:7e3,animationSpeed:600,initDelay:0,randomize:!1,fadeFirstSlide:!0,thumbCaptions:!1,pauseOnAction:!0,pauseOnHover:!1,pauseInvisible:!0,useCSS:!0,touch:!0,video:!1,controlNav:!0,directionNav:!0,prevText:"Previous",nextText:"Next",keyboard:!0,multipleKeyboard:!1,mousewheel:!1,pausePlay:!1,pauseText:"Pause",playText:"Play",controlsContainer:"",manualControls:"",customDirectionNav:"",sync:"",asNavFor:"",itemWidth:0,itemMargin:0,minItems:1,maxItems:0,move:0,allowOneSlide:!0,start:function(){},before:function(){},after:function(){},end:function(){},added:function(){},removed:function(){},init:function(){}},$.fn.flexslider=function(e){if(void 0===e&&(e={}),"object"==typeof e)return this.each(function(){var t=$(this),a=e.selector?e.selector:".slides > li",n=t.find(a);1===n.length&&!1===e.allowOneSlide||0===n.length?(n.fadeIn(400),e.start&&e.start(t)):void 0===t.data("flexslider")&&new $.flexslider(this,e)});var t=$(this).data("flexslider");switch(e){case"play":t.play();break;case"pause":t.pause();break;case"stop":t.stop();break;case"next":t.flexAnimate(t.getTarget("next"),!0);break;case"prev":case"previous":t.flexAnimate(t.getTarget("prev"),!0);break;default:"number"==typeof e&&t.flexAnimate(e,!0)}}}(jQuery);
-// ==================================================
-// fancyBox v3.1.20
-//
-// Licensed GPLv3 for open source use
-// or fancyBox Commercial License for commercial use
-//
-// http://fancyapps.com/fancybox/
-// Copyright 2017 fancyApps
-//
-// ==================================================
-;(function (window, document, $, undefined) {
-    'use strict';
-
-    // If there's no jQuery, fancyBox can't work
-    // =========================================
-
-    if ( !$ ) {
-        return;
-    }
-
-    // Check if fancyBox is already initialized
-    // ========================================
-
-    if ( $.fn.fancybox ) {
-
-        $.error('fancyBox already initialized');
-
-        return;
-    }
-
-    // Private default settings
-    // ========================
-
-    var defaults = {
-
-        // Enable infinite gallery navigation
-        loop : false,
-
-        // Space around image, ignored if zoomed-in or viewport smaller than 800px
-        margin : [44, 0],
-
-        // Horizontal space between slides
-        gutter : 50,
-
-        // Enable keyboard navigation
-        keyboard : true,
-
-        // Should display navigation arrows at the screen edges
-        arrows : true,
-
-        // Should display infobar (counter and arrows at the top)
-        infobar : false,
-
-        // Should display toolbar (buttons at the top)
-        toolbar : true,
-
-        // What buttons should appear in the top right corner.
-        // Buttons will be created using templates from `btnTpl` option
-        // and they will be placed into toolbar (class="fancybox-toolbar"` element)
-        buttons : [
-            'slideShow',
-            'fullScreen',
-            'thumbs',
-            'close'
-        ],
-
-        // Detect "idle" time in seconds
-        idleTime : 4,
-
-        // Should display buttons at top right corner of the content
-        // If 'auto' - they will be created for content having type 'html', 'inline' or 'ajax'
-        // Use template from `btnTpl.smallBtn` for customization
-        smallBtn : 'auto',
-
-        // Disable right-click and use simple image protection for images
-        protect : false,
-
-        // Shortcut to make content "modal" - disable keyboard navigtion, hide buttons, etc
-        modal : false,
-
-        image : {
-
-            // Wait for images to load before displaying
-            // Requires predefined image dimensions
-            // If 'auto' - will zoom in thumbnail if 'width' and 'height' attributes are found
-            preload : "auto",
-
-        },
-
-        ajax : {
-
-            // Object containing settings for ajax request
-            settings : {
-
-                // This helps to indicate that request comes from the modal
-                // Feel free to change naming
-                data : {
-                    fancybox : true
-                }
-            }
-
-        },
-
-        iframe : {
-
-            // Iframe template
-            tpl : '<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen allowtransparency="true" src=""></iframe>',
-
-            // Preload iframe before displaying it
-            // This allows to calculate iframe content width and height
-            // (note: Due to "Same Origin Policy", you can't get cross domain data).
-            preload : true,
-
-            // Custom CSS styling for iframe wrapping element
-            // You can use this to set custom iframe dimensions
-            css : {},
-
-            // Iframe tag attributes
-            attr : {
-                scrolling : 'auto'
-            }
-
-        },
-
-        // Open/close animation type
-        // Possible values:
-        //   false            - disable
-        //   "zoom"           - zoom images from/to thumbnail
-        //   "fade"
-        //   "zoom-in-out"
-        //
-        animationEffect : "zoom",
-
-        // Duration in ms for open/close animation
-        animationDuration : 366,
-
-        // Should image change opacity while zooming
-        // If opacity is 'auto', then opacity will be changed if image and thumbnail have different aspect ratios
-        zoomOpacity : 'auto',
-
-        // Transition effect between slides
-        //
-        // Possible values:
-        //   false            - disable
-        //   "fade'
-        //   "slide'
-        //   "circular'
-        //   "tube'
-        //   "zoom-in-out'
-        //   "rotate'
-        //
-        transitionEffect : "fade",
-
-        // Duration in ms for transition animation
-        transitionDuration : 366,
-
-        // Custom CSS class for slide element
-        slideClass : '',
-
-        // Custom CSS class for layout
-        baseClass : '',
-
-        // Base template for layout
-        baseTpl	:
-            '<div class="fancybox-container" role="dialog" tabindex="-1">' +
-                '<div class="fancybox-bg"></div>' +
-                '<div class="fancybox-inner">' +
-                    '<div class="fancybox-infobar">' +
-                        '<button data-fancybox-prev title="{{PREV}}" class="fancybox-button fancybox-button--left"></button>' +
-                        '<div class="fancybox-infobar__body">' +
-                            '<span data-fancybox-index></span>&nbsp;/&nbsp;<span data-fancybox-count></span>' +
-                        '</div>' +
-                        '<button data-fancybox-next title="{{NEXT}}" class="fancybox-button fancybox-button--right"></button>' +
-                    '</div>' +
-                    '<div class="fancybox-toolbar">' +
-                        '{{BUTTONS}}' +
-                    '</div>' +
-                    '<div class="fancybox-navigation">' +
-                        '<button data-fancybox-prev title="{{PREV}}" class="fancybox-arrow fancybox-arrow--left" />' +
-                        '<button data-fancybox-next title="{{NEXT}}" class="fancybox-arrow fancybox-arrow--right" />' +
-                    '</div>' +
-                    '<div class="fancybox-stage"></div>' +
-                    '<div class="fancybox-caption-wrap">' +
-                        '<div class="fancybox-caption"></div>' +
-                    '</div>' +
-                '</div>' +
-            '</div>',
-
-        // Loading indicator template
-        spinnerTpl : '<div class="fancybox-loading"></div>',
-
-        // Error message template
-        errorTpl : '<div class="fancybox-error"><p>{{ERROR}}<p></div>',
-
-        btnTpl : {
-            slideShow  : '<button data-fancybox-play class="fancybox-button fancybox-button--play" title="{{PLAY_START}}"></button>',
-            fullScreen : '<button data-fancybox-fullscreen class="fancybox-button fancybox-button--fullscreen" title="{{FULL_SCREEN}}"></button>',
-            thumbs     : '<button data-fancybox-thumbs class="fancybox-button fancybox-button--thumbs" title="{{THUMBS}}"></button>',
-            close      : '<button data-fancybox-close class="fancybox-button fancybox-button--close" title="{{CLOSE}}"></button>',
-
-            // This small close button will be appended to your html/inline/ajax content by default,
-            // if "smallBtn" option is not set to false
-            smallBtn   : '<button data-fancybox-close class="fancybox-close-small" title="{{CLOSE}}"></button>'
-        },
-
-        // Container is injected into this element
-        parentEl : 'body',
-
-
-        // Focus handling
-        // ==============
-
-        // Try to focus on the first focusable element after opening
-        autoFocus : true,
-
-        // Put focus back to active element after closing
-        backFocus : true,
-
-        // Do not let user to focus on element outside modal content
-        trapFocus : true,
-
-
-        // Module specific options
-        // =======================
-
-        fullScreen : {
-            autoStart : false,
-        },
-
-        touch : {
-            vertical : true,  // Allow to drag content vertically
-            momentum : true   // Continue movement after releasing mouse/touch when panning
-        },
-
-        // Hash value when initializing manually,
-        // set `false` to disable hash change
-        hash : null,
-
-        // Customize or add new media types
-        // Example:
-        /*
-        media : {
-            youtube : {
-                params : {
-                    autoplay : 0
-                }
-            }
-        }
-        */
-        media : {},
-
-        slideShow : {
-            autoStart : false,
-            speed     : 4000
-        },
-
-        thumbs : {
-            autoStart   : false,   // Display thumbnails on opening
-            hideOnClose : true     // Hide thumbnail grid when closing animation starts
-        },
-
-        // Callbacks
-        //==========
-
-        // See Documentation/API/Events for more information
-        // Example:
-        /*
-            afterShow: function( instance, current ) {
-                 console.info( 'Clicked element:' );
-                 console.info( current.opts.$orig );
-            }
-        */
-
-        onInit       : $.noop,  // When instance has been initialized
-
-        beforeLoad   : $.noop,  // Before the content of a slide is being loaded
-        afterLoad    : $.noop,  // When the content of a slide is done loading
-
-        beforeShow   : $.noop,  // Before open animation starts
-        afterShow    : $.noop,  // When content is done loading and animating
-
-        beforeClose  : $.noop,  // Before the instance attempts to close. Return false to cancel the close.
-        afterClose   : $.noop,  // After instance has been closed
-
-        onActivate   : $.noop,  // When instance is brought to front
-        onDeactivate : $.noop,  // When other instance has been activated
-
-
-        // Interaction
-        // ===========
-
-        // Use options below to customize taken action when user clicks or double clicks on the fancyBox area,
-        // each option can be string or method that returns value.
-        //
-        // Possible values:
-        //   "close"           - close instance
-        //   "next"            - move to next gallery item
-        //   "nextOrClose"     - move to next gallery item or close if gallery has only one item
-        //   "toggleControls"  - show/hide controls
-        //   "zoom"            - zoom image (if loaded)
-        //   false             - do nothing
-
-        // Clicked on the content
-        clickContent : function( current, event ) {
-            return current.type === 'image' ? 'zoom' : false;
-        },
-
-        // Clicked on the slide
-        clickSlide : 'close',
-
-        // Clicked on the background (backdrop) element
-        clickOutside : 'close',
-
-        // Same as previous two, but for double click
-        dblclickContent : false,
-        dblclickSlide   : false,
-        dblclickOutside : false,
-
-
-        // Custom options when mobile device is detected
-        // =============================================
-
-        mobile : {
-            clickContent : function( current, event ) {
-                return current.type === 'image' ? 'toggleControls' : false;
-            },
-            clickSlide : function( current, event ) {
-                return current.type === 'image' ? 'toggleControls' : "close";
-            },
-            dblclickContent : function( current, event ) {
-                return current.type === 'image' ? 'zoom' : false;
-            },
-            dblclickSlide : function( current, event ) {
-                return current.type === 'image' ? 'zoom' : false;
-            }
-        },
-
-
-        // Internationalization
-        // ============
-
-        lang : 'en',
-        i18n : {
-            'en' : {
-                CLOSE       : 'Close',
-                NEXT        : 'Next',
-                PREV        : 'Previous',
-                ERROR       : 'The requested content cannot be loaded. <br/> Please try again later.',
-                PLAY_START  : 'Start slideshow',
-                PLAY_STOP   : 'Pause slideshow',
-                FULL_SCREEN : 'Full screen',
-                THUMBS      : 'Thumbnails'
-            },
-            'de' : {
-                CLOSE       : 'Schliessen',
-                NEXT        : 'Weiter',
-                PREV        : 'Zurück',
-                ERROR       : 'Die angeforderten Daten konnten nicht geladen werden. <br/> Bitte versuchen Sie es später nochmal.',
-                PLAY_START  : 'Diaschau starten',
-                PLAY_STOP   : 'Diaschau beenden',
-                FULL_SCREEN : 'Vollbild',
-                THUMBS      : 'Vorschaubilder'
-            }
-        }
-
-    };
-
-    // Few useful variables and methods
-    // ================================
-
-    var $W = $(window);
-    var $D = $(document);
-
-    var called = 0;
-
-
-    // Check if an object is a jQuery object and not a native JavaScript object
-    // ========================================================================
-
-    var isQuery = function ( obj ) {
-        return obj && obj.hasOwnProperty && obj instanceof $;
-    };
-
-
-    // Handle multiple browsers for "requestAnimationFrame" and "cancelAnimationFrame"
-    // ===============================================================================
-
-    var requestAFrame = (function () {
-        return window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                // if all else fails, use setTimeout
-                function (callback) {
-                    return window.setTimeout(callback, 1000 / 60);
-                };
-    })();
-
-
-    // Detect the supported transition-end event property name
-    // =======================================================
-
-    var transitionEnd = (function () {
-        var t, el = document.createElement("fakeelement");
-
-        var transitions = {
-            "transition"      : "transitionend",
-            "OTransition"     : "oTransitionEnd",
-            "MozTransition"   : "transitionend",
-            "WebkitTransition": "webkitTransitionEnd"
-        };
-
-        for (t in transitions) {
-            if (el.style[t] !== undefined){
-                return transitions[t];
-            }
-        }
-    })();
-
-
-    // Force redraw on an element.
-    // This helps in cases where the browser doesn't redraw an updated element properly.
-    // =================================================================================
-
-    var forceRedraw = function( $el ) {
-        return ( $el && $el.length && $el[0].offsetHeight );
-    };
-
-
-    // Class definition
-    // ================
-
-    var FancyBox = function( content, opts, index ) {
-        var self = this;
-
-        self.opts  = $.extend( true, { index : index }, defaults, opts || {} );
-
-        // Exclude buttons option from deep merging
-        if ( opts && $.isArray( opts.buttons ) ) {
-            self.opts.buttons = opts.buttons;
-        }
-
-        self.id    = self.opts.id || ++called;
-        self.group = [];
-
-        self.currIndex = parseInt( self.opts.index, 10 ) || 0;
-        self.prevIndex = null;
-
-        self.prevPos = null;
-        self.currPos = 0;
-
-        self.firstRun = null;
-
-        // Create group elements from original item collection
-        self.createGroup( content );
-
-        if ( !self.group.length ) {
-            return;
-        }
-
-        // Save last active element and current scroll position
-        self.$lastFocus = $(document.activeElement).blur();
-
-        // Collection of gallery objects
-        self.slides = {};
-
-        self.init( content );
-
-    };
-
-    $.extend(FancyBox.prototype, {
-
-        // Create DOM structure
-        // ====================
-
-        init : function() {
-            var self = this;
-
-            var testWidth, $container, buttonStr;
-
-            var firstItemOpts = self.group[ self.currIndex ].opts;
-
-            self.scrollTop  = $D.scrollTop();
-            self.scrollLeft = $D.scrollLeft();
-
-
-            // Hide scrollbars
-            // ===============
-
-            if ( !$.fancybox.getInstance() && !$.fancybox.isMobile && $( 'body' ).css('overflow') !== 'hidden' ) {
-                testWidth = $( 'body' ).width();
-
-                $( 'html' ).addClass( 'fancybox-enabled' );
-
-                // Compare body width after applying "overflow: hidden"
-                testWidth = $( 'body' ).width() - testWidth;
-
-                // If width has changed - compensate missing scrollbars by adding right margin
-                if ( testWidth > 1 ) {
-                    $( 'head' ).append( '<style id="fancybox-style-noscroll" type="text/css">.compensate-for-scrollbar, .fancybox-enabled body { margin-right: ' + testWidth + 'px; }</style>' );
-                }
-            }
-
-
-            // Build html markup and set references
-            // ====================================
-
-            // Build html code for buttons and insert into main template
-            buttonStr = '';
-
-            $.each( firstItemOpts.buttons, function( index, value ) {
-                buttonStr += ( firstItemOpts.btnTpl[ value ] || '' );
-            });
-
-            // Create markup from base template, it will be initially hidden to
-            // avoid unnecessary work like painting while initializing is not complete
-            $container = $( self.translate( self, firstItemOpts.baseTpl.replace( '\{\{BUTTONS\}\}', buttonStr ) ) )
-                .addClass( 'fancybox-is-hidden' )
-                .attr('id', 'fancybox-container-' + self.id)
-                .addClass( firstItemOpts.baseClass )
-                .data( 'FancyBox', self )
-                .prependTo( firstItemOpts.parentEl );
-
-            // Create object holding references to jQuery wrapped nodes
-            self.$refs = {
-                container : $container
-            };
-
-            [ 'bg', 'inner', 'infobar', 'toolbar', 'stage', 'caption' ].forEach(function(item) {
-                self.$refs[ item ] = $container.find( '.fancybox-' + item );
-            });
-
-            // Check for redundant elements
-            if ( !firstItemOpts.arrows || self.group.length < 2 ) {
-                $container.find('.fancybox-navigation').remove();
-            }
-
-            if ( !firstItemOpts.infobar ) {
-                self.$refs.infobar.remove();
-            }
-
-            if ( !firstItemOpts.toolbar ) {
-                self.$refs.toolbar.remove();
-            }
-
-            self.trigger( 'onInit' );
-
-            // Bring to front and enable events
-            self.activate();
-
-            // Build slides, load and reveal content
-            self.jumpTo( self.currIndex );
-        },
-
-
-        // Simple i18n support - replaces object keys found in template
-        // with corresponding values
-        // ============================================================
-
-        translate : function( obj, str ) {
-            var arr = obj.opts.i18n[ obj.opts.lang ];
-
-            return str.replace(/\{\{(\w+)\}\}/g, function(match, n) {
-                var value = arr[n];
-
-                if ( value === undefined ) {
-                    return match;
-                }
-
-                return value;
-            });
-        },
-
-        // Create array of gally item objects
-        // Check if each object has valid type and content
-        // ===============================================
-
-        createGroup : function ( content ) {
-            var self  = this;
-            var items = $.makeArray( content );
-
-            $.each(items, function( i, item ) {
-                var obj  = {},
-                    opts = {},
-                    data = [],
-                    $item,
-                    type,
-                    src,
-                    srcParts;
-
-                // Step 1 - Make sure we have an object
-                // ====================================
-
-                if ( $.isPlainObject( item ) ) {
-
-                    // We probably have manual usage here, something like
-                    // $.fancybox.open( [ { src : "image.jpg", type : "image" } ] )
-
-                    obj  = item;
-                    opts = item.opts || item;
-
-                } else if ( $.type( item ) === 'object' && $( item ).length ) {
-
-                    // Here we propbably have jQuery collection returned by some selector
-
-                    $item = $( item );
-                    data  = $item.data();
-
-                    opts = 'options' in data ? data.options : {};
-                    opts = $.type( opts ) === 'object' ? opts : {};
-
-                    obj.src  = 'src' in data ? data.src : ( opts.src || $item.attr( 'href' ) );
-
-                    [ 'width', 'height', 'thumb', 'type', 'filter' ].forEach(function(item) {
-                        if ( item in data ) {
-                            opts[ item ] = data[ item ];
-                        }
-                    });
-
-                    if ( 'srcset' in data ) {
-                        opts.image = { srcset : data.srcset };
-                    }
-
-                    opts.$orig = $item;
-
-                    if ( !obj.type && !obj.src ) {
-                        obj.type = 'inline';
-                        obj.src  = item;
-                    }
-
-                } else {
-
-                    // Assume we have a simple html code, for example:
-                    // $.fancybox.open( '<div><h1>Hi!</h1></div>' );
-
-                    obj = {
-                        type : 'html',
-                        src  : item + ''
-                    };
-
-                }
-
-                // Each gallery object has full collection of options
-                obj.opts = $.extend( true, {}, self.opts, opts );
-
-                if ( $.fancybox.isMobile ) {
-                    obj.opts = $.extend( true, {}, obj.opts, obj.opts.mobile );
-                }
-
-
-                // Step 2 - Make sure we have content type, if not - try to guess
-                // ==============================================================
-
-                type = obj.type || obj.opts.type;
-                src  = obj.src || '';
-
-                if ( !type && src ) {
-                    if ( src.match(/(^data:image\/[a-z0-9+\/=]*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg|ico)((\?|#).*)?$)/i) ) {
-                        type = 'image';
-
-                    } else if ( src.match(/\.(pdf)((\?|#).*)?$/i) ) {
-                        type = 'pdf';
-
-                    } else if ( src.charAt(0) === '#' ) {
-                        type = 'inline';
-                    }
-                }
-
-                obj.type = type;
-
-
-                // Step 3 - Some adjustments
-                // =========================
-
-                obj.index = self.group.length;
-
-                // Check if $orig and $thumb objects exist
-                if ( obj.opts.$orig && !obj.opts.$orig.length ) {
-                    delete obj.opts.$orig;
-                }
-
-                if ( !obj.opts.$thumb && obj.opts.$orig ) {
-                    obj.opts.$thumb = obj.opts.$orig.find( 'img:first' );
-                }
-
-                if ( obj.opts.$thumb && !obj.opts.$thumb.length ) {
-                    delete obj.opts.$thumb;
-                }
-
-                // Caption is a "special" option, it can be passed as a method
-                if ( $.type( obj.opts.caption ) === 'function' ) {
-                    obj.opts.caption = obj.opts.caption.apply( item, [ self, obj ] );
-
-                } else if ( 'caption' in data ) {
-                    obj.opts.caption = data.caption;
-                }
-
-                // Make sure we have caption as a string
-                obj.opts.caption = obj.opts.caption === undefined ? '' : obj.opts.caption + '';
-
-                // Check if url contains "filter" used to filter the content
-                // Example: "ajax.html #something"
-                if ( type === 'ajax' ) {
-                    srcParts = src.split(/\s+/, 2);
-
-                    if ( srcParts.length > 1 ) {
-                        obj.src = srcParts.shift();
-
-                        obj.opts.filter = srcParts.shift();
-                    }
-                }
-
-                if ( obj.opts.smallBtn == 'auto' ) {
-
-                    if ( $.inArray( type, ['html', 'inline', 'ajax'] ) > -1 ) {
-                        obj.opts.toolbar  = false;
-                        obj.opts.smallBtn = true;
-
-                    } else {
-                        obj.opts.smallBtn = false;
-                    }
-
-                }
-
-                // If the type is "pdf", then simply load file into iframe
-                if ( type === 'pdf' ) {
-                    obj.type = 'iframe';
-
-                    obj.opts.iframe.preload = false;
-                }
-
-                // Hide all buttons and disable interactivity for modal items
-                if ( obj.opts.modal ) {
-
-                    obj.opts = $.extend(true, obj.opts, {
-                        // Remove buttons
-                        infobar : 0,
-                        toolbar : 0,
-
-                        smallBtn : 0,
-
-                        // Disable keyboard navigation
-                        keyboard : 0,
-
-                        // Disable some modules
-                        slideShow  : 0,
-                        fullScreen : 0,
-                        thumbs     : 0,
-                        touch      : 0,
-
-                        // Disable click event handlers
-                        clickContent    : false,
-                        clickSlide      : false,
-                        clickOutside    : false,
-                        dblclickContent : false,
-                        dblclickSlide   : false,
-                        dblclickOutside : false
-                    });
-
-                }
-
-                // Step 4 - Add processed object to group
-                // ======================================
-
-                self.group.push( obj );
-
-            });
-
-        },
-
-
-        // Attach an event handler functions for:
-        //   - navigation buttons
-        //   - browser scrolling, resizing;
-        //   - focusing
-        //   - keyboard
-        //   - detect idle
-        // ======================================
-
-        addEvents : function() {
-            var self = this;
-
-            self.removeEvents();
-
-            // Make navigation elements clickable
-            self.$refs.container.on('click.fb-close', '[data-fancybox-close]', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                self.close( e );
-
-            }).on( 'click.fb-prev touchend.fb-prev', '[data-fancybox-prev]', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                self.previous();
-
-            }).on( 'click.fb-next touchend.fb-next', '[data-fancybox-next]', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                self.next();
-
-            });
-
-
-            // Handle page scrolling and browser resizing
-            $W.on('orientationchange.fb resize.fb', function(e) {
-
-                if ( e && e.originalEvent && e.originalEvent.type === "resize" ) {
-
-                    requestAFrame(function() {
-                        self.update();
-                    });
-
-                } else {
-
-                    self.$refs.stage.hide();
-
-                    setTimeout(function() {
-                        self.$refs.stage.show();
-
-                        self.update();
-                    }, 500);
-
-                }
-
-            });
-
-            // Trap keyboard focus inside of the modal, so the user does not accidentally tab outside of the modal
-            // (a.k.a. "escaping the modal")
-            $D.on('focusin.fb', function(e) {
-                var instance = $.fancybox ? $.fancybox.getInstance() : null;
-
-                if ( instance.isClosing || !instance.current || !instance.current.opts.trapFocus || $( e.target ).hasClass( 'fancybox-container' ) || $( e.target ).is( document ) ) {
-                    return;
-                }
-
-                if ( instance && $( e.target ).css( 'position' ) !== 'fixed' && !instance.$refs.container.has( e.target ).length ) {
-                    e.stopPropagation();
-
-                    instance.focus();
-
-                    // Sometimes page gets scrolled, set it back
-                    $W.scrollTop( self.scrollTop ).scrollLeft( self.scrollLeft );
-                }
-            });
-
-
-            // Enable keyboard navigation
-            $D.on('keydown.fb', function (e) {
-                var current = self.current,
-                    keycode = e.keyCode || e.which;
-
-                if ( !current || !current.opts.keyboard ) {
-                    return;
-                }
-
-                if ( $(e.target).is('input') || $(e.target).is('textarea') ) {
-                    return;
-                }
-
-                // Backspace and Esc keys
-                if ( keycode === 8 || keycode === 27 ) {
-                    e.preventDefault();
-
-                    self.close( e );
-
-                    return;
-                }
-
-                // Left arrow and Up arrow
-                if ( keycode === 37 || keycode === 38 ) {
-                    e.preventDefault();
-
-                    self.previous();
-
-                    return;
-                }
-
-                // Righ arrow and Down arrow
-                if ( keycode === 39 || keycode === 40 ) {
-                    e.preventDefault();
-
-                    self.next();
-
-                    return;
-                }
-
-                self.trigger('afterKeydown', e, keycode);
-            });
-
-
-            // Hide controls after some inactivity period
-            if ( self.group[ self.currIndex ].opts.idleTime ) {
-                self.idleSecondsCounter = 0;
-
-                $D.on('mousemove.fb-idle mouseenter.fb-idle mouseleave.fb-idle mousedown.fb-idle touchstart.fb-idle touchmove.fb-idle scroll.fb-idle keydown.fb-idle', function() {
-                    self.idleSecondsCounter = 0;
-
-                    if ( self.isIdle ) {
-                        self.showControls();
-                    }
-
-                    self.isIdle = false;
-                });
-
-                self.idleInterval = window.setInterval(function() {
-
-                    self.idleSecondsCounter++;
-
-                    if ( self.idleSecondsCounter >= self.group[ self.currIndex ].opts.idleTime ) {
-                        self.isIdle = true;
-                        self.idleSecondsCounter = 0;
-
-                        self.hideControls();
-                    }
-
-                }, 1000);
-            }
-
-        },
-
-
-        // Remove events added by the core
-        // ===============================
-
-        removeEvents : function () {
-            var self = this;
-
-            $W.off( 'orientationchange.fb resize.fb' );
-            $D.off( 'focusin.fb keydown.fb .fb-idle' );
-
-            this.$refs.container.off( '.fb-close .fb-prev .fb-next' );
-
-            if ( self.idleInterval ) {
-                window.clearInterval( self.idleInterval );
-
-                self.idleInterval = null;
-            }
-        },
-
-
-        // Change to previous gallery item
-        // ===============================
-
-        previous : function( duration ) {
-            return this.jumpTo( this.currPos - 1, duration );
-        },
-
-
-        // Change to next gallery item
-        // ===========================
-
-        next : function( duration ) {
-            return this.jumpTo( this.currPos + 1, duration );
-        },
-
-
-        // Switch to selected gallery item
-        // ===============================
-
-        jumpTo : function ( pos, duration, slide ) {
-            var self = this,
-                firstRun,
-                loop,
-                current,
-                previous,
-                canvasWidth,
-                currentPos,
-                transitionProps;
-
-            var groupLen = self.group.length;
-
-            if ( self.isSliding || self.isClosing || ( self.isAnimating && self.firstRun ) ) {
-                return;
-            }
-
-            pos  = parseInt( pos, 10 );
-            loop = self.current ? self.current.opts.loop : self.opts.loop;
-
-            if ( !loop && ( pos < 0 || pos >= groupLen ) ) {
-                return false;
-            }
-
-            firstRun = self.firstRun = ( self.firstRun === null );
-
-            if ( groupLen < 2 && !firstRun && !!self.isSliding ) {
-                return;
-            }
-
-            previous = self.current;
-
-            self.prevIndex = self.currIndex;
-            self.prevPos   = self.currPos;
-
-            // Create slides
-            current = self.createSlide( pos );
-
-            if ( groupLen > 1 ) {
-                if ( loop || current.index > 0 ) {
-                    self.createSlide( pos - 1 );
-                }
-
-                if ( loop || current.index < groupLen - 1 ) {
-                    self.createSlide( pos + 1 );
-                }
-            }
-
-            self.current   = current;
-            self.currIndex = current.index;
-            self.currPos   = current.pos;
-
-            self.trigger( 'beforeShow', firstRun );
-
-            self.updateControls();
-
-            currentPos = $.fancybox.getTranslate( current.$slide );
-
-            current.isMoved        = ( currentPos.left !== 0 || currentPos.top !== 0 ) && !current.$slide.hasClass( 'fancybox-animated' );
-            current.forcedDuration = undefined;
-
-            if ( $.isNumeric( duration ) ) {
-                current.forcedDuration = duration;
-            } else {
-                duration = current.opts[ firstRun ? 'animationDuration' : 'transitionDuration' ];
-            }
-
-            duration = parseInt( duration, 10 );
-
-            // Fresh start - reveal container, current slide and start loading content
-            if ( firstRun ) {
-
-                if ( current.opts.animationEffect && duration ) {
-                    self.$refs.container.css( 'transition-duration', duration + 'ms' );
-                }
-
-                self.$refs.container.removeClass( 'fancybox-is-hidden' );
-
-                forceRedraw( self.$refs.container );
-
-                self.$refs.container.addClass( 'fancybox-is-open' );
-
-                // Make first slide visible (to display loading icon, if needed)
-                current.$slide.addClass( 'fancybox-slide--current' );
-
-                self.loadSlide( current );
-
-                self.preload();
-
-                return;
-            }
-
-            // Clean up
-            $.each(self.slides, function( index, slide ) {
-                $.fancybox.stop( slide.$slide );
-            });
-
-            // Make current that slide is visible even if content is still loading
-            current.$slide.removeClass( 'fancybox-slide--next fancybox-slide--previous' ).addClass( 'fancybox-slide--current' );
-
-            // If slides have been dragged, animate them to correct position
-            if ( current.isMoved ) {
-                canvasWidth = Math.round( current.$slide.width() );
-
-                $.each(self.slides, function( index, slide ) {
-                    var pos = slide.pos - current.pos;
-
-                    $.fancybox.animate( slide.$slide, {
-                        top  : 0,
-                        left : ( pos * canvasWidth ) + ( pos * slide.opts.gutter )
-                    }, duration, function() {
-
-                        slide.$slide.removeAttr('style').removeClass( 'fancybox-slide--next fancybox-slide--previous' );
-
-                        if ( slide.pos === self.currPos ) {
-                            current.isMoved = false;
-
-                            self.complete();
-                        }
-                    });
-                });
-
-            } else {
-                self.$refs.stage.children().removeAttr( 'style' );
-            }
-
-            // Start transition that reveals current content
-            // or wait when it will be loaded
-
-            if ( current.isLoaded ) {
-                self.revealContent( current );
-
-            } else {
-                self.loadSlide( current );
-            }
-
-            self.preload();
-
-            if ( previous.pos === current.pos ) {
-                return;
-            }
-
-            // Handle previous slide
-            // =====================
-
-            transitionProps = 'fancybox-slide--' + ( previous.pos > current.pos ? 'next' : 'previous' );
-
-            previous.$slide.removeClass( 'fancybox-slide--complete fancybox-slide--current fancybox-slide--next fancybox-slide--previous' );
-
-            previous.isComplete = false;
-
-            if ( !duration || ( !current.isMoved && !current.opts.transitionEffect ) ) {
-                return;
-            }
-
-            if ( current.isMoved ) {
-                previous.$slide.addClass( transitionProps );
-
-            } else {
-
-                transitionProps = 'fancybox-animated ' + transitionProps + ' fancybox-fx-' + current.opts.transitionEffect;
-
-                $.fancybox.animate( previous.$slide, transitionProps, duration, function() {
-                    previous.$slide.removeClass( transitionProps ).removeAttr( 'style' );
-                });
-
-            }
-
-        },
-
-
-        // Create new "slide" element
-        // These are gallery items  that are actually added to DOM
-        // =======================================================
-
-        createSlide : function( pos ) {
-
-            var self = this;
-            var $slide;
-            var index;
-
-            index = pos % self.group.length;
-            index = index < 0 ? self.group.length + index : index;
-
-            if ( !self.slides[ pos ] && self.group[ index ] ) {
-                $slide = $('<div class="fancybox-slide"></div>').appendTo( self.$refs.stage );
-
-                self.slides[ pos ] = $.extend( true, {}, self.group[ index ], {
-                    pos      : pos,
-                    $slide   : $slide,
-                    isLoaded : false,
-                });
-
-                self.updateSlide( self.slides[ pos ] );
-            }
-
-            return self.slides[ pos ];
-        },
-
-
-        // Scale image to the actual size of the image
-        // ===========================================
-
-        scaleToActual : function( x, y, duration ) {
-
-            var self = this;
-
-            var current = self.current;
-            var $what   = current.$content;
-
-            var imgPos, posX, posY, scaleX, scaleY;
-
-            var canvasWidth  = parseInt( current.$slide.width(), 10 );
-            var canvasHeight = parseInt( current.$slide.height(), 10 );
-
-            var newImgWidth  = current.width;
-            var newImgHeight = current.height;
-
-            if ( !( current.type == 'image' && !current.hasError) || !$what || self.isAnimating) {
-                return;
-            }
-
-            $.fancybox.stop( $what );
-
-            self.isAnimating = true;
-
-            x = x === undefined ? canvasWidth  * 0.5  : x;
-            y = y === undefined ? canvasHeight * 0.5  : y;
-
-            imgPos = $.fancybox.getTranslate( $what );
-
-            scaleX  = newImgWidth  / imgPos.width;
-            scaleY  = newImgHeight / imgPos.height;
-
-            // Get center position for original image
-            posX = ( canvasWidth * 0.5  - newImgWidth * 0.5 );
-            posY = ( canvasHeight * 0.5 - newImgHeight * 0.5 );
-
-            // Make sure image does not move away from edges
-            if ( newImgWidth > canvasWidth ) {
-                posX = imgPos.left * scaleX - ( ( x * scaleX ) - x );
-
-                if ( posX > 0 ) {
-                    posX = 0;
-                }
-
-                if ( posX <  canvasWidth - newImgWidth ) {
-                    posX = canvasWidth - newImgWidth;
-                }
-            }
-
-            if ( newImgHeight > canvasHeight) {
-                posY = imgPos.top  * scaleY - ( ( y * scaleY ) - y );
-
-                if ( posY > 0 ) {
-                    posY = 0;
-                }
-
-                if ( posY <  canvasHeight - newImgHeight ) {
-                    posY = canvasHeight - newImgHeight;
-                }
-            }
-
-            self.updateCursor( newImgWidth, newImgHeight );
-
-            $.fancybox.animate( $what, {
-                top    : posY,
-                left   : posX,
-                scaleX : scaleX,
-                scaleY : scaleY
-            }, duration || 330, function() {
-                self.isAnimating = false;
-            });
-
-            // Stop slideshow
-            if ( self.SlideShow && self.SlideShow.isActive ) {
-                self.SlideShow.stop();
-            }
-        },
-
-
-        // Scale image to fit inside parent element
-        // ========================================
-
-        scaleToFit : function( duration ) {
-
-            var self = this;
-
-            var current = self.current;
-            var $what   = current.$content;
-            var end;
-
-            if ( !( current.type == 'image' && !current.hasError) || !$what || self.isAnimating ) {
-                return;
-            }
-
-            $.fancybox.stop( $what );
-
-            self.isAnimating = true;
-
-            end = self.getFitPos( current );
-
-            self.updateCursor( end.width, end.height );
-
-            $.fancybox.animate( $what, {
-                top    : end.top,
-                left   : end.left,
-                scaleX : end.width  / $what.width(),
-                scaleY : end.height / $what.height()
-            }, duration || 330, function() {
-                self.isAnimating = false;
-            });
-
-        },
-
-        // Calculate image size to fit inside viewport
-        // ===========================================
-
-        getFitPos : function( slide ) {
-            var self  = this;
-            var $what = slide.$content;
-
-            var imgWidth  = slide.width;
-            var imgHeight = slide.height;
-
-            var margin = slide.opts.margin;
-
-            var canvasWidth, canvasHeight, minRatio, width, height;
-
-            if ( !$what || !$what.length || ( !imgWidth && !imgHeight) ) {
-                return false;
-            }
-
-            // Convert "margin to CSS style: [ top, right, bottom, left ]
-            if ( $.type( margin ) === "number" ) {
-                margin = [ margin, margin ];
-            }
-
-            if ( margin.length == 2 ) {
-                margin = [ margin[0], margin[1], margin[0], margin[1] ];
-            }
-
-            if ( $W.width() < 800 ) {
-                margin = [ 0, 0, 0, 0 ];
-            }
-
-            // We can not use $slide width here, because it can have different diemensions while in transiton
-            canvasWidth  = parseInt( self.$refs.stage.width(), 10 )  - ( margin[ 1 ] + margin[ 3 ] );
-            canvasHeight = parseInt( self.$refs.stage.height(), 10 ) - ( margin[ 0 ] + margin[ 2 ] );
-
-            minRatio = Math.min(1, canvasWidth / imgWidth, canvasHeight / imgHeight );
-
-            width  = Math.floor( minRatio * imgWidth );
-            height = Math.floor( minRatio * imgHeight );
-
-            // Use floor rounding to make sure it really fits
-            return {
-                top    : Math.floor( ( canvasHeight - height ) * 0.5 ) + margin[ 0 ],
-                left   : Math.floor( ( canvasWidth  - width )  * 0.5 ) + margin[ 3 ],
-                width  : width,
-                height : height
-            };
-
-        },
-
-
-        // Update position and content of all slides
-        // =========================================
-
-        update : function() {
-
-            var self = this;
-
-            $.each( self.slides, function( key, slide ) {
-                self.updateSlide( slide );
-            });
-
-        },
-
-
-        // Update slide position and scale content to fit
-        // ==============================================
-
-        updateSlide : function( slide ) {
-
-            var self  = this;
-            var $what = slide.$content;
-
-            if ( $what && ( slide.width || slide.height ) ) {
-                $.fancybox.stop( $what );
-
-                $.fancybox.setTranslate( $what, self.getFitPos( slide ) );
-
-                if ( slide.pos === self.currPos ) {
-                    self.updateCursor();
-                }
-            }
-
-            slide.$slide.trigger( 'refresh' );
-
-            self.trigger( 'onUpdate', slide );
-
-        },
-
-        // Update cursor style depending if content can be zoomed
-        // ======================================================
-
-        updateCursor : function( nextWidth, nextHeight ) {
-
-            var self = this;
-            var isScaledDown;
-
-            var $container = self.$refs.container.removeClass('fancybox-is-zoomable fancybox-can-zoomIn fancybox-can-drag fancybox-can-zoomOut');
-
-            if ( !self.current || self.isClosing ) {
-                return;
-            }
-
-            if ( self.isZoomable() ) {
-
-                $container.addClass( 'fancybox-is-zoomable' );
-
-                if ( nextWidth !== undefined && nextHeight !== undefined ) {
-                    isScaledDown = nextWidth < self.current.width && nextHeight < self.current.height;
-
-                } else {
-                    isScaledDown = self.isScaledDown();
-                }
-
-                if ( isScaledDown ) {
-
-                    // If image is scaled down, then, obviously, it can be zoomed to full size
-                    $container.addClass('fancybox-can-zoomIn');
-
-                } else {
-
-                    if ( self.current.opts.touch ) {
-
-                        // If image size ir largen than available available and touch module is not disable,
-                        // then user can do panning
-                        $container.addClass('fancybox-can-drag');
-
-                    } else {
-                        $container.addClass('fancybox-can-zoomOut');
-                    }
-
-                }
-
-            } else if ( self.current.opts.touch ) {
-                $container.addClass('fancybox-can-drag');
-            }
-
-        },
-
-
-        // Check if current slide is zoomable
-        // ==================================
-
-        isZoomable : function() {
-
-            var self = this;
-
-            var current = self.current;
-            var fitPos;
-
-            if ( !current || self.isClosing ) {
-                return;
-            }
-
-            // Assume that slide is zoomable if
-            //   - image is loaded successfuly
-            //   - click action is "zoom"
-            //   - actual size of the image is smaller than available area
-            if ( current.type === 'image' && current.isLoaded && !current.hasError &&
-                ( current.opts.clickContent === 'zoom' || ( $.isFunction( current.opts.clickContent ) && current.opts.clickContent( current ) ===  "zoom" ) )
-            ) {
-
-                fitPos = self.getFitPos( current );
-
-                if ( current.width > fitPos.width || current.height > fitPos.height ) {
-                    return true;
-                }
-
-            }
-
-            return false;
-
-        },
-
-
-        // Check if current image dimensions are smaller than actual
-        // =========================================================
-
-        isScaledDown : function() {
-
-            var self = this;
-
-            var current = self.current;
-            var $what   = current.$content;
-
-            var rez = false;
-
-            if ( $what ) {
-                rez = $.fancybox.getTranslate( $what );
-                rez = rez.width < current.width || rez.height < current.height;
-            }
-
-            return rez;
-
-        },
-
-
-        // Check if image dimensions exceed parent element
-        // ===============================================
-
-        canPan : function() {
-
-            var self = this;
-
-            var current = self.current;
-            var $what   = current.$content;
-
-            var rez = false;
-
-            if ( $what ) {
-                rez = self.getFitPos( current );
-                rez = Math.abs( $what.width() - rez.width ) > 1  || Math.abs( $what.height() - rez.height ) > 1;
-
-            }
-
-            return rez;
-
-        },
-
-
-        // Load content into the slide
-        // ===========================
-
-        loadSlide : function( slide ) {
-
-            var self = this, type, $slide;
-            var ajaxLoad;
-
-            if ( slide.isLoading ) {
-                return;
-            }
-
-            if ( slide.isLoaded ) {
-                return;
-            }
-
-            slide.isLoading = true;
-
-            self.trigger( 'beforeLoad', slide );
-
-            type   = slide.type;
-            $slide = slide.$slide;
-
-            $slide
-                .off( 'refresh' )
-                .trigger( 'onReset' )
-                .addClass( 'fancybox-slide--' + ( type || 'unknown' ) )
-                .addClass( slide.opts.slideClass );
-
-            // Create content depending on the type
-
-            switch ( type ) {
-
-                case 'image':
-
-                    self.setImage( slide );
-
-                break;
-
-                case 'iframe':
-
-                    self.setIframe( slide );
-
-                break;
-
-                case 'html':
-
-                    self.setContent( slide, slide.src || slide.content );
-
-                break;
-
-                case 'inline':
-
-                    if ( $( slide.src ).length ) {
-                        self.setContent( slide, $( slide.src ) );
-
-                    } else {
-                        self.setError( slide );
-                    }
-
-                break;
-
-                case 'ajax':
-
-                    self.showLoading( slide );
-
-                    ajaxLoad = $.ajax( $.extend( {}, slide.opts.ajax.settings, {
-                        url : slide.src,
-                        success : function ( data, textStatus ) {
-
-                            if ( textStatus === 'success' ) {
-                                self.setContent( slide, data );
-                            }
-
-                        },
-                        error : function ( jqXHR, textStatus ) {
-
-                            if ( jqXHR && textStatus !== 'abort' ) {
-                                self.setError( slide );
-                            }
-
-                        }
-                    }));
-
-                    $slide.one( 'onReset', function () {
-                        ajaxLoad.abort();
-                    });
-
-                break;
-
-                default:
-
-                    self.setError( slide );
-
-                break;
-
-            }
-
-            return true;
-
-        },
-
-
-        // Use thumbnail image, if possible
-        // ================================
-
-        setImage : function( slide ) {
-
-            var self   = this;
-            var srcset = slide.opts.image.srcset;
-
-            var found, temp, pxRatio, windowWidth;
-
-            // If we have "srcset", then we need to find matching "src" value.
-            // This is necessary, because when you set an src attribute, the browser will preload the image
-            // before any javascript or even CSS is applied.
-            if ( srcset ) {
-                pxRatio     = window.devicePixelRatio || 1;
-                windowWidth = window.innerWidth  * pxRatio;
-
-                temp = srcset.split(',').map(function ( el ) {
-            		var ret = {};
-
-            		el.trim().split(/\s+/).forEach(function ( el, i ) {
-                        var value = parseInt( el.substring(0, el.length - 1), 10 );
-
-            			if ( i === 0 ) {
-            				return ( ret.url = el );
-            			}
-
-                        if ( value ) {
-                            ret.value   = value;
-                            ret.postfix = el[ el.length - 1 ];
-                        }
-
-            		});
-
-            		return ret;
-            	});
-
-                // Sort by value
-                temp.sort(function (a, b) {
-                  return a.value - b.value;
-                });
-
-                // Ok, now we have an array of all srcset values
-                for ( var j = 0; j < temp.length; j++ ) {
-                    var el = temp[ j ];
-
-                    if ( ( el.postfix === 'w' && el.value >= windowWidth ) || ( el.postfix === 'x' && el.value >= pxRatio ) ) {
-                        found = el;
-                        break;
-                    }
-                }
-
-                // If not found, take the last one
-                if ( !found && temp.length ) {
-                    found = temp[ temp.length - 1 ];
-                }
-
-                if ( found ) {
-                    slide.src = found.url;
-
-                    // If we have default width/height values, we can calculate height for matching source
-                    if ( slide.width && slide.height && found.postfix == 'w' ) {
-                        slide.height = ( slide.width / slide.height ) * found.value;
-                        slide.width  = found.value;
-                    }
-                }
-            }
-
-            // This will be wrapper containing both ghost and actual image
-            slide.$content = $('<div class="fancybox-image-wrap"></div>')
-                .addClass( 'fancybox-is-hidden' )
-                .appendTo( slide.$slide );
-
-
-            // If we have a thumbnail, we can display it while actual image is loading
-            // Users will not stare at black screen and actual image will appear gradually
-            if ( slide.opts.preload !== false && slide.opts.width && slide.opts.height && ( slide.opts.thumb || slide.opts.$thumb ) ) {
-
-                slide.width  = slide.opts.width;
-                slide.height = slide.opts.height;
-
-                slide.$ghost = $('<img />')
-                    .one('error', function() {
-
-                        $(this).remove();
-
-                        slide.$ghost = null;
-
-                        self.setBigImage( slide );
-
-                    })
-                    .one('load', function() {
-
-                        self.afterLoad( slide );
-
-                        self.setBigImage( slide );
-
-                    })
-                    .addClass( 'fancybox-image' )
-                    .appendTo( slide.$content )
-                    .attr( 'src', slide.opts.thumb || slide.opts.$thumb.attr( 'src' ) );
-
-            } else {
-
-                self.setBigImage( slide );
-
-            }
-
-        },
-
-
-        // Create full-size image
-        // ======================
-
-        setBigImage : function ( slide ) {
-            var self = this;
-            var $img = $('<img />');
-
-            slide.$image = $img
-                .one('error', function() {
-
-                    self.setError( slide );
-
-                })
-                .one('load', function() {
-
-                    // Clear timeout that checks if loading icon needs to be displayed
-                    clearTimeout( slide.timouts );
-
-                    slide.timouts = null;
-
-                    if ( self.isClosing ) {
-                        return;
-                    }
-
-                    slide.width  = this.naturalWidth;
-                    slide.height = this.naturalHeight;
-
-                    if ( slide.opts.image.srcset ) {
-                        $img.attr( 'sizes', '100vw' ).attr( 'srcset', slide.opts.image.srcset );
-                    }
-
-                    self.hideLoading( slide );
-
-                    if ( slide.$ghost ) {
-
-                        slide.timouts = setTimeout(function() {
-                            slide.timouts = null;
-
-                            slide.$ghost.hide();
-
-                        }, Math.min( 300, Math.max( 1000, slide.height / 1600 ) ) );
-
-                    } else {
-                        self.afterLoad( slide );
-                    }
-
-                })
-                .addClass( 'fancybox-image' )
-                .attr('src', slide.src)
-                .appendTo( slide.$content );
-
-            if ( $img[0].complete ) {
-                  $img.trigger( 'load' );
-
-            } else if( $img[0].error ) {
-                 $img.trigger( 'error' );
-
-            } else {
-
-                slide.timouts = setTimeout(function() {
-                    if ( !$img[0].complete && !slide.hasError ) {
-                        self.showLoading( slide );
-                    }
-
-                }, 100);
-
-            }
-
-        },
-
-
-        // Create iframe wrapper, iframe and bindings
-        // ==========================================
-
-        setIframe : function( slide ) {
-            var self	= this,
-                opts    = slide.opts.iframe,
-                $slide	= slide.$slide,
-                $iframe;
-
-            slide.$content = $('<div class="fancybox-content' + ( opts.preload ? ' fancybox-is-hidden' : '' ) + '"></div>')
-                .css( opts.css )
-                .appendTo( $slide );
-
-            $iframe = $( opts.tpl.replace(/\{rnd\}/g, new Date().getTime()) )
-                .attr( opts.attr )
-                .appendTo( slide.$content );
-
-            if ( opts.preload ) {
-
-                self.showLoading( slide );
-
-                // Unfortunately, it is not always possible to determine if iframe is successfully loaded
-                // (due to browser security policy)
-
-                $iframe.on('load.fb error.fb', function(e) {
-                    this.isReady = 1;
-
-                    slide.$slide.trigger( 'refresh' );
-
-                    self.afterLoad( slide );
-                });
-
-                // Recalculate iframe content size
-                // ===============================
-
-                $slide.on('refresh.fb', function() {
-                    var $wrap = slide.$content,
-                        $contents,
-                        $body,
-                        scrollWidth,
-                        frameWidth,
-                        frameHeight;
-
-                    if ( $iframe[0].isReady !== 1 ) {
-                        return;
-                    }
-
-                    // Check if content is accessible,
-                    // it will fail if frame is not with the same origin
-
-                    try {
-                        $contents = $iframe.contents();
-                        $body     = $contents.find('body');
-
-                    } catch (ignore) {}
-
-                    // Calculate dimensions for the wrapper
-                    if ( $body && $body.length && !( opts.css.width !== undefined && opts.css.height !== undefined ) ) {
-
-                        scrollWidth = $iframe[0].contentWindow.document.documentElement.scrollWidth;
-
-                        frameWidth	= Math.ceil( $body.outerWidth(true) + ( $wrap.width() - scrollWidth ) );
-                        frameHeight	= Math.ceil( $body.outerHeight(true) );
-
-                        // Resize wrapper to fit iframe content
-                        $wrap.css({
-                            'width'  : opts.css.width  === undefined ? frameWidth  + ( $wrap.outerWidth()  - $wrap.innerWidth() )  : opts.css.width,
-                            'height' : opts.css.height === undefined ? frameHeight + ( $wrap.outerHeight() - $wrap.innerHeight() ) : opts.css.height
-                        });
-
-                    }
-
-                    $wrap.removeClass( 'fancybox-is-hidden' );
-
-                });
-
-            } else {
-
-                this.afterLoad( slide );
-
-            }
-
-            $iframe.attr( 'src', slide.src );
-
-            if ( slide.opts.smallBtn === true ) {
-                slide.$content.prepend( self.translate( slide, slide.opts.btnTpl.smallBtn ) );
-            }
-
-            // Remove iframe if closing or changing gallery item
-            $slide.one( 'onReset', function () {
-
-                // This helps IE not to throw errors when closing
-                try {
-
-                    $( this ).find( 'iframe' ).hide().attr( 'src', '//about:blank' );
-
-                } catch ( ignore ) {}
-
-                $( this ).empty();
-
-                slide.isLoaded = false;
-
-            });
-
-        },
-
-
-        // Wrap and append content to the slide
-        // ======================================
-
-        setContent : function ( slide, content ) {
-
-            var self = this;
-
-            if ( self.isClosing ) {
-                return;
-            }
-
-            self.hideLoading( slide );
-
-            slide.$slide.empty();
-
-            if ( isQuery( content ) && content.parent().length ) {
-
-                // If content is a jQuery object, then it will be moved to the slide.
-                // The placeholder is created so we will know where to put it back.
-                // If user is navigating gallery fast, then the content might be already inside fancyBox
-                // =====================================================================================
-
-                // Make sure content is not already moved to fancyBox
-                content.parent( '.fancybox-slide--inline' ).trigger( 'onReset' );
-
-                // Create temporary element marking original place of the content
-                slide.$placeholder = $( '<div></div>' ).hide().insertAfter( content );
-
-                // Make sure content is visible
-                content.css('display', 'inline-block');
-
-            } else if ( !slide.hasError ) {
-
-                // If content is just a plain text, try to convert it to html
-                if ( $.type( content ) === 'string' ) {
-                    content = $('<div>').append( $.trim( content ) ).contents();
-
-                    // If we have text node, then add wrapping element to make vertical alignment work
-                    if ( content[0].nodeType === 3 ) {
-                        content = $('<div>').html( content );
-                    }
-                }
-
-                // If "filter" option is provided, then filter content
-                if ( slide.opts.filter ) {
-                    content = $('<div>').html( content ).find( slide.opts.filter );
-                }
-
-            }
-
-            slide.$slide.one('onReset', function () {
-
-                // Put content back
-                if ( slide.$placeholder ) {
-                    slide.$placeholder.after( content.hide() ).remove();
-
-                    slide.$placeholder = null;
-                }
-
-                // Remove custom close button
-                if ( slide.$smallBtn ) {
-                    slide.$smallBtn.remove();
-
-                    slide.$smallBtn = null;
-                }
-
-                // Remove content and mark slide as not loaded
-                if ( !slide.hasError ) {
-                    $(this).empty();
-
-                    slide.isLoaded = false;
-                }
-
-            });
-
-            slide.$content = $( content ).appendTo( slide.$slide );
-
-            if ( slide.opts.smallBtn && !slide.$smallBtn ) {
-                slide.$smallBtn = $( self.translate( slide, slide.opts.btnTpl.smallBtn ) ).appendTo( slide.$content );
-            }
-
-            this.afterLoad( slide );
-        },
-
-        // Display error message
-        // =====================
-
-        setError : function ( slide ) {
-
-            slide.hasError = true;
-
-            slide.$slide.removeClass( 'fancybox-slide--' + slide.type );
-
-            this.setContent( slide, this.translate( slide, slide.opts.errorTpl ) );
-
-        },
-
-
-        // Show loading icon inside the slide
-        // ==================================
-
-        showLoading : function( slide ) {
-
-            var self = this;
-
-            slide = slide || self.current;
-
-            if ( slide && !slide.$spinner ) {
-                slide.$spinner = $( self.opts.spinnerTpl ).appendTo( slide.$slide );
-            }
-
-        },
-
-        // Remove loading icon from the slide
-        // ==================================
-
-        hideLoading : function( slide ) {
-
-            var self = this;
-
-            slide = slide || self.current;
-
-            if ( slide && slide.$spinner ) {
-                slide.$spinner.remove();
-
-                delete slide.$spinner;
-            }
-
-        },
-
-
-        // Adjustments after slide content has been loaded
-        // ===============================================
-
-        afterLoad : function( slide ) {
-
-            var self = this;
-
-            if ( self.isClosing ) {
-                return;
-            }
-
-            slide.isLoading = false;
-            slide.isLoaded  = true;
-
-            self.trigger( 'afterLoad', slide );
-
-            self.hideLoading( slide );
-
-            if ( slide.opts.protect && slide.$content && !slide.hasError ) {
-
-                // Disable right click
-                slide.$content.on( 'contextmenu.fb', function( e ) {
-                     if ( e.button == 2 ) {
-                         e.preventDefault();
-                     }
-
-                    return true;
-                });
-
-                // Add fake element on top of the image
-                // This makes a bit harder for user to select image
-                if ( slide.type === 'image' ) {
-                    $( '<div class="fancybox-spaceball"></div>' ).appendTo( slide.$content );
-                }
-
-            }
-
-            self.revealContent( slide );
-
-        },
-
-
-        // Make content visible
-        // This method is called right after content has been loaded or
-        // user navigates gallery and transition should start
-        // ============================================================
-
-        revealContent : function( slide ) {
-
-            var self   = this;
-            var $slide = slide.$slide;
-
-            var effect, effectClassName, duration, opacity, end, start = false;
-
-            effect   = slide.opts[ self.firstRun ? 'animationEffect'   : 'transitionEffect' ];
-            duration = slide.opts[ self.firstRun ? 'animationDuration' : 'transitionDuration' ];
-
-            duration = parseInt( slide.forcedDuration === undefined ? duration : slide.forcedDuration, 10 );
-
-            if ( slide.isMoved || slide.pos !== self.currPos || !duration ) {
-                effect = false;
-            }
-
-            // Check if can zoom
-            if ( effect === 'zoom' && !( slide.pos === self.currPos && duration && slide.type === 'image' && !slide.hasError && ( start = self.getThumbPos( slide ) ) ) ) {
-                effect = 'fade';
-            }
-
-
-            // Zoom animation
-            // ==============
-
-            if ( effect === 'zoom' ) {
-                end = self.getFitPos( slide );
-
-                end.scaleX = Math.round( (end.width  / start.width)  * 100 ) / 100;
-                end.scaleY = Math.round( (end.height / start.height) * 100 ) / 100;
-
-                delete end.width;
-                delete end.height;
-
-                // Check if we need to animate opacity
-                opacity = slide.opts.zoomOpacity;
-
-                if ( opacity == 'auto' ) {
-                    opacity = Math.abs( slide.width / slide.height - start.width / start.height ) > 0.1;
-                }
-
-                if ( opacity ) {
-                    start.opacity = 0.1;
-                    end.opacity   = 1;
-                }
-
-                // Draw image at start position
-                $.fancybox.setTranslate( slide.$content.removeClass( 'fancybox-is-hidden' ), start );
-
-                forceRedraw( slide.$content );
-
-                // Start animation
-                $.fancybox.animate( slide.$content, end, duration, function() {
-                    self.complete();
-                });
-
-                return;
-            }
-
-
-            self.updateSlide( slide );
-
-
-            // Simply show content
-            // ===================
-
-            if ( !effect ) {
-                forceRedraw( $slide );
-
-                slide.$content.removeClass( 'fancybox-is-hidden' );
-
-                if ( slide.pos === self.currPos ) {
-                    self.complete();
-                }
-
-                return;
-            }
-
-            $.fancybox.stop( $slide );
-
-            effectClassName = 'fancybox-animated fancybox-slide--' + ( slide.pos > self.prevPos ? 'next' : 'previous' ) + ' fancybox-fx-' + effect;
-
-            $slide.removeAttr( 'style' ).removeClass( 'fancybox-slide--current fancybox-slide--next fancybox-slide--previous' ).addClass( effectClassName );
-
-            slide.$content.removeClass( 'fancybox-is-hidden' );
-
-            //Force reflow for CSS3 transitions
-            forceRedraw( $slide );
-
-            $.fancybox.animate( $slide, 'fancybox-slide--current', duration, function(e) {
-                $slide.removeClass( effectClassName ).removeAttr( 'style' );
-
-                if ( slide.pos === self.currPos ) {
-                    self.complete();
-                }
-
-            }, true);
-
-        },
-
-
-        // Check if we can and have to zoom from thumbnail
-        //================================================
-
-        getThumbPos : function( slide ) {
-
-            var self = this;
-            var rez  = false;
-
-            // Check if element is inside the viewport by at least 1 pixel
-            var isElementVisible = function( $el ) {
-                var element = $el[0];
-
-                var elementRect = element.getBoundingClientRect();
-                var parentRects = [];
-
-                var visibleInAllParents;
-
-                while ( element.parentElement !== null ) {
-                    if ( $(element.parentElement).css('overflow') === 'hidden'  || $(element.parentElement).css('overflow') === 'auto' ) {
-                        parentRects.push(element.parentElement.getBoundingClientRect());
-                    }
-
-                    element = element.parentElement;
-                }
-
-                visibleInAllParents = parentRects.every(function(parentRect){
-                    var visiblePixelX = Math.min(elementRect.right, parentRect.right) - Math.max(elementRect.left, parentRect.left);
-                    var visiblePixelY = Math.min(elementRect.bottom, parentRect.bottom) - Math.max(elementRect.top, parentRect.top);
-
-                    return visiblePixelX > 0 && visiblePixelY > 0;
-                });
-
-                return visibleInAllParents &&
-                    elementRect.bottom > 0 && elementRect.right > 0 &&
-                    elementRect.left < $(window).width() && elementRect.top < $(window).height();
-            };
-
-            var $thumb   = slide.opts.$thumb;
-            var thumbPos = $thumb ? $thumb.offset() : 0;
-            var slidePos;
-
-            if ( thumbPos && $thumb[0].ownerDocument === document && isElementVisible( $thumb ) ) {
-                slidePos = self.$refs.stage.offset();
-
-                rez = {
-                    top    : thumbPos.top  - slidePos.top  + parseFloat( $thumb.css( "border-top-width" ) || 0 ),
-                    left   : thumbPos.left - slidePos.left + parseFloat( $thumb.css( "border-left-width" ) || 0 ),
-                    width  : $thumb.width(),
-                    height : $thumb.height(),
-                    scaleX : 1,
-                    scaleY : 1
-                };
-            }
-
-            return rez;
-        },
-
-
-        // Final adjustments after current gallery item is moved to position
-        // and it`s content is loaded
-        // ==================================================================
-
-        complete : function() {
-
-            var self = this;
-
-            var current = self.current;
-            var slides  = {};
-
-            if ( current.isMoved || !current.isLoaded || current.isComplete ) {
-                return;
-            }
-
-            current.isComplete = true;
-
-            current.$slide.siblings().trigger( 'onReset' );
-
-            // Trigger any CSS3 transiton inside the slide
-            forceRedraw( current.$slide );
-
-            current.$slide.addClass( 'fancybox-slide--complete' );
-
-            // Remove unnecessary slides
-            $.each( self.slides, function( key, slide ) {
-                if ( slide.pos >= self.currPos - 1 && slide.pos <= self.currPos + 1 ) {
-                    slides[ slide.pos ] = slide;
-
-                } else if ( slide ) {
-
-                    $.fancybox.stop( slide.$slide );
-
-                    slide.$slide.unbind().remove();
-                }
-            });
-
-            self.slides = slides;
-
-            self.updateCursor();
-
-            self.trigger( 'afterShow' );
-
-            // Try to focus on the first focusable element
-            if ( $( document.activeElement ).is( '[disabled]' ) || ( current.opts.autoFocus && !( current.type == 'image' || current.type === 'iframe' ) ) ) {
-                self.focus();
-            }
-
-        },
-
-
-        // Preload next and previous slides
-        // ================================
-
-        preload : function() {
-            var self = this;
-            var next, prev;
-
-            if ( self.group.length < 2 ) {
-                return;
-            }
-
-            next  = self.slides[ self.currPos + 1 ];
-            prev  = self.slides[ self.currPos - 1 ];
-
-            if ( next && next.type === 'image' ) {
-                self.loadSlide( next );
-            }
-
-            if ( prev && prev.type === 'image' ) {
-                self.loadSlide( prev );
-            }
-
-        },
-
-
-        // Try to find and focus on the first focusable element
-        // ====================================================
-
-        focus : function() {
-            var current = this.current;
-            var $el;
-
-            if ( this.isClosing ) {
-                return;
-            }
-
-            // Skip for images and iframes
-            $el = current && current.isComplete ? current.$slide.find('button,:input,[tabindex],a').filter(':not([disabled]):visible:first') : null;
-            $el = $el && $el.length ? $el : this.$refs.container;
-
-            $el.focus();
-        },
-
-
-        // Activates current instance - brings container to the front and enables keyboard,
-        // notifies other instances about deactivating
-        // =================================================================================
-
-        activate : function () {
-            var self = this;
-
-            // Deactivate all instances
-            $( '.fancybox-container' ).each(function () {
-                var instance = $(this).data( 'FancyBox' );
-
-                // Skip self and closing instances
-                if (instance && instance.uid !== self.uid && !instance.isClosing) {
-                    instance.trigger( 'onDeactivate' );
-                }
-
-            });
-
-            if ( self.current ) {
-                if ( self.$refs.container.index() > 0 ) {
-                    self.$refs.container.prependTo( document.body );
-                }
-
-                self.updateControls();
-            }
-
-            self.trigger( 'onActivate' );
-
-            self.addEvents();
-
-        },
-
-
-        // Start closing procedure
-        // This will start "zoom-out" animation if needed and clean everything up afterwards
-        // =================================================================================
-
-        close : function( e, d ) {
-
-            var self    = this;
-            var current = self.current;
-
-            var effect, duration;
-            var $what, opacity, start, end;
-
-            var done = function() {
-                self.cleanUp( e );
-            };
-
-            if ( self.isClosing ) {
-                return false;
-            }
-
-            self.isClosing = true;
-
-            // If beforeClose callback prevents closing, make sure content is centered
-            if ( self.trigger( 'beforeClose', e ) === false ) {
-                self.isClosing = false;
-
-                requestAFrame(function() {
-                    self.update();
-                });
-
-                return false;
-            }
-
-            // Remove all events
-            // If there are multiple instances, they will be set again by "activate" method
-            self.removeEvents();
-
-            if ( current.timouts ) {
-                clearTimeout( current.timouts );
-            }
-
-            $what    = current.$content;
-            effect   = current.opts.animationEffect;
-            duration = $.isNumeric( d ) ? d : ( effect ? current.opts.animationDuration : 0 );
-
-            // Remove other slides
-            current.$slide.off( transitionEnd ).removeClass( 'fancybox-slide--complete fancybox-slide--next fancybox-slide--previous fancybox-animated' );
-
-            current.$slide.siblings().trigger( 'onReset' ).remove();
-
-            // Trigger animations
-            if ( duration ) {
-                self.$refs.container.removeClass( 'fancybox-is-open' ).addClass( 'fancybox-is-closing' );
-            }
-
-            // Clean up
-            self.hideLoading( current );
-
-            self.hideControls();
-
-            self.updateCursor();
-
-            // Check if possible to zoom-out
-            if ( effect === 'zoom' && !( e !== true && $what && duration && current.type === 'image' && !current.hasError && ( end = self.getThumbPos( current ) ) ) ) {
-                effect = 'fade';
-            }
-
-            if ( effect === 'zoom' ) {
-                $.fancybox.stop( $what );
-
-                start = $.fancybox.getTranslate( $what );
-
-                start.width  = start.width  * start.scaleX;
-                start.height = start.height * start.scaleY;
-
-                // Check if we need to animate opacity
-                opacity = current.opts.zoomOpacity;
-
-                if ( opacity == 'auto' ) {
-                    opacity = Math.abs( current.width / current.height - end.width / end.height ) > 0.1;
-                }
-
-                if ( opacity ) {
-                    end.opacity = 0;
-                }
-
-                start.scaleX = start.width  / end.width;
-                start.scaleY = start.height / end.height;
-
-                start.width  = end.width;
-                start.height = end.height;
-
-                $.fancybox.setTranslate( current.$content, start );
-
-                $.fancybox.animate( current.$content, end, duration, done );
-
-                return true;
-            }
-
-            if ( effect && duration ) {
-
-                // If skip animation
-                if ( e === true ) {
-                    setTimeout( done, duration );
-
-                } else {
-                    $.fancybox.animate( current.$slide.removeClass( 'fancybox-slide--current' ), 'fancybox-animated fancybox-slide--previous fancybox-fx-' + effect, duration, done );
-                }
-
-            } else {
-                done();
-            }
-
-            return true;
-        },
-
-
-        // Final adjustments after removing the instance
-        // =============================================
-
-        cleanUp : function( e ) {
-            var self = this,
-                instance;
-
-            self.current.$slide.trigger( 'onReset' );
-
-            self.$refs.container.empty().remove();
-
-            self.trigger( 'afterClose', e );
-
-            // Place back focus
-            if ( self.$lastFocus && !!!self.current.focusBack ) {
-                self.$lastFocus.focus();
-            }
-
-            self.current = null;
-
-            // Check if there are other instances
-            instance = $.fancybox.getInstance();
-
-            if ( instance ) {
-                instance.activate();
-
-            } else {
-
-                $W.scrollTop( self.scrollTop ).scrollLeft( self.scrollLeft );
-
-                $( 'html' ).removeClass( 'fancybox-enabled' );
-
-                $( '#fancybox-style-noscroll' ).remove();
-            }
-
-        },
-
-
-        // Call callback and trigger an event
-        // ==================================
-
-        trigger : function( name, slide ) {
-            var args  = Array.prototype.slice.call(arguments, 1),
-                self  = this,
-                obj   = slide && slide.opts ? slide : self.current,
-                rez;
-
-            if ( obj ) {
-                args.unshift( obj );
-
-            } else {
-                obj = self;
-            }
-
-            args.unshift( self );
-
-            if ( $.isFunction( obj.opts[ name ] ) ) {
-                rez = obj.opts[ name ].apply( obj, args );
-            }
-
-            if ( rez === false ) {
-                return rez;
-            }
-
-            if ( name === 'afterClose' ) {
-                $D.trigger( name + '.fb', args );
-
-            } else {
-                self.$refs.container.trigger( name + '.fb', args );
-            }
-
-        },
-
-
-        // Update infobar values, navigation button states and reveal caption
-        // ==================================================================
-
-        updateControls : function ( force ) {
-
-            var self = this;
-
-            var current  = self.current;
-            var index    = current.index;
-            var opts     = current.opts;
-            var caption  = opts.caption;
-            var $caption = self.$refs.caption;
-
-            // Recalculate content dimensions
-            current.$slide.trigger( 'refresh' );
-
-            self.$caption = caption && caption.length ? $caption.html( caption ) : null;
-
-            if ( !self.isHiddenControls ) {
-                self.showControls();
-            }
-
-            // Update info and navigation elements
-            $('[data-fancybox-count]').html( self.group.length );
-            $('[data-fancybox-index]').html( index + 1 );
-
-            $('[data-fancybox-prev]').prop('disabled', ( !opts.loop && index <= 0 ) );
-            $('[data-fancybox-next]').prop('disabled', ( !opts.loop && index >= self.group.length - 1 ) );
-
-        },
-
-        // Hide toolbar and caption
-        // ========================
-
-        hideControls : function () {
-
-            this.isHiddenControls = true;
-
-            this.$refs.container.removeClass('fancybox-show-infobar fancybox-show-toolbar fancybox-show-caption fancybox-show-nav');
-
-        },
-
-        showControls : function() {
-
-            var self = this;
-            var opts = self.current ? self.current.opts : self.opts;
-            var $container = self.$refs.container;
-
-            self.isHiddenControls   = false;
-            self.idleSecondsCounter = 0;
-
-            $container
-                .toggleClass('fancybox-show-toolbar', !!( opts.toolbar && opts.buttons ) )
-                .toggleClass('fancybox-show-infobar', !!( opts.infobar && self.group.length > 1 ) )
-                .toggleClass('fancybox-show-nav',     !!( opts.arrows && self.group.length > 1 ) )
-                .toggleClass('fancybox-is-modal',     !!opts.modal );
-
-            if ( self.$caption ) {
-                $container.addClass( 'fancybox-show-caption ');
-
-            } else {
-               $container.removeClass( 'fancybox-show-caption' );
-           }
-
-       },
-
-
-       // Toggle toolbar and caption
-       // ==========================
-
-       toggleControls : function() {
-
-           if ( this.isHiddenControls ) {
-               this.showControls();
-
-           } else {
-               this.hideControls();
-           }
-
-       },
-
-
-    });
-
-
-    $.fancybox = {
-
-        version  : "3.1.20",
-        defaults : defaults,
-
-
-        // Get current instance and execute a command.
-        //
-        // Examples of usage:
-        //
-        //   $instance = $.fancybox.getInstance();
-        //   $.fancybox.getInstance().jumpTo( 1 );
-        //   $.fancybox.getInstance( 'jumpTo', 1 );
-        //   $.fancybox.getInstance( function() {
-        //       console.info( this.currIndex );
-        //   });
-        // ======================================================
-
-        getInstance : function ( command ) {
-            var instance = $('.fancybox-container:not(".fancybox-is-closing"):first').data( 'FancyBox' );
-            var args     = Array.prototype.slice.call(arguments, 1);
-
-            if ( instance instanceof FancyBox ) {
-
-                if ( $.type( command ) === 'string' ) {
-                    instance[ command ].apply( instance, args );
-
-                } else if ( $.type( command ) === 'function' ) {
-                    command.apply( instance, args );
-
-                }
-
-                return instance;
-            }
-
-            return false;
-
-        },
-
-
-        // Create new instance
-        // ===================
-
-        open : function ( items, opts, index ) {
-            return new FancyBox( items, opts, index );
-        },
-
-
-        // Close current or all instances
-        // ==============================
-
-        close : function ( all ) {
-            var instance = this.getInstance();
-
-            if ( instance ) {
-                instance.close();
-
-                // Try to find and close next instance
-
-                if ( all === true ) {
-                    this.close();
-                }
-            }
-
-        },
-
-        // Close instances and unbind all events
-        // ==============================
-
-        destroy : function() {
-
-            this.close( true );
-
-            $D.off( 'click.fb-start' );
-
-        },
-
-
-        // Try to detect mobile devices
-        // ============================
-
-        isMobile : document.createTouch !== undefined && /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
-
-
-        // Detect if 'translate3d' support is available
-        // ============================================
-
-        use3d : (function() {
-            var div = document.createElement('div');
-
-            return window.getComputedStyle && window.getComputedStyle( div ).getPropertyValue('transform') && !(document.documentMode && document.documentMode < 11);
-        }()),
-
-
-        // Helper function to get current visual state of an element
-        // returns array[ top, left, horizontal-scale, vertical-scale, opacity ]
-        // =====================================================================
-
-        getTranslate : function( $el ) {
-            var matrix;
-
-            if ( !$el || !$el.length ) {
-                return false;
-            }
-
-            matrix  = $el.eq( 0 ).css('transform');
-
-            if ( matrix && matrix.indexOf( 'matrix' ) !== -1 ) {
-                matrix = matrix.split('(')[1];
-                matrix = matrix.split(')')[0];
-                matrix = matrix.split(',');
-            } else {
-                matrix = [];
-            }
-
-            if ( matrix.length ) {
-
-                // If IE
-                if ( matrix.length > 10 ) {
-                    matrix = [ matrix[13], matrix[12], matrix[0], matrix[5] ];
-
-                } else {
-                    matrix = [ matrix[5], matrix[4], matrix[0], matrix[3]];
-                }
-
-                matrix = matrix.map(parseFloat);
-
-            } else {
-                matrix = [ 0, 0, 1, 1 ];
-
-                var transRegex = /\.*translate\((.*)px,(.*)px\)/i;
-                var transRez = transRegex.exec( $el.eq( 0 ).attr('style') );
-
-                if ( transRez ) {
-                    matrix[ 0 ] = parseFloat( transRez[2] );
-                    matrix[ 1 ] = parseFloat( transRez[1] );
-                }
-            }
-
-            return {
-                top     : matrix[ 0 ],
-                left    : matrix[ 1 ],
-                scaleX  : matrix[ 2 ],
-                scaleY  : matrix[ 3 ],
-                opacity : parseFloat( $el.css('opacity') ),
-                width   : $el.width(),
-                height  : $el.height()
-            };
-
-        },
-
-
-        // Shortcut for setting "translate3d" properties for element
-        // Can set be used to set opacity, too
-        // ========================================================
-
-        setTranslate : function( $el, props ) {
-            var str  = '';
-            var css  = {};
-
-            if ( !$el || !props ) {
-                return;
-            }
-
-            if ( props.left !== undefined || props.top !== undefined ) {
-                str = ( props.left === undefined ? $el.position().left : props.left )  + 'px, ' + ( props.top === undefined ? $el.position().top : props.top ) + 'px';
-
-                if ( this.use3d ) {
-                    str = 'translate3d(' + str + ', 0px)';
-
-                } else {
-                    str = 'translate(' + str + ')';
-                }
-            }
-
-            if ( props.scaleX !== undefined && props.scaleY !== undefined ) {
-                str = (str.length ? str + ' ' : '') + 'scale(' + props.scaleX + ', ' + props.scaleY + ')';
-            }
-
-            if ( str.length ) {
-                css.transform = str;
-            }
-
-            if ( props.opacity !== undefined ) {
-                css.opacity = props.opacity;
-            }
-
-            if ( props.width !== undefined ) {
-                css.width = props.width;
-            }
-
-            if ( props.height !== undefined ) {
-                css.height = props.height;
-            }
-
-            return $el.css( css );
-        },
-
-
-        // Simple CSS transition handler
-        // =============================
-
-        animate : function ( $el, to, duration, callback, leaveAnimationName ) {
-            var event = transitionEnd || 'transitionend';
-
-            if ( $.isFunction( duration ) ) {
-                callback = duration;
-                duration = null;
-            }
-
-            if ( !$.isPlainObject( to ) ) {
-                $el.removeAttr('style');
-            }
-
-            $el.on( event, function(e) {
-
-                // Skip events from child elements and z-index change
-                if ( e && e.originalEvent && ( !$el.is( e.originalEvent.target ) || e.originalEvent.propertyName == 'z-index' ) ) {
-                    return;
-                }
-
-                $el.off( event );
-
-                if ( $.isPlainObject( to ) ) {
-
-                    if ( to.scaleX !== undefined && to.scaleY !== undefined ) {
-                        $el.css( 'transition-duration', '0ms' );
-
-                        to.width  = $el.width()  * to.scaleX;
-                        to.height = $el.height() * to.scaleY;
-
-                        to.scaleX = 1;
-                        to.scaleY = 1;
-
-                        $.fancybox.setTranslate( $el, to );
-                    }
-
-                } else if ( leaveAnimationName !== true ) {
-                    $el.removeClass( to );
-                }
-
-                if ( $.isFunction( callback ) ) {
-                    callback( e );
-                }
-
-            });
-
-            if ( $.isNumeric( duration ) ) {
-                $el.css( 'transition-duration', duration + 'ms' );
-            }
-
-            if ( $.isPlainObject( to ) ) {
-                $.fancybox.setTranslate( $el, to );
-
-            } else {
-                $el.addClass( to );
-            }
-
-            $el.data("timer", setTimeout(function() {
-                $el.trigger( 'transitionend' );
-            }, duration + 16));
-
-        },
-
-        stop : function( $el ) {
-            clearTimeout( $el.data("timer") );
-
-            $el.off( transitionEnd );
-        }
-
-    };
-
-
-    // Default click handler for "fancyboxed" links
-    // ============================================
-
-    function _run( e ) {
-        var target	= e.currentTarget,
-            opts	= e.data ? e.data.options : {},
-            items	= e.data ? e.data.items : [],
-            value	= $(target).attr( 'data-fancybox' ) || '',
-            index	= 0;
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Get all related items and find index for clicked one
-        if ( value ) {
-            items = items.length ? items.filter( '[data-fancybox="' + value + '"]' ) : $( '[data-fancybox="' + value + '"]' );
-            index = items.index( target );
-
-            // Sometimes current item can not be found
-            // (for example, when slider clones items)
-            if ( index < 0 ) {
-                index = 0;
-            }
-
-        } else {
-            items = [ target ];
-        }
-
-        $.fancybox.open( items, opts, index );
-    }
-
-
-    // Create a jQuery plugin
-    // ======================
-
-    $.fn.fancybox = function (options) {
-        var selector;
-
-        options  = options || {};
-        selector = options.selector || false;
-
-        if ( selector ) {
-
-            $( 'body' ).off( 'click.fb-start', selector ).on( 'click.fb-start', selector, {
-                items   : $( selector ),
-                options : options
-            }, _run );
-
-        } else {
-
-            this.off( 'click.fb-start' ).on( 'click.fb-start', {
-                items   : this,
-                options : options
-            }, _run);
-
-        }
-
-        return this;
-    };
-
-
-    // Self initializing plugin
-    // ========================
-
-    $D.on( 'click.fb-start', '[data-fancybox]', _run );
-
-}( window, document, window.jQuery ));
-
-// ==========================================================================
-//
-// Media
-// Adds additional media type support
-//
-// ==========================================================================
-;(function ($) {
-
-	'use strict';
-
-	// Formats matching url to final form
-
-	var format = function (url, rez, params) {
-		if ( !url ) {
-			return;
-		}
-
-		params = params || '';
-
-		if ( $.type(params) === "object" ) {
-			params = $.param(params, true);
-		}
-
-		$.each(rez, function (key, value) {
-			url = url.replace('$' + key, value || '');
-		});
-
-		if (params.length) {
-			url += (url.indexOf('?') > 0 ? '&' : '?') + params;
-		}
-
-		return url;
-	};
-
-	// Object containing properties for each media type
-
-	var defaults = {
-		youtube : {
-			matcher : /(youtube\.com|youtu\.be|youtube\-nocookie\.com)\/(watch\?(.*&)?v=|v\/|u\/|embed\/?)?(videoseries\?list=(.*)|[\w-]{11}|\?listType=(.*)&list=(.*))(.*)/i,
-			params  : {
-				autoplay : 1,
-				autohide : 1,
-				fs  : 1,
-				rel : 0,
-				hd  : 1,
-				wmode : 'transparent',
-				enablejsapi : 1,
-				html5 : 1
-			},
-			paramPlace : 8,
-			type  : 'iframe',
-			url   : '//www.youtube.com/embed/$4',
-			thumb : '//img.youtube.com/vi/$4/hqdefault.jpg'
-		},
-
-		vimeo : {
-			matcher : /^.+vimeo.com\/(.*\/)?([\d]+)(.*)?/,
-			params  : {
-				autoplay : 1,
-				hd : 1,
-				show_title    : 1,
-				show_byline   : 1,
-				show_portrait : 0,
-				fullscreen    : 1,
-				api : 1
-			},
-			paramPlace : 3,
-			type : 'iframe',
-			url : '//player.vimeo.com/video/$2'
-		},
-
-		metacafe : {
-			matcher : /metacafe.com\/watch\/(\d+)\/(.*)?/,
-			type    : 'iframe',
-			url     : '//www.metacafe.com/embed/$1/?ap=1'
-		},
-
-		dailymotion : {
-			matcher : /dailymotion.com\/video\/(.*)\/?(.*)/,
-			params : {
-				additionalInfos : 0,
-				autoStart : 1
-			},
-			type : 'iframe',
-			url  : '//www.dailymotion.com/embed/video/$1'
-		},
-
-		vine : {
-			matcher : /vine.co\/v\/([a-zA-Z0-9\?\=\-]+)/,
-			type    : 'iframe',
-			url     : '//vine.co/v/$1/embed/simple'
-		},
-
-		instagram : {
-			matcher : /(instagr\.am|instagram\.com)\/p\/([a-zA-Z0-9_\-]+)\/?/i,
-			type    : 'image',
-			url     : '//$1/p/$2/media/?size=l'
-		},
-
-		// Examples:
-		// http://maps.google.com/?ll=48.857995,2.294297&spn=0.007666,0.021136&t=m&z=16
-		// http://maps.google.com/?ll=48.857995,2.294297&spn=0.007666,0.021136&t=m&z=16
-		// https://www.google.lv/maps/place/Googleplex/@37.4220041,-122.0833494,17z/data=!4m5!3m4!1s0x0:0x6c296c66619367e0!8m2!3d37.4219998!4d-122.0840572
-		google_maps : {
-			matcher : /(maps\.)?google\.([a-z]{2,3}(\.[a-z]{2})?)\/(((maps\/(place\/(.*)\/)?\@(.*),(\d+.?\d+?)z))|(\?ll=))(.*)?/i,
-			type    : 'iframe',
-			url     : function (rez) {
-				return '//maps.google.' + rez[2] + '/?ll=' + ( rez[9] ? rez[9] + '&z=' + Math.floor(  rez[10]  ) + ( rez[12] ? rez[12].replace(/^\//, "&") : '' )  : rez[12] ) + '&output=' + ( rez[12] && rez[12].indexOf('layer=c') > 0 ? 'svembed' : 'embed' );
-			}
-		}
-	};
-
-	$(document).on('onInit.fb', function (e, instance) {
-
-		$.each(instance.group, function( i, item ) {
-
-			var url	 = item.src || '',
-				type = false,
-				media,
-				thumb,
-				rez,
-				params,
-				urlParams,
-				o,
-				provider;
-
-			// Skip items that already have content type
-			if ( item.type ) {
-				return;
-			}
-
-			media = $.extend( true, {}, defaults, item.opts.media );
-
-			// Look for any matching media type
-			$.each(media, function ( n, el ) {
-				rez = url.match(el.matcher);
-				o   = {};
-				provider = n;
-
-				if (!rez) {
-					return;
-				}
-
-				type = el.type;
-
-				if ( el.paramPlace && rez[ el.paramPlace ] ) {
-					urlParams = rez[ el.paramPlace ];
-
-					if ( urlParams[ 0 ] == '?' ) {
-						urlParams = urlParams.substring(1);
-					}
-
-					urlParams = urlParams.split('&');
-
-					for ( var m = 0; m < urlParams.length; ++m ) {
-						var p = urlParams[ m ].split('=', 2);
-
-						if ( p.length == 2 ) {
-							o[ p[0] ] = decodeURIComponent( p[1].replace(/\+/g, " ") );
-						}
-					}
-				}
-
-				params = $.extend( true, {}, el.params, item.opts[ n ], o );
-
-				url   = $.type(el.url) === "function" ? el.url.call(this, rez, params, item) : format(el.url, rez, params);
-				thumb = $.type(el.thumb) === "function" ? el.thumb.call(this, rez, params, item) : format(el.thumb, rez);
-
-				if ( provider === 'vimeo' ) {
-					url = url.replace('&%23', '#');
-				}
-
-				return false;
-			});
-
-			// If it is found, then change content type and update the url
-
-			if ( type ) {
-				item.src  = url;
-				item.type = type;
-
-				if ( !item.opts.thumb && !( item.opts.$thumb && item.opts.$thumb.length ) ) {
-					item.opts.thumb = thumb;
-				}
-
-				if ( type === 'iframe' ) {
-					$.extend(true, item.opts, {
-						iframe : {
-							preload : false,
-							attr : {
-								scrolling : "no"
-							}
-						}
-					});
-
-					item.contentProvider = provider;
-
-					item.opts.slideClass += ' fancybox-slide--' + ( provider == 'google_maps' ? 'map' : 'video' );
-				}
-
-			} else {
-
-				// If no content type is found, then set it to `image` as fallback
-				item.type = 'image';
-			}
-
-		});
-
-	});
-
-}(window.jQuery));
-
-// ==========================================================================
-//
-// Guestures
-// Adds touch guestures, handles click and tap events
-//
-// ==========================================================================
-;(function (window, document, $) {
-	'use strict';
-
-	var requestAFrame = (function () {
-        return window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                // if all else fails, use setTimeout
-                function (callback) {
-                    return window.setTimeout(callback, 1000 / 60);
-                };
-    })();
-
-
-    var cancelAFrame = (function () {
-        return window.cancelAnimationFrame ||
-                window.webkitCancelAnimationFrame ||
-                window.mozCancelAnimationFrame ||
-                window.oCancelAnimationFrame ||
-                function (id) {
-                    window.clearTimeout(id);
-                };
-    })();
-
-
-	var pointers = function( e ) {
-		var result = [];
-
-		e = e.originalEvent || e || window.e;
-		e = e.touches && e.touches.length ? e.touches : ( e.changedTouches && e.changedTouches.length ? e.changedTouches : [ e ] );
-
-		for ( var key in e ) {
-
-			if ( e[ key ].pageX ) {
-				result.push( { x : e[ key ].pageX, y : e[ key ].pageY } );
-
-			} else if ( e[ key ].clientX ) {
-				result.push( { x : e[ key ].clientX, y : e[ key ].clientY } );
-			}
-		}
-
-		return result;
-	};
-
-	var distance = function( point2, point1, what ) {
-		if ( !point1 || !point2 ) {
-			return 0;
-		}
-
-		if ( what === 'x' ) {
-			return point2.x - point1.x;
-
-		} else if ( what === 'y' ) {
-			return point2.y - point1.y;
-		}
-
-		return Math.sqrt( Math.pow( point2.x - point1.x, 2 ) + Math.pow( point2.y - point1.y, 2 ) );
-	};
-
-	var isClickable = function( $el ) {
-		if ( $el.is('a,button,input,select,textarea') || $.isFunction( $el.get(0).onclick ) ) {
-			return true;
-		}
-
-		// Check for attributes like data-fancybox-next or data-fancybox-close
-		for ( var i = 0, atts = $el[0].attributes, n = atts.length; i < n; i++ ) {
-            if ( atts[i].nodeName.substr(0, 14) === 'data-fancybox-' ) {
-                return true;
-            }
-        }
-
-	 	return false;
-	};
-
-	var hasScrollbars = function( el ) {
-		var overflowY = window.getComputedStyle( el )['overflow-y'];
-		var overflowX = window.getComputedStyle( el )['overflow-x'];
-
-		var vertical   = (overflowY === 'scroll' || overflowY === 'auto') && el.scrollHeight > el.clientHeight;
-		var horizontal = (overflowX === 'scroll' || overflowX === 'auto') && el.scrollWidth > el.clientWidth;
-
-		return vertical || horizontal;
-	};
-
-	var isScrollable = function ( $el ) {
-		var rez = false;
-
-		while ( true ) {
-			rez	= hasScrollbars( $el.get(0) );
-
-			if ( rez ) {
-				break;
-			}
-
-			$el = $el.parent();
-
-			if ( !$el.length || $el.hasClass( 'fancybox-stage' ) || $el.is( 'body' ) ) {
-				break;
-			}
-		}
-
-		return rez;
-	};
-
-
-	var Guestures = function ( instance ) {
-		var self = this;
-
-		self.instance = instance;
-
-		self.$bg        = instance.$refs.bg;
-		self.$stage     = instance.$refs.stage;
-		self.$container = instance.$refs.container;
-
-		self.destroy();
-
-		self.$container.on( 'touchstart.fb.touch mousedown.fb.touch', $.proxy(self, 'ontouchstart') );
-	};
-
-	Guestures.prototype.destroy = function() {
-		this.$container.off( '.fb.touch' );
-	};
-
-	Guestures.prototype.ontouchstart = function( e ) {
-		var self = this;
-
-		var $target  = $( e.target );
-		var instance = self.instance;
-		var current  = instance.current;
-		var $content = current.$content;
-
-		var isTouchDevice = ( e.type == 'touchstart' );
-
-		// Do not respond to both events
-		if ( isTouchDevice ) {
-	        self.$container.off( 'mousedown.fb.touch' );
-	    }
-
-		// Ignore clicks while zooming or closing
-		if ( !current || self.instance.isAnimating || self.instance.isClosing ) {
-			e.stopPropagation();
-			e.preventDefault();
-
-			return;
-		}
-
-		// Ignore right click
-		if ( e.originalEvent && e.originalEvent.button == 2 ) {
-			return;
-		}
-
-		// Ignore taping on links, buttons, input elements
-		if ( !$target.length || isClickable( $target ) || isClickable( $target.parent() ) ) {
-			return;
-		}
-
-		// Ignore clicks on the scrollbar
-		if ( e.originalEvent.clientX > $target[0].clientWidth + $target.offset().left ) {
-			return;
-		}
-
-		self.startPoints = pointers( e );
-
-		// Prevent zooming if already swiping
-		if ( !self.startPoints || ( self.startPoints.length > 1 && instance.isSliding ) ) {
-			return;
-		}
-
-		self.$target  = $target;
-		self.$content = $content;
-		self.canTap   = true;
-
-		$(document).off( '.fb.touch' );
-
-		$(document).on( isTouchDevice ? 'touchend.fb.touch touchcancel.fb.touch' : 'mouseup.fb.touch mouseleave.fb.touch',  $.proxy(self, "ontouchend"));
-		$(document).on( isTouchDevice ? 'touchmove.fb.touch' : 'mousemove.fb.touch',  $.proxy(self, "ontouchmove"));
-
-		e.stopPropagation();
-
-		if ( !(instance.current.opts.touch || instance.canPan() ) || !( $target.is( self.$stage ) || self.$stage.find( $target ).length ) ) {
-
-			// Prevent ghosting
-			if ( $target.is('img') ) {
-				e.preventDefault();
-			}
-
-			return;
-		}
-
-		if ( !( $.fancybox.isMobile && ( isScrollable( self.$target ) || isScrollable( self.$target.parent() ) ) ) ) {
-			e.preventDefault();
-		}
-
-		self.canvasWidth  = Math.round( current.$slide[0].clientWidth );
-		self.canvasHeight = Math.round( current.$slide[0].clientHeight );
-
-		self.startTime = new Date().getTime();
-		self.distanceX = self.distanceY = self.distance = 0;
-
-		self.isPanning = false;
-		self.isSwiping = false;
-		self.isZooming = false;
-
-		self.sliderStartPos  = self.sliderLastPos || { top: 0, left: 0 };
-		self.contentStartPos = $.fancybox.getTranslate( self.$content );
-		self.contentLastPos  = null;
-
-		if ( self.startPoints.length === 1 && !self.isZooming ) {
-			self.canTap = !instance.isSliding;
-
-			if ( current.type === 'image' && ( self.contentStartPos.width > self.canvasWidth + 1 || self.contentStartPos.height > self.canvasHeight + 1 ) ) {
-
-				$.fancybox.stop( self.$content );
-
-				self.$content.css( 'transition-duration', '0ms' );
-
-				self.isPanning = true;
-
-			} else {
-
-				self.isSwiping = true;
-			}
-
-			self.$container.addClass('fancybox-controls--isGrabbing');
-		}
-
-		if ( self.startPoints.length === 2 && !instance.isAnimating && !current.hasError && current.type === 'image' && ( current.isLoaded || current.$ghost ) ) {
-			self.isZooming = true;
-
-			self.isSwiping = false;
-			self.isPanning = false;
-
-			$.fancybox.stop( self.$content );
-
-			self.$content.css( 'transition-duration', '0ms' );
-
-			self.centerPointStartX = ( ( self.startPoints[0].x + self.startPoints[1].x ) * 0.5 ) - $(window).scrollLeft();
-			self.centerPointStartY = ( ( self.startPoints[0].y + self.startPoints[1].y ) * 0.5 ) - $(window).scrollTop();
-
-			self.percentageOfImageAtPinchPointX = ( self.centerPointStartX - self.contentStartPos.left ) / self.contentStartPos.width;
-			self.percentageOfImageAtPinchPointY = ( self.centerPointStartY - self.contentStartPos.top  ) / self.contentStartPos.height;
-
-			self.startDistanceBetweenFingers = distance( self.startPoints[0], self.startPoints[1] );
-		}
-
-	};
-
-	Guestures.prototype.ontouchmove = function( e ) {
-
-		var self = this;
-
-		self.newPoints = pointers( e );
-
-		if ( $.fancybox.isMobile && ( isScrollable( self.$target ) || isScrollable( self.$target.parent() ) ) ) {
-			e.stopPropagation();
-
-			self.canTap = false;
-
-			return;
-		}
-
-		if ( !( self.instance.current.opts.touch || self.instance.canPan() ) || !self.newPoints || !self.newPoints.length ) {
-			return;
-		}
-
-		self.distanceX = distance( self.newPoints[0], self.startPoints[0], 'x' );
-		self.distanceY = distance( self.newPoints[0], self.startPoints[0], 'y' );
-
-		self.distance = distance( self.newPoints[0], self.startPoints[0] );
-
-		// Skip false ontouchmove events (Chrome)
-		if ( self.distance > 0 ) {
-
-			if ( !( self.$target.is( self.$stage ) || self.$stage.find( self.$target ).length ) ) {
-				return;
-			}
-
-			e.stopPropagation();
-			e.preventDefault();
-
-			if ( self.isSwiping ) {
-				self.onSwipe();
-
-			} else if ( self.isPanning ) {
-				self.onPan();
-
-			} else if ( self.isZooming ) {
-				self.onZoom();
-			}
-
-		}
-
-	};
-
-	Guestures.prototype.onSwipe = function() {
-
-		var self = this;
-
-		var swiping = self.isSwiping;
-		var left    = self.sliderStartPos.left || 0;
-		var angle;
-
-		if ( swiping === true ) {
-
-			if ( Math.abs( self.distance ) > 10 )  {
-
-				self.canTap = false;
-
-				if ( self.instance.group.length < 2 && self.instance.opts.touch.vertical ) {
-					self.isSwiping  = 'y';
-
-				} else if ( self.instance.isSliding || self.instance.opts.touch.vertical === false || ( self.instance.opts.touch.vertical === 'auto' && $( window ).width() > 800 ) ) {
-					self.isSwiping  = 'x';
-
-				} else {
-					angle = Math.abs( Math.atan2( self.distanceY, self.distanceX ) * 180 / Math.PI );
-
-					self.isSwiping = ( angle > 45 && angle < 135 ) ? 'y' : 'x';
-				}
-
-				self.instance.isSliding = self.isSwiping;
-
-				// Reset points to avoid jumping, because we dropped first swipes to calculate the angle
-				self.startPoints = self.newPoints;
-
-				$.each(self.instance.slides, function( index, slide ) {
-					$.fancybox.stop( slide.$slide );
-
-					slide.$slide.css( 'transition-duration', '0ms' );
-
-					slide.inTransition = false;
-
-					if ( slide.pos === self.instance.current.pos ) {
-						self.sliderStartPos.left = $.fancybox.getTranslate( slide.$slide ).left;
-					}
-				});
-
-				//self.instance.current.isMoved = true;
-
-				// Stop slideshow
-				if ( self.instance.SlideShow && self.instance.SlideShow.isActive ) {
-					self.instance.SlideShow.stop();
-				}
-			}
-
-		} else {
-
-			if ( swiping == 'x' ) {
-
-				// Sticky edges
-				if ( self.distanceX > 0 && ( self.instance.group.length < 2 || ( self.instance.current.index === 0 && !self.instance.current.opts.loop ) ) ) {
-					left = left + Math.pow( self.distanceX, 0.8 );
-
-				} else if ( self.distanceX < 0 && ( self.instance.group.length < 2 || ( self.instance.current.index === self.instance.group.length - 1 && !self.instance.current.opts.loop ) ) ) {
-					left = left - Math.pow( -self.distanceX, 0.8 );
-
-				} else {
-					left = left + self.distanceX;
-				}
-
-			}
-
-			self.sliderLastPos = {
-				top  : swiping == 'x' ? 0 : self.sliderStartPos.top + self.distanceY,
-				left : left
-			};
-
-			if ( self.requestId ) {
-				cancelAFrame( self.requestId );
-
-				self.requestId = null;
-			}
-
-			self.requestId = requestAFrame(function() {
-
-				if ( self.sliderLastPos ) {
-					$.each(self.instance.slides, function( index, slide ) {
-						var pos = slide.pos - self.instance.currPos;
-
-						$.fancybox.setTranslate( slide.$slide, {
-							top  : self.sliderLastPos.top,
-							left : self.sliderLastPos.left + ( pos * self.canvasWidth ) + ( pos * slide.opts.gutter )
-						});
-					});
-
-					self.$container.addClass( 'fancybox-is-sliding' );
-				}
-
-			});
-
-		}
-
-	};
-
-	Guestures.prototype.onPan = function() {
-
-		var self = this;
-
-		var newOffsetX, newOffsetY, newPos;
-
-		self.canTap = false;
-
-		if ( self.contentStartPos.width > self.canvasWidth ) {
-			newOffsetX = self.contentStartPos.left + self.distanceX;
-
-		} else {
-			newOffsetX = self.contentStartPos.left;
-		}
-
-		newOffsetY = self.contentStartPos.top + self.distanceY;
-
-		newPos = self.limitMovement( newOffsetX, newOffsetY, self.contentStartPos.width, self.contentStartPos.height );
-
-		newPos.scaleX = self.contentStartPos.scaleX;
-		newPos.scaleY = self.contentStartPos.scaleY;
-
-		self.contentLastPos = newPos;
-
-		if ( self.requestId ) {
-			cancelAFrame( self.requestId );
-
-			self.requestId = null;
-		}
-
-		self.requestId = requestAFrame(function() {
-			$.fancybox.setTranslate( self.$content, self.contentLastPos );
-		});
-	};
-
-	// Make panning sticky to the edges
-	Guestures.prototype.limitMovement = function( newOffsetX, newOffsetY, newWidth, newHeight ) {
-
-		var self = this;
-
-		var minTranslateX, minTranslateY, maxTranslateX, maxTranslateY;
-
-		var canvasWidth  = self.canvasWidth;
-		var canvasHeight = self.canvasHeight;
-
-		var currentOffsetX = self.contentStartPos.left;
-		var currentOffsetY = self.contentStartPos.top;
-
-		var distanceX = self.distanceX;
-		var distanceY = self.distanceY;
-
-		// Slow down proportionally to traveled distance
-
-		minTranslateX = Math.max(0, canvasWidth  * 0.5 - newWidth  * 0.5 );
-		minTranslateY = Math.max(0, canvasHeight * 0.5 - newHeight * 0.5 );
-
-		maxTranslateX = Math.min( canvasWidth  - newWidth,  canvasWidth  * 0.5 - newWidth  * 0.5 );
-		maxTranslateY = Math.min( canvasHeight - newHeight, canvasHeight * 0.5 - newHeight * 0.5 );
-
-		if ( newWidth > canvasWidth ) {
-
-			//   ->
-			if ( distanceX > 0 && newOffsetX > minTranslateX ) {
-				newOffsetX = minTranslateX - 1 + Math.pow( -minTranslateX + currentOffsetX + distanceX, 0.8 ) || 0;
-			}
-
-			//    <-
-			if ( distanceX  < 0 && newOffsetX < maxTranslateX ) {
-				newOffsetX = maxTranslateX + 1 - Math.pow( maxTranslateX - currentOffsetX - distanceX, 0.8 ) || 0;
-			}
-
-		}
-
-		if ( newHeight > canvasHeight ) {
-
-			//   \/
-			if ( distanceY > 0 && newOffsetY > minTranslateY ) {
-				newOffsetY = minTranslateY - 1 + Math.pow(-minTranslateY + currentOffsetY + distanceY, 0.8 ) || 0;
-			}
-
-			//   /\
-			if ( distanceY < 0 && newOffsetY < maxTranslateY ) {
-				newOffsetY = maxTranslateY + 1 - Math.pow ( maxTranslateY - currentOffsetY - distanceY, 0.8 ) || 0;
-			}
-
-		}
-
-		return {
-			top  : newOffsetY,
-			left : newOffsetX
-		};
-
-	};
-
-
-	Guestures.prototype.limitPosition = function( newOffsetX, newOffsetY, newWidth, newHeight ) {
-
-		var self = this;
-
-		var canvasWidth  = self.canvasWidth;
-		var canvasHeight = self.canvasHeight;
-
-		if ( newWidth > canvasWidth ) {
-			newOffsetX = newOffsetX > 0 ? 0 : newOffsetX;
-			newOffsetX = newOffsetX < canvasWidth - newWidth ? canvasWidth - newWidth : newOffsetX;
-
-		} else {
-
-			// Center horizontally
-			newOffsetX = Math.max( 0, canvasWidth / 2 - newWidth / 2 );
-
-		}
-
-		if ( newHeight > canvasHeight ) {
-			newOffsetY = newOffsetY > 0 ? 0 : newOffsetY;
-			newOffsetY = newOffsetY < canvasHeight - newHeight ? canvasHeight - newHeight : newOffsetY;
-
-		} else {
-
-			// Center vertically
-			newOffsetY = Math.max( 0, canvasHeight / 2 - newHeight / 2 );
-
-		}
-
-		return {
-			top  : newOffsetY,
-			left : newOffsetX
-		};
-
-	};
-
-	Guestures.prototype.onZoom = function() {
-
-		var self = this;
-
-		// Calculate current distance between points to get pinch ratio and new width and height
-
-		var currentWidth  = self.contentStartPos.width;
-		var currentHeight = self.contentStartPos.height;
-
-		var currentOffsetX = self.contentStartPos.left;
-		var currentOffsetY = self.contentStartPos.top;
-
-		var endDistanceBetweenFingers = distance( self.newPoints[0], self.newPoints[1] );
-
-		var pinchRatio = endDistanceBetweenFingers / self.startDistanceBetweenFingers;
-
-		var newWidth  = Math.floor( currentWidth  * pinchRatio );
-		var newHeight = Math.floor( currentHeight * pinchRatio );
-
-		// This is the translation due to pinch-zooming
-		var translateFromZoomingX = (currentWidth  - newWidth)  * self.percentageOfImageAtPinchPointX;
-		var translateFromZoomingY = (currentHeight - newHeight) * self.percentageOfImageAtPinchPointY;
-
-		//Point between the two touches
-
-		var centerPointEndX = ((self.newPoints[0].x + self.newPoints[1].x) / 2) - $(window).scrollLeft();
-		var centerPointEndY = ((self.newPoints[0].y + self.newPoints[1].y) / 2) - $(window).scrollTop();
-
-		// And this is the translation due to translation of the centerpoint
-		// between the two fingers
-
-		var translateFromTranslatingX = centerPointEndX - self.centerPointStartX;
-		var translateFromTranslatingY = centerPointEndY - self.centerPointStartY;
-
-		// The new offset is the old/current one plus the total translation
-
-		var newOffsetX = currentOffsetX + ( translateFromZoomingX + translateFromTranslatingX );
-		var newOffsetY = currentOffsetY + ( translateFromZoomingY + translateFromTranslatingY );
-
-		var newPos = {
-			top    : newOffsetY,
-			left   : newOffsetX,
-			scaleX : self.contentStartPos.scaleX * pinchRatio,
-			scaleY : self.contentStartPos.scaleY * pinchRatio
-		};
-
-		self.canTap = false;
-
-		self.newWidth  = newWidth;
-		self.newHeight = newHeight;
-
-		self.contentLastPos = newPos;
-
-		if ( self.requestId ) {
-			cancelAFrame( self.requestId );
-
-			self.requestId = null;
-		}
-
-		self.requestId = requestAFrame(function() {
-			$.fancybox.setTranslate( self.$content, self.contentLastPos );
-		});
-
-	};
-
-	Guestures.prototype.ontouchend = function( e ) {
-
-		var self = this;
-		var dMs  = Math.max( (new Date().getTime() ) - self.startTime, 1);
-
-		var swiping = self.isSwiping;
-		var panning = self.isPanning;
-		var zooming = self.isZooming;
-
-		self.endPoints = pointers( e );
-
-		self.$container.removeClass( 'fancybox-controls--isGrabbing' );
-
-		$(document).off( '.fb.touch' );
-
-		if ( self.requestId ) {
-			cancelAFrame( self.requestId );
-
-			self.requestId = null;
-		}
-
-		self.isSwiping = false;
-		self.isPanning = false;
-		self.isZooming = false;
-
-		if ( self.canTap )  {
-			return self.onTap( e );
-		}
-
-		self.speed = 366;
-
-		// Speed in px/ms
-		self.velocityX = self.distanceX / dMs * 0.5;
-		self.velocityY = self.distanceY / dMs * 0.5;
-
-		self.speedX = Math.max( self.speed * 0.5, Math.min( self.speed * 1.5, ( 1 / Math.abs( self.velocityX ) ) * self.speed ) );
-
-		if ( panning ) {
-			self.endPanning();
-
-		} else if ( zooming ) {
-			self.endZooming();
-
-		} else {
-			self.endSwiping( swiping );
-		}
-
-		return;
-	};
-
-	Guestures.prototype.endSwiping = function( swiping ) {
-
-		var self = this;
-		var ret = false;
-
-		self.instance.isSliding = false;
-		self.sliderLastPos      = null;
-
-		// Close if swiped vertically / navigate if horizontally
-		if ( swiping == 'y' && Math.abs( self.distanceY ) > 50 ) {
-
-			// Continue vertical movement
-			$.fancybox.animate( self.instance.current.$slide, {
-				top     : self.sliderStartPos.top + self.distanceY + ( self.velocityY * 150 ),
-				opacity : 0
-			}, 150 );
-
-			ret = self.instance.close( true, 300 );
-
-		} else if ( swiping == 'x' && self.distanceX > 50 && self.instance.group.length > 1 ) {
-			ret = self.instance.previous( self.speedX );
-
-		} else if ( swiping == 'x' && self.distanceX < -50  && self.instance.group.length > 1 ) {
-			ret = self.instance.next( self.speedX );
-		}
-
-		if ( ret === false && ( swiping == 'x' || swiping == 'y' ) ) {
-			self.instance.jumpTo( self.instance.current.index, 150 );
-		}
-
-		self.$container.removeClass( 'fancybox-is-sliding' );
-
-	};
-
-	// Limit panning from edges
-	// ========================
-
-	Guestures.prototype.endPanning = function() {
-
-		var self = this;
-		var newOffsetX, newOffsetY, newPos;
-
-		if ( !self.contentLastPos ) {
-			return;
-		}
-
-		if ( self.instance.current.opts.touch.momentum === false ) {
-			newOffsetX = self.contentLastPos.left;
-			newOffsetY = self.contentLastPos.top;
-
-		} else {
-
-			// Continue movement
-			newOffsetX = self.contentLastPos.left + ( self.velocityX * self.speed );
-			newOffsetY = self.contentLastPos.top  + ( self.velocityY * self.speed );
-		}
-
-		newPos = self.limitPosition( newOffsetX, newOffsetY, self.contentStartPos.width, self.contentStartPos.height );
-
-		 newPos.width  = self.contentStartPos.width;
-		 newPos.height = self.contentStartPos.height;
-
-		$.fancybox.animate( self.$content, newPos, 330 );
-	};
-
-
-	Guestures.prototype.endZooming = function() {
-
-		var self = this;
-
-		var current = self.instance.current;
-
-		var newOffsetX, newOffsetY, newPos, reset;
-
-		var newWidth  = self.newWidth;
-		var newHeight = self.newHeight;
-
-		if ( !self.contentLastPos ) {
-			return;
-		}
-
-		newOffsetX = self.contentLastPos.left;
-		newOffsetY = self.contentLastPos.top;
-
-		reset = {
-		   	top    : newOffsetY,
-		   	left   : newOffsetX,
-		   	width  : newWidth,
-		   	height : newHeight,
-			scaleX : 1,
-			scaleY : 1
-	   };
-
-	   // Reset scalex/scaleY values; this helps for perfomance and does not break animation
-	   $.fancybox.setTranslate( self.$content, reset );
-
-		if ( newWidth < self.canvasWidth && newHeight < self.canvasHeight ) {
-			self.instance.scaleToFit( 150 );
-
-		} else if ( newWidth > current.width || newHeight > current.height ) {
-			self.instance.scaleToActual( self.centerPointStartX, self.centerPointStartY, 150 );
-
-		} else {
-
-			newPos = self.limitPosition( newOffsetX, newOffsetY, newWidth, newHeight );
-
-			// Switch from scale() to width/height or animation will not work correctly
-			$.fancybox.setTranslate( self.content, $.fancybox.getTranslate( self.$content ) );
-
-			$.fancybox.animate( self.$content, newPos, 150 );
-		}
-
-	};
-
-	Guestures.prototype.onTap = function(e) {
-		var self    = this;
-		var $target = $( e.target );
-
-		var instance = self.instance;
-		var current  = instance.current;
-
-		var endPoints = ( e && pointers( e ) ) || self.startPoints;
-
-		var tapX = endPoints[0] ? endPoints[0].x - self.$stage.offset().left : 0;
-		var tapY = endPoints[0] ? endPoints[0].y - self.$stage.offset().top  : 0;
-
-		var where;
-
-		var process = function ( prefix ) {
-
-			var action = current.opts[ prefix ];
-
-			if ( $.isFunction( action ) ) {
-				action = action.apply( instance, [ current, e ] );
-			}
-
-			if ( !action) {
-				return;
-			}
-
-			switch ( action ) {
-
-				case "close" :
-
-					instance.close( self.startEvent );
-
-				break;
-
-				case "toggleControls" :
-
-					instance.toggleControls( true );
-
-				break;
-
-				case "next" :
-
-					instance.next();
-
-				break;
-
-				case "nextOrClose" :
-
-					if ( instance.group.length > 1 ) {
-						instance.next();
-
-					} else {
-						instance.close( self.startEvent );
-					}
-
-				break;
-
-				case "zoom" :
-
-					if ( current.type == 'image' && ( current.isLoaded || current.$ghost ) ) {
-
-						if ( instance.canPan() ) {
-							instance.scaleToFit();
-
-						} else if ( instance.isScaledDown() ) {
-							instance.scaleToActual( tapX, tapY );
-
-						} else if ( instance.group.length < 2 ) {
-							instance.close( self.startEvent );
-						}
-					}
-
-				break;
-			}
-
-		};
-
-		// Ignore right click
-		if ( e.originalEvent && e.originalEvent.button == 2 ) {
-			return;
-		}
-
-		// Skip if current slide is not in the center
-		if ( instance.isSliding ) {
-			return;
-		}
-
-		// Skip if clicked on the scrollbar
-		if ( tapX > $target[0].clientWidth + $target.offset().left ) {
-			return;
-		}
-
-		// Check where is clicked
-		if ( $target.is( '.fancybox-bg,.fancybox-inner,.fancybox-outer,.fancybox-container' ) ) {
-			where = 'Outside';
-
-		} else if ( $target.is( '.fancybox-slide' ) ) {
-			where = 'Slide';
-
-		} else if  ( instance.current.$content && instance.current.$content.has( e.target ).length ) {
-		 	where = 'Content';
-
-		} else {
-			return;
-		}
-
-		// Check if this is a double tap
-		if ( self.tapped ) {
-
-			// Stop previously created single tap
-			clearTimeout( self.tapped );
-			self.tapped = null;
-
-			// Skip if distance between taps is too big
-			if ( Math.abs( tapX - self.tapX ) > 50 || Math.abs( tapY - self.tapY ) > 50 || instance.isSliding ) {
-				return this;
-			}
-
-			// OK, now we assume that this is a double-tap
-			process( 'dblclick' + where );
-
-		} else {
-
-			// Single tap will be processed if user has not clicked second time within 300ms
-			// or there is no need to wait for double-tap
-			self.tapX = tapX;
-			self.tapY = tapY;
-
-			if ( current.opts[ 'dblclick' + where ] && current.opts[ 'dblclick' + where ] !== current.opts[ 'click' + where ] ) {
-				self.tapped = setTimeout(function() {
-					self.tapped = null;
-
-					process( 'click' + where );
-
-				}, 300);
-
-			} else {
-				process( 'click' + where );
-			}
-
-		}
-
-		return this;
-	};
-
-	$(document).on('onActivate.fb', function (e, instance) {
-		if ( instance && !instance.Guestures ) {
-			instance.Guestures = new Guestures( instance );
-		}
-	});
-
-	$(document).on('beforeClose.fb', function (e, instance) {
-		if ( instance && instance.Guestures ) {
-			instance.Guestures.destroy();
-		}
-	});
-
-
-}(window, document, window.jQuery));
-
-// ==========================================================================
-//
-// SlideShow
-// Enables slideshow functionality
-//
-// Example of usage:
-// $.fancybox.getInstance().SlideShow.start()
-//
-// ==========================================================================
-;(function (document, $) {
-	'use strict';
-
-	var SlideShow = function( instance ) {
-		this.instance = instance;
-		this.init();
-	};
-
-	$.extend( SlideShow.prototype, {
-		timer    : null,
-		isActive : false,
-		$button  : null,
-		speed    : 3000,
-
-		init : function() {
-			var self = this;
-
-			self.$button = self.instance.$refs.toolbar.find('[data-fancybox-play]').on('click', function() {
-				self.toggle();
-			});
-
-			if ( self.instance.group.length < 2 || !self.instance.group[ self.instance.currIndex ].opts.slideShow ) {
-				self.$button.hide();
-			}
-		},
-
-		set : function() {
-			var self = this;
-
-			// Check if reached last element
-			if ( self.instance && self.instance.current && (self.instance.current.opts.loop || self.instance.currIndex < self.instance.group.length - 1 )) {
-				self.timer = setTimeout(function() {
-					self.instance.next();
-
-				}, self.instance.current.opts.slideShow.speed || self.speed);
-
-			} else {
-				self.stop();
-				self.instance.idleSecondsCounter = 0;
-				self.instance.showControls();
-			}
-
-		},
-
-		clear : function() {
-			var self = this;
-
-			clearTimeout( self.timer );
-
-			self.timer = null;
-		},
-
-		start : function() {
-			var self = this;
-			var current = self.instance.current;
-
-			if ( self.instance && current && ( current.opts.loop || current.index < self.instance.group.length - 1 )) {
-
-				self.isActive = true;
-
-				self.$button
-					.attr( 'title', current.opts.i18n[ current.opts.lang ].PLAY_STOP )
-					.addClass( 'fancybox-button--pause' );
-
-				if ( current.isComplete ) {
-					self.set();
-				}
-			}
-		},
-
-		stop : function() {
-			var self = this;
-			var current = self.instance.current;
-
-			self.clear();
-
-			self.$button
-				.attr( 'title', current.opts.i18n[ current.opts.lang ].PLAY_START )
-				.removeClass( 'fancybox-button--pause' );
-
-			self.isActive = false;
-		},
-
-		toggle : function() {
-			var self = this;
-
-			if ( self.isActive ) {
-				self.stop();
-
-			} else {
-				self.start();
-			}
-		}
-
-	});
-
-	$(document).on({
-		'onInit.fb' : function(e, instance) {
-			if ( instance && !instance.SlideShow ) {
-				instance.SlideShow = new SlideShow( instance );
-			}
-		},
-
-		'beforeShow.fb' : function(e, instance, current, firstRun) {
-			var SlideShow = instance && instance.SlideShow;
-
-			if ( firstRun ) {
-
-				if ( SlideShow && current.opts.slideShow.autoStart ) {
-					SlideShow.start();
-				}
-
-			} else if ( SlideShow && SlideShow.isActive )  {
-				SlideShow.clear();
-			}
-		},
-
-		'afterShow.fb' : function(e, instance, current) {
-			var SlideShow = instance && instance.SlideShow;
-
-			if ( SlideShow && SlideShow.isActive ) {
-				SlideShow.set();
-			}
-		},
-
-		'afterKeydown.fb' : function(e, instance, current, keypress, keycode) {
-			var SlideShow = instance && instance.SlideShow;
-
-			// "P" or Spacebar
-			if ( SlideShow && current.opts.slideShow && ( keycode === 80 || keycode === 32 ) && !$(document.activeElement).is( 'button,a,input' ) ) {
-				keypress.preventDefault();
-
-				SlideShow.toggle();
-			}
-		},
-
-		'beforeClose.fb onDeactivate.fb' : function(e, instance) {
-			var SlideShow = instance && instance.SlideShow;
-
-			if ( SlideShow ) {
-				SlideShow.stop();
-			}
-		}
-	});
-
-	// Page Visibility API to pause slideshow when window is not active
-	$(document).on("visibilitychange", function() {
-		var instance  = $.fancybox.getInstance();
-		var SlideShow = instance && instance.SlideShow;
-
-		if ( SlideShow && SlideShow.isActive ) {
-			if ( document.hidden ) {
-				SlideShow.clear();
-
-			} else {
-				SlideShow.set();
-			}
-		}
-	});
-
-}(document, window.jQuery));
-
-// ==========================================================================
-//
-// FullScreen
-// Adds fullscreen functionality
-//
-// ==========================================================================
-;(function (document, $) {
-	'use strict';
-
-	// Collection of methods supported by user browser
-	var fn = (function () {
-
-		var fnMap = [
-			[
-				'requestFullscreen',
-				'exitFullscreen',
-				'fullscreenElement',
-				'fullscreenEnabled',
-				'fullscreenchange',
-				'fullscreenerror'
-			],
-			// new WebKit
-			[
-				'webkitRequestFullscreen',
-				'webkitExitFullscreen',
-				'webkitFullscreenElement',
-				'webkitFullscreenEnabled',
-				'webkitfullscreenchange',
-				'webkitfullscreenerror'
-
-			],
-			// old WebKit (Safari 5.1)
-			[
-				'webkitRequestFullScreen',
-				'webkitCancelFullScreen',
-				'webkitCurrentFullScreenElement',
-				'webkitCancelFullScreen',
-				'webkitfullscreenchange',
-				'webkitfullscreenerror'
-
-			],
-			[
-				'mozRequestFullScreen',
-				'mozCancelFullScreen',
-				'mozFullScreenElement',
-				'mozFullScreenEnabled',
-				'mozfullscreenchange',
-				'mozfullscreenerror'
-			],
-			[
-				'msRequestFullscreen',
-				'msExitFullscreen',
-				'msFullscreenElement',
-				'msFullscreenEnabled',
-				'MSFullscreenChange',
-				'MSFullscreenError'
-			]
-		];
-
-		var val;
-		var ret = {};
-		var i, j;
-
-		for ( i = 0; i < fnMap.length; i++ ) {
-			val = fnMap[ i ];
-
-			if ( val && val[ 1 ] in document ) {
-				for ( j = 0; j < val.length; j++ ) {
-					ret[ fnMap[ 0 ][ j ] ] = val[ j ];
-				}
-
-				return ret;
-			}
-		}
-
-		return false;
-	})();
-
-	// If browser does not have Full Screen API, then simply unset default button template and stop
-	if ( !fn ) {
-		$.fancybox.defaults.btnTpl.fullScreen = false;
-
-		return;
-	}
-
-	var FullScreen = {
-		request : function ( elem ) {
-
-			elem = elem || document.documentElement;
-
-			elem[ fn.requestFullscreen ]( elem.ALLOW_KEYBOARD_INPUT );
-
-		},
-		exit : function () {
-
-			document[ fn.exitFullscreen ]();
-
-		},
-		toggle : function ( elem ) {
-
-			elem = elem || document.documentElement;
-
-			if ( this.isFullscreen() ) {
-				this.exit();
-
-			} else {
-				this.request( elem );
-			}
-
-		},
-		isFullscreen : function()  {
-
-			return Boolean( document[ fn.fullscreenElement ] );
-
-		},
-		enabled : function()  {
-
-			return Boolean( document[ fn.fullscreenEnabled ] );
-
-		}
-	};
-
-	$(document).on({
-		'onInit.fb' : function(e, instance) {
-			var $container;
-
-			var $button = instance.$refs.toolbar.find('[data-fancybox-fullscreen]');
-
-			if ( instance && !instance.FullScreen && instance.group[ instance.currIndex ].opts.fullScreen ) {
-				$container = instance.$refs.container;
-
-				$container.on('click.fb-fullscreen', '[data-fancybox-fullscreen]', function(e) {
-
-					e.stopPropagation();
-					e.preventDefault();
-
-					FullScreen.toggle( $container[ 0 ] );
-
-				});
-
-				if ( instance.opts.fullScreen && instance.opts.fullScreen.autoStart === true ) {
-					FullScreen.request( $container[ 0 ] );
-				}
-
-				// Expose API
-				instance.FullScreen = FullScreen;
-
-			} else {
-				$button.hide();
-			}
-
-		},
-
-		'afterKeydown.fb' : function(e, instance, current, keypress, keycode) {
-
-			// "P" or Spacebar
-			if ( instance && instance.FullScreen && keycode === 70 ) {
-				keypress.preventDefault();
-
-				instance.FullScreen.toggle( instance.$refs.container[ 0 ] );
-			}
-
-		},
-
-		'beforeClose.fb' : function( instance ) {
-			if ( instance && instance.FullScreen ) {
-				FullScreen.exit();
-			}
-		}
-	});
-
-	$(document).on(fn.fullscreenchange, function() {
-		var instance = $.fancybox.getInstance();
-
-		// If image is zooming, then force to stop and reposition properly
-		if ( instance.current && instance.current.type === 'image' && instance.isAnimating ) {
-			instance.current.$content.css( 'transition', 'none' );
-
-			instance.isAnimating = false;
-
-			instance.update( true, true, 0 );
-		}
-
-	});
-
-}(document, window.jQuery));
-
-// ==========================================================================
-//
-// Thumbs
-// Displays thumbnails in a grid
-//
-// ==========================================================================
-;(function (document, $) {
-	'use strict';
-
-	var FancyThumbs = function( instance ) {
-		this.instance = instance;
-		this.init();
-	};
-
-	$.extend( FancyThumbs.prototype, {
-
-		$button		: null,
-		$grid		: null,
-		$list		: null,
-		isVisible	: false,
-
-		init : function() {
-			var self = this;
-
-			var first  = self.instance.group[0],
-				second = self.instance.group[1];
-
-			self.$button = self.instance.$refs.toolbar.find( '[data-fancybox-thumbs]' );
-
-			if ( self.instance.group.length > 1 && self.instance.group[ self.instance.currIndex ].opts.thumbs && (
-		    		( first.type == 'image'  || first.opts.thumb  || first.opts.$thumb ) &&
-		    		( second.type == 'image' || second.opts.thumb || second.opts.$thumb )
-			)) {
-
-				self.$button.on('click', function() {
-					self.toggle();
-				});
-
-				self.isActive = true;
-
-			} else {
-				self.$button.hide();
-
-				self.isActive = false;
-			}
-
-		},
-
-		create : function() {
-			var instance = this.instance,
-				list,
-				src;
-
-			this.$grid = $('<div class="fancybox-thumbs"></div>').appendTo( instance.$refs.container );
-
-			list = '<ul>';
-
-			$.each(instance.group, function( i, item ) {
-
-				src = item.opts.thumb || ( item.opts.$thumb ? item.opts.$thumb.attr('src') : null );
-
-				if ( !src && item.type === 'image' ) {
-					src = item.src;
-				}
-
-				if ( src && src.length ) {
-					list += '<li data-index="' + i + '"  tabindex="0" class="fancybox-thumbs-loading"><img data-src="' + src + '" /></li>';
-				}
-
-			});
-
-			list += '</ul>';
-
-			this.$list = $( list ).appendTo( this.$grid ).on('click', 'li', function() {
-				instance.jumpTo( $(this).data('index') );
-			});
-
-			this.$list.find('img').hide().one('load', function() {
-
-				var $parent		= $(this).parent().removeClass('fancybox-thumbs-loading'),
-					thumbWidth	= $parent.outerWidth(),
-					thumbHeight	= $parent.outerHeight(),
-					width,
-					height,
-					widthRatio,
-					heightRatio;
-
-				width  = this.naturalWidth	|| this.width;
-				height = this.naturalHeight	|| this.height;
-
-				//Calculate thumbnail width/height and center it
-
-				widthRatio  = width  / thumbWidth;
-				heightRatio = height / thumbHeight;
-
-				if (widthRatio >= 1 && heightRatio >= 1) {
-					if (widthRatio > heightRatio) {
-						width  = width / heightRatio;
-						height = thumbHeight;
-
-					} else {
-						width  = thumbWidth;
-						height = height / widthRatio;
-					}
-				}
-
-				$(this).css({
-					width         : Math.floor(width),
-					height        : Math.floor(height),
-					'margin-top'  : Math.min( 0, Math.floor(thumbHeight * 0.3 - height * 0.3 ) ),
-					'margin-left' : Math.min( 0, Math.floor(thumbWidth  * 0.5 - width  * 0.5 ) )
-				}).show();
-
-			})
-			.each(function() {
-				this.src = $( this ).data( 'src' );
-			});
-
-		},
-
-		focus : function() {
-
-			if ( this.instance.current ) {
-				this.$list
-					.children()
-					.removeClass('fancybox-thumbs-active')
-					.filter('[data-index="' + this.instance.current.index  + '"]')
-					.addClass('fancybox-thumbs-active')
-					.focus();
-			}
-
-		},
-
-		close : function() {
-			this.$grid.hide();
-		},
-
-		update : function() {
-
-			this.instance.$refs.container.toggleClass( 'fancybox-show-thumbs', this.isVisible );
-
-			if ( this.isVisible ) {
-
-				if ( !this.$grid ) {
-					this.create();
-				}
-
-				this.instance.trigger( 'onThumbsShow' );
-
-				this.focus();
-
-			} else if ( this.$grid ) {
-				this.instance.trigger( 'onThumbsHide' );
-			}
-
-			// Update content position
-			this.instance.update();
-
-		},
-
-		hide : function() {
-			this.isVisible = false;
-			this.update();
-		},
-
-		show : function() {
-			this.isVisible = true;
-			this.update();
-		},
-
-		toggle : function() {
-			this.isVisible = !this.isVisible;
-			this.update();
-		}
-
-	});
-
-	$(document).on({
-
-		'onInit.fb' : function(e, instance) {
-			if ( instance && !instance.Thumbs ) {
-				instance.Thumbs = new FancyThumbs( instance );
-			}
-		},
-
-		'beforeShow.fb' : function(e, instance, item, firstRun) {
-			var Thumbs = instance && instance.Thumbs;
-
-			if ( !Thumbs || !Thumbs.isActive ) {
-				return;
-			}
-
-			if ( item.modal ) {
-				Thumbs.$button.hide();
-
-				Thumbs.hide();
-
-				return;
-			}
-
-			if ( firstRun && instance.opts.thumbs.autoStart === true ) {
-				Thumbs.show();
-			}
-
-			if ( Thumbs.isVisible ) {
-				Thumbs.focus();
-			}
-		},
-
-		'afterKeydown.fb' : function(e, instance, current, keypress, keycode) {
-			var Thumbs = instance && instance.Thumbs;
-
-			// "G"
-			if ( Thumbs && Thumbs.isActive && keycode === 71 ) {
-				keypress.preventDefault();
-
-				Thumbs.toggle();
-			}
-		},
-
-		'beforeClose.fb' : function( e, instance ) {
-			var Thumbs = instance && instance.Thumbs;
-
-			if ( Thumbs && Thumbs.isVisible && instance.opts.thumbs.hideOnClose !== false ) {
-				Thumbs.close();
-			}
-		}
-
-	});
-
-}(document, window.jQuery));
-
-// ==========================================================================
-//
-// Hash
-// Enables linking to each modal
-//
-// ==========================================================================
-;(function (document, window, $) {
-	'use strict';
-
-	// Simple $.escapeSelector polyfill (for jQuery prior v3)
-	if ( !$.escapeSelector ) {
-		$.escapeSelector = function( sel ) {
-			var rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g;
-			var fcssescape = function( ch, asCodePoint ) {
-				if ( asCodePoint ) {
-					// U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
-					if ( ch === "\0" ) {
-						return "\uFFFD";
-					}
-
-					// Control characters and (dependent upon position) numbers get escaped as code points
-					return ch.slice( 0, -1 ) + "\\" + ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
-				}
-
-				// Other potentially-special ASCII characters get backslash-escaped
-				return "\\" + ch;
-			};
-
-			return ( sel + "" ).replace( rcssescape, fcssescape );
-		};
-	}
-
-	// Variable containing last hash value set by fancyBox
-	// It will be used to determine if fancyBox needs to close after hash change is detected
-    var currentHash = null;
-
-	// Throtlling the history change
-	var timerID = null;
-
-	// Get info about gallery name and current index from url
-    function parseUrl() {
-        var hash    = window.location.hash.substr( 1 );
-        var rez     = hash.split( '-' );
-        var index   = rez.length > 1 && /^\+?\d+$/.test( rez[ rez.length - 1 ] ) ? parseInt( rez.pop( -1 ), 10 ) || 1 : 1;
-        var gallery = rez.join( '-' );
-
-		// Index is starting from 1
-		if ( index < 1 ) {
-			index = 1;
-		}
-
-        return {
-            hash    : hash,
-            index   : index,
-            gallery : gallery
-        };
-    }
-
-	// Trigger click evnt on links to open new fancyBox instance
-	function triggerFromUrl( url ) {
-		var $el;
-
-        if ( url.gallery !== '' ) {
-
-			// If we can find element matching 'data-fancybox' atribute, then trigger click event for that ..
-			$el = $( "[data-fancybox='" + $.escapeSelector( url.gallery ) + "']" ).eq( url.index - 1 );
-
-            if ( $el.length ) {
-				$el.trigger( 'click' );
-
-			} else {
-
-				// .. if not, try finding element by ID
-				$( "#" + $.escapeSelector( url.gallery ) + "" ).trigger( 'click' );
-
-			}
-
-        }
-	}
-
-	// Get gallery name from current instance
-	function getGallery( instance ) {
-		var opts;
-
-		if ( !instance ) {
-			return false;
-		}
-
-		opts = instance.current ? instance.current.opts : instance.opts;
-
-		return opts.$orig ? opts.$orig.data( 'fancybox' ) : ( opts.hash || '' );
-	}
-
-	// Star when DOM becomes ready
-    $(function() {
-
-		// Small delay is used to allow other scripts to process "dom ready" event
-		setTimeout(function() {
-
-			// Check if this module is not disabled
-			if ( $.fancybox.defaults.hash === false ) {
-				return;
-			}
-
-			// Update hash when opening/closing fancyBox
-		    $(document).on({
-				'onInit.fb' : function( e, instance ) {
-					var url, gallery;
-
-					if ( instance.group[ instance.currIndex ].opts.hash === false ) {
-						return;
-					}
-
-					url     = parseUrl();
-					gallery = getGallery( instance );
-
-					// Make sure gallery start index matches index from hash
-					if ( gallery && url.gallery && gallery == url.gallery ) {
-						instance.currIndex = url.index - 1;
-					}
-
-				},
-
-				'beforeShow.fb' : function( e, instance, current, firstRun ) {
-					var gallery;
-
-					if ( current.opts.hash === false ) {
-						return;
-					}
-
-		            gallery = getGallery( instance );
-
-		            // Update window hash
-		            if ( gallery && gallery !== '' ) {
-
-						if ( window.location.hash.indexOf( gallery ) < 0 ) {
-			                instance.opts.origHash = window.location.hash;
-			            }
-
-						currentHash = gallery + ( instance.group.length > 1 ? '-' + ( current.index + 1 ) : '' );
-
-						if ( 'replaceState' in window.history ) {
-							if ( timerID ) {
-								clearTimeout( timerID );
-							}
-
-							timerID = setTimeout(function() {
-								window.history[ firstRun ? 'pushState' : 'replaceState' ]( {} , document.title, window.location.pathname + window.location.search + '#' +  currentHash );
-
-								timerID = null;
-
-							}, 300);
-
-						} else {
-							window.location.hash = currentHash;
-						}
-
-		            }
-
-		        },
-
-				'beforeClose.fb' : function( e, instance, current ) {
-					var gallery, origHash;
-
-					if ( timerID ) {
-						clearTimeout( timerID );
-					}
-
-					if ( current.opts.hash === false ) {
-						return;
-					}
-
-					gallery  = getGallery( instance );
-					origHash = instance && instance.opts.origHash ? instance.opts.origHash : '';
-
-		            // Remove hash from location bar
-		            if ( gallery && gallery !== '' ) {
-
-		                if ( 'replaceState' in history ) {
-							window.history.replaceState( {} , document.title, window.location.pathname + window.location.search + origHash );
-
-		                } else {
-							window.location.hash = origHash;
-
-							// Keep original scroll position
-							$( window ).scrollTop( instance.scrollTop ).scrollLeft( instance.scrollLeft );
-		                }
-		            }
-
-					currentHash = null;
-		        }
-		    });
-
-			// Check if need to close after url has changed
-			$(window).on('hashchange.fb', function() {
-				var url = parseUrl();
-
-				if ( $.fancybox.getInstance() ) {
-					if ( currentHash && currentHash !== url.gallery + '-' + url.index && !( url.index === 1 && currentHash == url.gallery ) ) {
-						currentHash = null;
-
-						$.fancybox.close();
-					}
-
-				} else if ( url.gallery !== '' ) {
-					triggerFromUrl( url );
-				}
-			});
-
-			// If navigating away from current page
-			$(window).one('unload.fb popstate.fb', function() {
-				$.fancybox.getInstance( 'close', true, 0 );
-			});
-
-			// Check current hash and trigger click event on matching element to start fancyBox, if needed
-			triggerFromUrl( parseUrl() );
-
-		}, 50);
-
-    });
-
-
-}(document, window, window.jQuery));
-
 (function(r){"object"===typeof exports&&"undefined"!==typeof module?module.exports=r():"function"===typeof define&&define.amd?define([],r):("undefined"!==typeof window?window:"undefined"!==typeof global?global:"undefined"!==typeof self?self:this).SmartBanner=r()})(function(){return function b(g,f,e){function c(d,n){if(!f[d]){if(!g[d]){var k="function"==typeof require&&require;if(!n&&k)return k(d,!0);if(a)return a(d,!0);k=Error("Cannot find module '"+d+"'");throw k.code="MODULE_NOT_FOUND",k;}k=f[d]=
 {exports:{}};g[d][0].call(k.exports,function(a){var e=g[d][1][a];return c(e?e:a)},k,k.exports,b,g,f,e)}return f[d].exports}for(var a="function"==typeof require&&require,d=0;d<e.length;d++)c(e[d]);return c}({1:[function(b,g,f){var e=b("xtend/mutable"),c=b("component-query"),a=b("get-doc"),d=a&&a.documentElement,p=b("cookie-cutter"),n=b("ua-parser-js"),k=(navigator.language||navigator.userLanguage||navigator.browserLanguage).slice(-2)||"us",l={ios:{appMeta:"apple-itunes-app",iconRels:["apple-touch-icon-precomposed",
 "apple-touch-icon"],getStoreLink:function(){return"https://itunes.apple.com/"+this.options.appStoreLanguage+"/app/id"+this.appId}},android:{appMeta:"google-play-app",iconRels:["android-touch-icon","apple-touch-icon-precomposed","apple-touch-icon"],getStoreLink:function(){return"http://play.google.com/store/apps/details?id="+this.appId}},windows:{appMeta:"msApplication-ID",iconRels:["windows-touch-icon","apple-touch-icon-precomposed","apple-touch-icon"],getStoreLink:function(){return"http://www.windowsphone.com/s?appid="+
@@ -4967,15 +50,9 @@ g.os)};this.getResult=function(){return{ua:this.getUA(),browser:this.getBrowser(
 EMBEDDED:"embedded"};l.ENGINE={NAME:"name",VERSION:"version"};l.OS={NAME:"name",VERSION:"version"};"undefined"!==typeof f?("undefined"!==typeof g&&g.exports&&(f=g.exports=l),f.UAParser=l):e.UAParser=l;var m=e.jQuery||e.Zepto;if("undefined"!==typeof m){var q=new l;m.ua=q.getResult();m.ua.get=function(){return q.getUA()};m.ua.set=function(a){q.setUA(a);a=q.getResult();for(var b in a)m.ua[b]=a[b]}}})("object"===typeof window?window:this)},{}],7:[function(b,g,f){g.exports=function(b){for(var c=1;c<arguments.length;c++){var a=
 arguments[c],d;for(d in a)a.hasOwnProperty(d)&&(b[d]=a[d])}return b}},{}]},{},[1])(1)});
 
-//! moment.js
-//! version : 2.18.1
-//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
-//! license : MIT
-//! momentjs.com
-!function(a,b){"object"==typeof exports&&"undefined"!=typeof module?module.exports=b():"function"==typeof define&&define.amd?define(b):a.moment=b()}(this,function(){"use strict";function a(){return sd.apply(null,arguments)}function b(a){sd=a}function c(a){return a instanceof Array||"[object Array]"===Object.prototype.toString.call(a)}function d(a){return null!=a&&"[object Object]"===Object.prototype.toString.call(a)}function e(a){var b;for(b in a)return!1;return!0}function f(a){return void 0===a}function g(a){return"number"==typeof a||"[object Number]"===Object.prototype.toString.call(a)}function h(a){return a instanceof Date||"[object Date]"===Object.prototype.toString.call(a)}function i(a,b){var c,d=[];for(c=0;c<a.length;++c)d.push(b(a[c],c));return d}function j(a,b){return Object.prototype.hasOwnProperty.call(a,b)}function k(a,b){for(var c in b)j(b,c)&&(a[c]=b[c]);return j(b,"toString")&&(a.toString=b.toString),j(b,"valueOf")&&(a.valueOf=b.valueOf),a}function l(a,b,c,d){return sb(a,b,c,d,!0).utc()}function m(){return{empty:!1,unusedTokens:[],unusedInput:[],overflow:-2,charsLeftOver:0,nullInput:!1,invalidMonth:null,invalidFormat:!1,userInvalidated:!1,iso:!1,parsedDateParts:[],meridiem:null,rfc2822:!1,weekdayMismatch:!1}}function n(a){return null==a._pf&&(a._pf=m()),a._pf}function o(a){if(null==a._isValid){var b=n(a),c=ud.call(b.parsedDateParts,function(a){return null!=a}),d=!isNaN(a._d.getTime())&&b.overflow<0&&!b.empty&&!b.invalidMonth&&!b.invalidWeekday&&!b.nullInput&&!b.invalidFormat&&!b.userInvalidated&&(!b.meridiem||b.meridiem&&c);if(a._strict&&(d=d&&0===b.charsLeftOver&&0===b.unusedTokens.length&&void 0===b.bigHour),null!=Object.isFrozen&&Object.isFrozen(a))return d;a._isValid=d}return a._isValid}function p(a){var b=l(NaN);return null!=a?k(n(b),a):n(b).userInvalidated=!0,b}function q(a,b){var c,d,e;if(f(b._isAMomentObject)||(a._isAMomentObject=b._isAMomentObject),f(b._i)||(a._i=b._i),f(b._f)||(a._f=b._f),f(b._l)||(a._l=b._l),f(b._strict)||(a._strict=b._strict),f(b._tzm)||(a._tzm=b._tzm),f(b._isUTC)||(a._isUTC=b._isUTC),f(b._offset)||(a._offset=b._offset),f(b._pf)||(a._pf=n(b)),f(b._locale)||(a._locale=b._locale),vd.length>0)for(c=0;c<vd.length;c++)d=vd[c],e=b[d],f(e)||(a[d]=e);return a}function r(b){q(this,b),this._d=new Date(null!=b._d?b._d.getTime():NaN),this.isValid()||(this._d=new Date(NaN)),wd===!1&&(wd=!0,a.updateOffset(this),wd=!1)}function s(a){return a instanceof r||null!=a&&null!=a._isAMomentObject}function t(a){return a<0?Math.ceil(a)||0:Math.floor(a)}function u(a){var b=+a,c=0;return 0!==b&&isFinite(b)&&(c=t(b)),c}function v(a,b,c){var d,e=Math.min(a.length,b.length),f=Math.abs(a.length-b.length),g=0;for(d=0;d<e;d++)(c&&a[d]!==b[d]||!c&&u(a[d])!==u(b[d]))&&g++;return g+f}function w(b){a.suppressDeprecationWarnings===!1&&"undefined"!=typeof console&&console.warn&&console.warn("Deprecation warning: "+b)}function x(b,c){var d=!0;return k(function(){if(null!=a.deprecationHandler&&a.deprecationHandler(null,b),d){for(var e,f=[],g=0;g<arguments.length;g++){if(e="","object"==typeof arguments[g]){e+="\n["+g+"] ";for(var h in arguments[0])e+=h+": "+arguments[0][h]+", ";e=e.slice(0,-2)}else e=arguments[g];f.push(e)}w(b+"\nArguments: "+Array.prototype.slice.call(f).join("")+"\n"+(new Error).stack),d=!1}return c.apply(this,arguments)},c)}function y(b,c){null!=a.deprecationHandler&&a.deprecationHandler(b,c),xd[b]||(w(c),xd[b]=!0)}function z(a){return a instanceof Function||"[object Function]"===Object.prototype.toString.call(a)}function A(a){var b,c;for(c in a)b=a[c],z(b)?this[c]=b:this["_"+c]=b;this._config=a,this._dayOfMonthOrdinalParseLenient=new RegExp((this._dayOfMonthOrdinalParse.source||this._ordinalParse.source)+"|"+/\d{1,2}/.source)}function B(a,b){var c,e=k({},a);for(c in b)j(b,c)&&(d(a[c])&&d(b[c])?(e[c]={},k(e[c],a[c]),k(e[c],b[c])):null!=b[c]?e[c]=b[c]:delete e[c]);for(c in a)j(a,c)&&!j(b,c)&&d(a[c])&&(e[c]=k({},e[c]));return e}function C(a){null!=a&&this.set(a)}function D(a,b,c){var d=this._calendar[a]||this._calendar.sameElse;return z(d)?d.call(b,c):d}function E(a){var b=this._longDateFormat[a],c=this._longDateFormat[a.toUpperCase()];return b||!c?b:(this._longDateFormat[a]=c.replace(/MMMM|MM|DD|dddd/g,function(a){return a.slice(1)}),this._longDateFormat[a])}function F(){return this._invalidDate}function G(a){return this._ordinal.replace("%d",a)}function H(a,b,c,d){var e=this._relativeTime[c];return z(e)?e(a,b,c,d):e.replace(/%d/i,a)}function I(a,b){var c=this._relativeTime[a>0?"future":"past"];return z(c)?c(b):c.replace(/%s/i,b)}function J(a,b){var c=a.toLowerCase();Hd[c]=Hd[c+"s"]=Hd[b]=a}function K(a){return"string"==typeof a?Hd[a]||Hd[a.toLowerCase()]:void 0}function L(a){var b,c,d={};for(c in a)j(a,c)&&(b=K(c),b&&(d[b]=a[c]));return d}function M(a,b){Id[a]=b}function N(a){var b=[];for(var c in a)b.push({unit:c,priority:Id[c]});return b.sort(function(a,b){return a.priority-b.priority}),b}function O(b,c){return function(d){return null!=d?(Q(this,b,d),a.updateOffset(this,c),this):P(this,b)}}function P(a,b){return a.isValid()?a._d["get"+(a._isUTC?"UTC":"")+b]():NaN}function Q(a,b,c){a.isValid()&&a._d["set"+(a._isUTC?"UTC":"")+b](c)}function R(a){return a=K(a),z(this[a])?this[a]():this}function S(a,b){if("object"==typeof a){a=L(a);for(var c=N(a),d=0;d<c.length;d++)this[c[d].unit](a[c[d].unit])}else if(a=K(a),z(this[a]))return this[a](b);return this}function T(a,b,c){var d=""+Math.abs(a),e=b-d.length,f=a>=0;return(f?c?"+":"":"-")+Math.pow(10,Math.max(0,e)).toString().substr(1)+d}function U(a,b,c,d){var e=d;"string"==typeof d&&(e=function(){return this[d]()}),a&&(Md[a]=e),b&&(Md[b[0]]=function(){return T(e.apply(this,arguments),b[1],b[2])}),c&&(Md[c]=function(){return this.localeData().ordinal(e.apply(this,arguments),a)})}function V(a){return a.match(/\[[\s\S]/)?a.replace(/^\[|\]$/g,""):a.replace(/\\/g,"")}function W(a){var b,c,d=a.match(Jd);for(b=0,c=d.length;b<c;b++)Md[d[b]]?d[b]=Md[d[b]]:d[b]=V(d[b]);return function(b){var e,f="";for(e=0;e<c;e++)f+=z(d[e])?d[e].call(b,a):d[e];return f}}function X(a,b){return a.isValid()?(b=Y(b,a.localeData()),Ld[b]=Ld[b]||W(b),Ld[b](a)):a.localeData().invalidDate()}function Y(a,b){function c(a){return b.longDateFormat(a)||a}var d=5;for(Kd.lastIndex=0;d>=0&&Kd.test(a);)a=a.replace(Kd,c),Kd.lastIndex=0,d-=1;return a}function Z(a,b,c){ce[a]=z(b)?b:function(a,d){return a&&c?c:b}}function $(a,b){return j(ce,a)?ce[a](b._strict,b._locale):new RegExp(_(a))}function _(a){return aa(a.replace("\\","").replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g,function(a,b,c,d,e){return b||c||d||e}))}function aa(a){return a.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&")}function ba(a,b){var c,d=b;for("string"==typeof a&&(a=[a]),g(b)&&(d=function(a,c){c[b]=u(a)}),c=0;c<a.length;c++)de[a[c]]=d}function ca(a,b){ba(a,function(a,c,d,e){d._w=d._w||{},b(a,d._w,d,e)})}function da(a,b,c){null!=b&&j(de,a)&&de[a](b,c._a,c,a)}function ea(a,b){return new Date(Date.UTC(a,b+1,0)).getUTCDate()}function fa(a,b){return a?c(this._months)?this._months[a.month()]:this._months[(this._months.isFormat||oe).test(b)?"format":"standalone"][a.month()]:c(this._months)?this._months:this._months.standalone}function ga(a,b){return a?c(this._monthsShort)?this._monthsShort[a.month()]:this._monthsShort[oe.test(b)?"format":"standalone"][a.month()]:c(this._monthsShort)?this._monthsShort:this._monthsShort.standalone}function ha(a,b,c){var d,e,f,g=a.toLocaleLowerCase();if(!this._monthsParse)for(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[],d=0;d<12;++d)f=l([2e3,d]),this._shortMonthsParse[d]=this.monthsShort(f,"").toLocaleLowerCase(),this._longMonthsParse[d]=this.months(f,"").toLocaleLowerCase();return c?"MMM"===b?(e=ne.call(this._shortMonthsParse,g),e!==-1?e:null):(e=ne.call(this._longMonthsParse,g),e!==-1?e:null):"MMM"===b?(e=ne.call(this._shortMonthsParse,g),e!==-1?e:(e=ne.call(this._longMonthsParse,g),e!==-1?e:null)):(e=ne.call(this._longMonthsParse,g),e!==-1?e:(e=ne.call(this._shortMonthsParse,g),e!==-1?e:null))}function ia(a,b,c){var d,e,f;if(this._monthsParseExact)return ha.call(this,a,b,c);for(this._monthsParse||(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[]),d=0;d<12;d++){if(e=l([2e3,d]),c&&!this._longMonthsParse[d]&&(this._longMonthsParse[d]=new RegExp("^"+this.months(e,"").replace(".","")+"$","i"),this._shortMonthsParse[d]=new RegExp("^"+this.monthsShort(e,"").replace(".","")+"$","i")),c||this._monthsParse[d]||(f="^"+this.months(e,"")+"|^"+this.monthsShort(e,""),this._monthsParse[d]=new RegExp(f.replace(".",""),"i")),c&&"MMMM"===b&&this._longMonthsParse[d].test(a))return d;if(c&&"MMM"===b&&this._shortMonthsParse[d].test(a))return d;if(!c&&this._monthsParse[d].test(a))return d}}function ja(a,b){var c;if(!a.isValid())return a;if("string"==typeof b)if(/^\d+$/.test(b))b=u(b);else if(b=a.localeData().monthsParse(b),!g(b))return a;return c=Math.min(a.date(),ea(a.year(),b)),a._d["set"+(a._isUTC?"UTC":"")+"Month"](b,c),a}function ka(b){return null!=b?(ja(this,b),a.updateOffset(this,!0),this):P(this,"Month")}function la(){return ea(this.year(),this.month())}function ma(a){return this._monthsParseExact?(j(this,"_monthsRegex")||oa.call(this),a?this._monthsShortStrictRegex:this._monthsShortRegex):(j(this,"_monthsShortRegex")||(this._monthsShortRegex=re),this._monthsShortStrictRegex&&a?this._monthsShortStrictRegex:this._monthsShortRegex)}function na(a){return this._monthsParseExact?(j(this,"_monthsRegex")||oa.call(this),a?this._monthsStrictRegex:this._monthsRegex):(j(this,"_monthsRegex")||(this._monthsRegex=se),this._monthsStrictRegex&&a?this._monthsStrictRegex:this._monthsRegex)}function oa(){function a(a,b){return b.length-a.length}var b,c,d=[],e=[],f=[];for(b=0;b<12;b++)c=l([2e3,b]),d.push(this.monthsShort(c,"")),e.push(this.months(c,"")),f.push(this.months(c,"")),f.push(this.monthsShort(c,""));for(d.sort(a),e.sort(a),f.sort(a),b=0;b<12;b++)d[b]=aa(d[b]),e[b]=aa(e[b]);for(b=0;b<24;b++)f[b]=aa(f[b]);this._monthsRegex=new RegExp("^("+f.join("|")+")","i"),this._monthsShortRegex=this._monthsRegex,this._monthsStrictRegex=new RegExp("^("+e.join("|")+")","i"),this._monthsShortStrictRegex=new RegExp("^("+d.join("|")+")","i")}function pa(a){return qa(a)?366:365}function qa(a){return a%4===0&&a%100!==0||a%400===0}function ra(){return qa(this.year())}function sa(a,b,c,d,e,f,g){var h=new Date(a,b,c,d,e,f,g);return a<100&&a>=0&&isFinite(h.getFullYear())&&h.setFullYear(a),h}function ta(a){var b=new Date(Date.UTC.apply(null,arguments));return a<100&&a>=0&&isFinite(b.getUTCFullYear())&&b.setUTCFullYear(a),b}function ua(a,b,c){var d=7+b-c,e=(7+ta(a,0,d).getUTCDay()-b)%7;return-e+d-1}function va(a,b,c,d,e){var f,g,h=(7+c-d)%7,i=ua(a,d,e),j=1+7*(b-1)+h+i;return j<=0?(f=a-1,g=pa(f)+j):j>pa(a)?(f=a+1,g=j-pa(a)):(f=a,g=j),{year:f,dayOfYear:g}}function wa(a,b,c){var d,e,f=ua(a.year(),b,c),g=Math.floor((a.dayOfYear()-f-1)/7)+1;return g<1?(e=a.year()-1,d=g+xa(e,b,c)):g>xa(a.year(),b,c)?(d=g-xa(a.year(),b,c),e=a.year()+1):(e=a.year(),d=g),{week:d,year:e}}function xa(a,b,c){var d=ua(a,b,c),e=ua(a+1,b,c);return(pa(a)-d+e)/7}function ya(a){return wa(a,this._week.dow,this._week.doy).week}function za(){return this._week.dow}function Aa(){return this._week.doy}function Ba(a){var b=this.localeData().week(this);return null==a?b:this.add(7*(a-b),"d")}function Ca(a){var b=wa(this,1,4).week;return null==a?b:this.add(7*(a-b),"d")}function Da(a,b){return"string"!=typeof a?a:isNaN(a)?(a=b.weekdaysParse(a),"number"==typeof a?a:null):parseInt(a,10)}function Ea(a,b){return"string"==typeof a?b.weekdaysParse(a)%7||7:isNaN(a)?null:a}function Fa(a,b){return a?c(this._weekdays)?this._weekdays[a.day()]:this._weekdays[this._weekdays.isFormat.test(b)?"format":"standalone"][a.day()]:c(this._weekdays)?this._weekdays:this._weekdays.standalone}function Ga(a){return a?this._weekdaysShort[a.day()]:this._weekdaysShort}function Ha(a){return a?this._weekdaysMin[a.day()]:this._weekdaysMin}function Ia(a,b,c){var d,e,f,g=a.toLocaleLowerCase();if(!this._weekdaysParse)for(this._weekdaysParse=[],this._shortWeekdaysParse=[],this._minWeekdaysParse=[],d=0;d<7;++d)f=l([2e3,1]).day(d),this._minWeekdaysParse[d]=this.weekdaysMin(f,"").toLocaleLowerCase(),this._shortWeekdaysParse[d]=this.weekdaysShort(f,"").toLocaleLowerCase(),this._weekdaysParse[d]=this.weekdays(f,"").toLocaleLowerCase();return c?"dddd"===b?(e=ne.call(this._weekdaysParse,g),e!==-1?e:null):"ddd"===b?(e=ne.call(this._shortWeekdaysParse,g),e!==-1?e:null):(e=ne.call(this._minWeekdaysParse,g),e!==-1?e:null):"dddd"===b?(e=ne.call(this._weekdaysParse,g),e!==-1?e:(e=ne.call(this._shortWeekdaysParse,g),e!==-1?e:(e=ne.call(this._minWeekdaysParse,g),e!==-1?e:null))):"ddd"===b?(e=ne.call(this._shortWeekdaysParse,g),e!==-1?e:(e=ne.call(this._weekdaysParse,g),e!==-1?e:(e=ne.call(this._minWeekdaysParse,g),e!==-1?e:null))):(e=ne.call(this._minWeekdaysParse,g),e!==-1?e:(e=ne.call(this._weekdaysParse,g),e!==-1?e:(e=ne.call(this._shortWeekdaysParse,g),e!==-1?e:null)))}function Ja(a,b,c){var d,e,f;if(this._weekdaysParseExact)return Ia.call(this,a,b,c);for(this._weekdaysParse||(this._weekdaysParse=[],this._minWeekdaysParse=[],this._shortWeekdaysParse=[],this._fullWeekdaysParse=[]),d=0;d<7;d++){if(e=l([2e3,1]).day(d),c&&!this._fullWeekdaysParse[d]&&(this._fullWeekdaysParse[d]=new RegExp("^"+this.weekdays(e,"").replace(".",".?")+"$","i"),this._shortWeekdaysParse[d]=new RegExp("^"+this.weekdaysShort(e,"").replace(".",".?")+"$","i"),this._minWeekdaysParse[d]=new RegExp("^"+this.weekdaysMin(e,"").replace(".",".?")+"$","i")),this._weekdaysParse[d]||(f="^"+this.weekdays(e,"")+"|^"+this.weekdaysShort(e,"")+"|^"+this.weekdaysMin(e,""),this._weekdaysParse[d]=new RegExp(f.replace(".",""),"i")),c&&"dddd"===b&&this._fullWeekdaysParse[d].test(a))return d;if(c&&"ddd"===b&&this._shortWeekdaysParse[d].test(a))return d;if(c&&"dd"===b&&this._minWeekdaysParse[d].test(a))return d;if(!c&&this._weekdaysParse[d].test(a))return d}}function Ka(a){if(!this.isValid())return null!=a?this:NaN;var b=this._isUTC?this._d.getUTCDay():this._d.getDay();return null!=a?(a=Da(a,this.localeData()),this.add(a-b,"d")):b}function La(a){if(!this.isValid())return null!=a?this:NaN;var b=(this.day()+7-this.localeData()._week.dow)%7;return null==a?b:this.add(a-b,"d")}function Ma(a){if(!this.isValid())return null!=a?this:NaN;if(null!=a){var b=Ea(a,this.localeData());return this.day(this.day()%7?b:b-7)}return this.day()||7}function Na(a){return this._weekdaysParseExact?(j(this,"_weekdaysRegex")||Qa.call(this),a?this._weekdaysStrictRegex:this._weekdaysRegex):(j(this,"_weekdaysRegex")||(this._weekdaysRegex=ye),this._weekdaysStrictRegex&&a?this._weekdaysStrictRegex:this._weekdaysRegex)}function Oa(a){return this._weekdaysParseExact?(j(this,"_weekdaysRegex")||Qa.call(this),a?this._weekdaysShortStrictRegex:this._weekdaysShortRegex):(j(this,"_weekdaysShortRegex")||(this._weekdaysShortRegex=ze),this._weekdaysShortStrictRegex&&a?this._weekdaysShortStrictRegex:this._weekdaysShortRegex)}function Pa(a){return this._weekdaysParseExact?(j(this,"_weekdaysRegex")||Qa.call(this),a?this._weekdaysMinStrictRegex:this._weekdaysMinRegex):(j(this,"_weekdaysMinRegex")||(this._weekdaysMinRegex=Ae),this._weekdaysMinStrictRegex&&a?this._weekdaysMinStrictRegex:this._weekdaysMinRegex)}function Qa(){function a(a,b){return b.length-a.length}var b,c,d,e,f,g=[],h=[],i=[],j=[];for(b=0;b<7;b++)c=l([2e3,1]).day(b),d=this.weekdaysMin(c,""),e=this.weekdaysShort(c,""),f=this.weekdays(c,""),g.push(d),h.push(e),i.push(f),j.push(d),j.push(e),j.push(f);for(g.sort(a),h.sort(a),i.sort(a),j.sort(a),b=0;b<7;b++)h[b]=aa(h[b]),i[b]=aa(i[b]),j[b]=aa(j[b]);this._weekdaysRegex=new RegExp("^("+j.join("|")+")","i"),this._weekdaysShortRegex=this._weekdaysRegex,this._weekdaysMinRegex=this._weekdaysRegex,this._weekdaysStrictRegex=new RegExp("^("+i.join("|")+")","i"),this._weekdaysShortStrictRegex=new RegExp("^("+h.join("|")+")","i"),this._weekdaysMinStrictRegex=new RegExp("^("+g.join("|")+")","i")}function Ra(){return this.hours()%12||12}function Sa(){return this.hours()||24}function Ta(a,b){U(a,0,0,function(){return this.localeData().meridiem(this.hours(),this.minutes(),b)})}function Ua(a,b){return b._meridiemParse}function Va(a){return"p"===(a+"").toLowerCase().charAt(0)}function Wa(a,b,c){return a>11?c?"pm":"PM":c?"am":"AM"}function Xa(a){return a?a.toLowerCase().replace("_","-"):a}function Ya(a){for(var b,c,d,e,f=0;f<a.length;){for(e=Xa(a[f]).split("-"),b=e.length,c=Xa(a[f+1]),c=c?c.split("-"):null;b>0;){if(d=Za(e.slice(0,b).join("-")))return d;if(c&&c.length>=b&&v(e,c,!0)>=b-1)break;b--}f++}return null}function Za(a){var b=null;if(!Fe[a]&&"undefined"!=typeof module&&module&&module.exports)try{b=Be._abbr,require("./locale/"+a),$a(b)}catch(a){}return Fe[a]}function $a(a,b){var c;return a&&(c=f(b)?bb(a):_a(a,b),c&&(Be=c)),Be._abbr}function _a(a,b){if(null!==b){var c=Ee;if(b.abbr=a,null!=Fe[a])y("defineLocaleOverride","use moment.updateLocale(localeName, config) to change an existing locale. moment.defineLocale(localeName, config) should only be used for creating a new locale See http://momentjs.com/guides/#/warnings/define-locale/ for more info."),c=Fe[a]._config;else if(null!=b.parentLocale){if(null==Fe[b.parentLocale])return Ge[b.parentLocale]||(Ge[b.parentLocale]=[]),Ge[b.parentLocale].push({name:a,config:b}),null;c=Fe[b.parentLocale]._config}return Fe[a]=new C(B(c,b)),Ge[a]&&Ge[a].forEach(function(a){_a(a.name,a.config)}),$a(a),Fe[a]}return delete Fe[a],null}function ab(a,b){if(null!=b){var c,d=Ee;null!=Fe[a]&&(d=Fe[a]._config),b=B(d,b),c=new C(b),c.parentLocale=Fe[a],Fe[a]=c,$a(a)}else null!=Fe[a]&&(null!=Fe[a].parentLocale?Fe[a]=Fe[a].parentLocale:null!=Fe[a]&&delete Fe[a]);return Fe[a]}function bb(a){var b;if(a&&a._locale&&a._locale._abbr&&(a=a._locale._abbr),!a)return Be;if(!c(a)){if(b=Za(a))return b;a=[a]}return Ya(a)}function cb(){return Ad(Fe)}function db(a){var b,c=a._a;return c&&n(a).overflow===-2&&(b=c[fe]<0||c[fe]>11?fe:c[ge]<1||c[ge]>ea(c[ee],c[fe])?ge:c[he]<0||c[he]>24||24===c[he]&&(0!==c[ie]||0!==c[je]||0!==c[ke])?he:c[ie]<0||c[ie]>59?ie:c[je]<0||c[je]>59?je:c[ke]<0||c[ke]>999?ke:-1,n(a)._overflowDayOfYear&&(b<ee||b>ge)&&(b=ge),n(a)._overflowWeeks&&b===-1&&(b=le),n(a)._overflowWeekday&&b===-1&&(b=me),n(a).overflow=b),a}function eb(a){var b,c,d,e,f,g,h=a._i,i=He.exec(h)||Ie.exec(h);if(i){for(n(a).iso=!0,b=0,c=Ke.length;b<c;b++)if(Ke[b][1].exec(i[1])){e=Ke[b][0],d=Ke[b][2]!==!1;break}if(null==e)return void(a._isValid=!1);if(i[3]){for(b=0,c=Le.length;b<c;b++)if(Le[b][1].exec(i[3])){f=(i[2]||" ")+Le[b][0];break}if(null==f)return void(a._isValid=!1)}if(!d&&null!=f)return void(a._isValid=!1);if(i[4]){if(!Je.exec(i[4]))return void(a._isValid=!1);g="Z"}a._f=e+(f||"")+(g||""),lb(a)}else a._isValid=!1}function fb(a){var b,c,d,e,f,g,h,i,j={" GMT":" +0000"," EDT":" -0400"," EST":" -0500"," CDT":" -0500"," CST":" -0600"," MDT":" -0600"," MST":" -0700"," PDT":" -0700"," PST":" -0800"},k="YXWVUTSRQPONZABCDEFGHIKLM";if(b=a._i.replace(/\([^\)]*\)|[\n\t]/g," ").replace(/(\s\s+)/g," ").replace(/^\s|\s$/g,""),c=Ne.exec(b)){if(d=c[1]?"ddd"+(5===c[1].length?", ":" "):"",e="D MMM "+(c[2].length>10?"YYYY ":"YY "),f="HH:mm"+(c[4]?":ss":""),c[1]){var l=new Date(c[2]),m=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][l.getDay()];if(c[1].substr(0,3)!==m)return n(a).weekdayMismatch=!0,void(a._isValid=!1)}switch(c[5].length){case 2:0===i?h=" +0000":(i=k.indexOf(c[5][1].toUpperCase())-12,h=(i<0?" -":" +")+(""+i).replace(/^-?/,"0").match(/..$/)[0]+"00");break;case 4:h=j[c[5]];break;default:h=j[" GMT"]}c[5]=h,a._i=c.splice(1).join(""),g=" ZZ",a._f=d+e+f+g,lb(a),n(a).rfc2822=!0}else a._isValid=!1}function gb(b){var c=Me.exec(b._i);return null!==c?void(b._d=new Date(+c[1])):(eb(b),void(b._isValid===!1&&(delete b._isValid,fb(b),b._isValid===!1&&(delete b._isValid,a.createFromInputFallback(b)))))}function hb(a,b,c){return null!=a?a:null!=b?b:c}function ib(b){var c=new Date(a.now());return b._useUTC?[c.getUTCFullYear(),c.getUTCMonth(),c.getUTCDate()]:[c.getFullYear(),c.getMonth(),c.getDate()]}function jb(a){var b,c,d,e,f=[];if(!a._d){for(d=ib(a),a._w&&null==a._a[ge]&&null==a._a[fe]&&kb(a),null!=a._dayOfYear&&(e=hb(a._a[ee],d[ee]),(a._dayOfYear>pa(e)||0===a._dayOfYear)&&(n(a)._overflowDayOfYear=!0),c=ta(e,0,a._dayOfYear),a._a[fe]=c.getUTCMonth(),a._a[ge]=c.getUTCDate()),b=0;b<3&&null==a._a[b];++b)a._a[b]=f[b]=d[b];for(;b<7;b++)a._a[b]=f[b]=null==a._a[b]?2===b?1:0:a._a[b];24===a._a[he]&&0===a._a[ie]&&0===a._a[je]&&0===a._a[ke]&&(a._nextDay=!0,a._a[he]=0),a._d=(a._useUTC?ta:sa).apply(null,f),null!=a._tzm&&a._d.setUTCMinutes(a._d.getUTCMinutes()-a._tzm),a._nextDay&&(a._a[he]=24)}}function kb(a){var b,c,d,e,f,g,h,i;if(b=a._w,null!=b.GG||null!=b.W||null!=b.E)f=1,g=4,c=hb(b.GG,a._a[ee],wa(tb(),1,4).year),d=hb(b.W,1),e=hb(b.E,1),(e<1||e>7)&&(i=!0);else{f=a._locale._week.dow,g=a._locale._week.doy;var j=wa(tb(),f,g);c=hb(b.gg,a._a[ee],j.year),d=hb(b.w,j.week),null!=b.d?(e=b.d,(e<0||e>6)&&(i=!0)):null!=b.e?(e=b.e+f,(b.e<0||b.e>6)&&(i=!0)):e=f}d<1||d>xa(c,f,g)?n(a)._overflowWeeks=!0:null!=i?n(a)._overflowWeekday=!0:(h=va(c,d,e,f,g),a._a[ee]=h.year,a._dayOfYear=h.dayOfYear)}function lb(b){if(b._f===a.ISO_8601)return void eb(b);if(b._f===a.RFC_2822)return void fb(b);b._a=[],n(b).empty=!0;var c,d,e,f,g,h=""+b._i,i=h.length,j=0;for(e=Y(b._f,b._locale).match(Jd)||[],c=0;c<e.length;c++)f=e[c],d=(h.match($(f,b))||[])[0],d&&(g=h.substr(0,h.indexOf(d)),g.length>0&&n(b).unusedInput.push(g),h=h.slice(h.indexOf(d)+d.length),j+=d.length),Md[f]?(d?n(b).empty=!1:n(b).unusedTokens.push(f),da(f,d,b)):b._strict&&!d&&n(b).unusedTokens.push(f);n(b).charsLeftOver=i-j,h.length>0&&n(b).unusedInput.push(h),b._a[he]<=12&&n(b).bigHour===!0&&b._a[he]>0&&(n(b).bigHour=void 0),n(b).parsedDateParts=b._a.slice(0),n(b).meridiem=b._meridiem,b._a[he]=mb(b._locale,b._a[he],b._meridiem),jb(b),db(b)}function mb(a,b,c){var d;return null==c?b:null!=a.meridiemHour?a.meridiemHour(b,c):null!=a.isPM?(d=a.isPM(c),d&&b<12&&(b+=12),d||12!==b||(b=0),b):b}function nb(a){var b,c,d,e,f;if(0===a._f.length)return n(a).invalidFormat=!0,void(a._d=new Date(NaN));for(e=0;e<a._f.length;e++)f=0,b=q({},a),null!=a._useUTC&&(b._useUTC=a._useUTC),b._f=a._f[e],lb(b),o(b)&&(f+=n(b).charsLeftOver,f+=10*n(b).unusedTokens.length,n(b).score=f,(null==d||f<d)&&(d=f,c=b));k(a,c||b)}function ob(a){if(!a._d){var b=L(a._i);a._a=i([b.year,b.month,b.day||b.date,b.hour,b.minute,b.second,b.millisecond],function(a){return a&&parseInt(a,10)}),jb(a)}}function pb(a){var b=new r(db(qb(a)));return b._nextDay&&(b.add(1,"d"),b._nextDay=void 0),b}function qb(a){var b=a._i,d=a._f;return a._locale=a._locale||bb(a._l),null===b||void 0===d&&""===b?p({nullInput:!0}):("string"==typeof b&&(a._i=b=a._locale.preparse(b)),s(b)?new r(db(b)):(h(b)?a._d=b:c(d)?nb(a):d?lb(a):rb(a),o(a)||(a._d=null),a))}function rb(b){var e=b._i;f(e)?b._d=new Date(a.now()):h(e)?b._d=new Date(e.valueOf()):"string"==typeof e?gb(b):c(e)?(b._a=i(e.slice(0),function(a){return parseInt(a,10)}),jb(b)):d(e)?ob(b):g(e)?b._d=new Date(e):a.createFromInputFallback(b)}function sb(a,b,f,g,h){var i={};return f!==!0&&f!==!1||(g=f,f=void 0),(d(a)&&e(a)||c(a)&&0===a.length)&&(a=void 0),i._isAMomentObject=!0,i._useUTC=i._isUTC=h,i._l=f,i._i=a,i._f=b,i._strict=g,pb(i)}function tb(a,b,c,d){return sb(a,b,c,d,!1)}function ub(a,b){var d,e;if(1===b.length&&c(b[0])&&(b=b[0]),!b.length)return tb();for(d=b[0],e=1;e<b.length;++e)b[e].isValid()&&!b[e][a](d)||(d=b[e]);return d}function vb(){var a=[].slice.call(arguments,0);return ub("isBefore",a)}function wb(){var a=[].slice.call(arguments,0);return ub("isAfter",a)}function xb(a){for(var b in a)if(Re.indexOf(b)===-1||null!=a[b]&&isNaN(a[b]))return!1;for(var c=!1,d=0;d<Re.length;++d)if(a[Re[d]]){if(c)return!1;parseFloat(a[Re[d]])!==u(a[Re[d]])&&(c=!0)}return!0}function yb(){return this._isValid}function zb(){return Sb(NaN)}function Ab(a){var b=L(a),c=b.year||0,d=b.quarter||0,e=b.month||0,f=b.week||0,g=b.day||0,h=b.hour||0,i=b.minute||0,j=b.second||0,k=b.millisecond||0;this._isValid=xb(b),this._milliseconds=+k+1e3*j+6e4*i+1e3*h*60*60,this._days=+g+7*f,this._months=+e+3*d+12*c,this._data={},this._locale=bb(),this._bubble()}function Bb(a){return a instanceof Ab}function Cb(a){return a<0?Math.round(-1*a)*-1:Math.round(a)}function Db(a,b){U(a,0,0,function(){var a=this.utcOffset(),c="+";return a<0&&(a=-a,c="-"),c+T(~~(a/60),2)+b+T(~~a%60,2)})}function Eb(a,b){var c=(b||"").match(a);if(null===c)return null;var d=c[c.length-1]||[],e=(d+"").match(Se)||["-",0,0],f=+(60*e[1])+u(e[2]);return 0===f?0:"+"===e[0]?f:-f}function Fb(b,c){var d,e;return c._isUTC?(d=c.clone(),e=(s(b)||h(b)?b.valueOf():tb(b).valueOf())-d.valueOf(),d._d.setTime(d._d.valueOf()+e),a.updateOffset(d,!1),d):tb(b).local()}function Gb(a){return 15*-Math.round(a._d.getTimezoneOffset()/15)}function Hb(b,c,d){var e,f=this._offset||0;if(!this.isValid())return null!=b?this:NaN;if(null!=b){if("string"==typeof b){if(b=Eb(_d,b),null===b)return this}else Math.abs(b)<16&&!d&&(b=60*b);return!this._isUTC&&c&&(e=Gb(this)),this._offset=b,this._isUTC=!0,null!=e&&this.add(e,"m"),f!==b&&(!c||this._changeInProgress?Xb(this,Sb(b-f,"m"),1,!1):this._changeInProgress||(this._changeInProgress=!0,a.updateOffset(this,!0),this._changeInProgress=null)),this}return this._isUTC?f:Gb(this)}function Ib(a,b){return null!=a?("string"!=typeof a&&(a=-a),this.utcOffset(a,b),this):-this.utcOffset()}function Jb(a){return this.utcOffset(0,a)}function Kb(a){return this._isUTC&&(this.utcOffset(0,a),this._isUTC=!1,a&&this.subtract(Gb(this),"m")),this}function Lb(){if(null!=this._tzm)this.utcOffset(this._tzm,!1,!0);else if("string"==typeof this._i){var a=Eb($d,this._i);null!=a?this.utcOffset(a):this.utcOffset(0,!0)}return this}function Mb(a){return!!this.isValid()&&(a=a?tb(a).utcOffset():0,(this.utcOffset()-a)%60===0)}function Nb(){return this.utcOffset()>this.clone().month(0).utcOffset()||this.utcOffset()>this.clone().month(5).utcOffset()}function Ob(){if(!f(this._isDSTShifted))return this._isDSTShifted;var a={};if(q(a,this),a=qb(a),a._a){var b=a._isUTC?l(a._a):tb(a._a);this._isDSTShifted=this.isValid()&&v(a._a,b.toArray())>0}else this._isDSTShifted=!1;return this._isDSTShifted}function Pb(){return!!this.isValid()&&!this._isUTC}function Qb(){return!!this.isValid()&&this._isUTC}function Rb(){return!!this.isValid()&&(this._isUTC&&0===this._offset)}function Sb(a,b){var c,d,e,f=a,h=null;return Bb(a)?f={ms:a._milliseconds,d:a._days,M:a._months}:g(a)?(f={},b?f[b]=a:f.milliseconds=a):(h=Te.exec(a))?(c="-"===h[1]?-1:1,f={y:0,d:u(h[ge])*c,h:u(h[he])*c,m:u(h[ie])*c,s:u(h[je])*c,ms:u(Cb(1e3*h[ke]))*c}):(h=Ue.exec(a))?(c="-"===h[1]?-1:1,f={y:Tb(h[2],c),M:Tb(h[3],c),w:Tb(h[4],c),d:Tb(h[5],c),h:Tb(h[6],c),m:Tb(h[7],c),s:Tb(h[8],c)}):null==f?f={}:"object"==typeof f&&("from"in f||"to"in f)&&(e=Vb(tb(f.from),tb(f.to)),f={},f.ms=e.milliseconds,f.M=e.months),d=new Ab(f),Bb(a)&&j(a,"_locale")&&(d._locale=a._locale),d}function Tb(a,b){var c=a&&parseFloat(a.replace(",","."));return(isNaN(c)?0:c)*b}function Ub(a,b){var c={milliseconds:0,months:0};return c.months=b.month()-a.month()+12*(b.year()-a.year()),a.clone().add(c.months,"M").isAfter(b)&&--c.months,c.milliseconds=+b-+a.clone().add(c.months,"M"),c}function Vb(a,b){var c;return a.isValid()&&b.isValid()?(b=Fb(b,a),a.isBefore(b)?c=Ub(a,b):(c=Ub(b,a),c.milliseconds=-c.milliseconds,c.months=-c.months),c):{milliseconds:0,months:0}}function Wb(a,b){return function(c,d){var e,f;return null===d||isNaN(+d)||(y(b,"moment()."+b+"(period, number) is deprecated. Please use moment()."+b+"(number, period). See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info."),f=c,c=d,d=f),c="string"==typeof c?+c:c,e=Sb(c,d),Xb(this,e,a),this}}function Xb(b,c,d,e){var f=c._milliseconds,g=Cb(c._days),h=Cb(c._months);b.isValid()&&(e=null==e||e,f&&b._d.setTime(b._d.valueOf()+f*d),g&&Q(b,"Date",P(b,"Date")+g*d),h&&ja(b,P(b,"Month")+h*d),e&&a.updateOffset(b,g||h))}function Yb(a,b){var c=a.diff(b,"days",!0);return c<-6?"sameElse":c<-1?"lastWeek":c<0?"lastDay":c<1?"sameDay":c<2?"nextDay":c<7?"nextWeek":"sameElse"}function Zb(b,c){var d=b||tb(),e=Fb(d,this).startOf("day"),f=a.calendarFormat(this,e)||"sameElse",g=c&&(z(c[f])?c[f].call(this,d):c[f]);return this.format(g||this.localeData().calendar(f,this,tb(d)))}function $b(){return new r(this)}function _b(a,b){var c=s(a)?a:tb(a);return!(!this.isValid()||!c.isValid())&&(b=K(f(b)?"millisecond":b),"millisecond"===b?this.valueOf()>c.valueOf():c.valueOf()<this.clone().startOf(b).valueOf())}function ac(a,b){var c=s(a)?a:tb(a);return!(!this.isValid()||!c.isValid())&&(b=K(f(b)?"millisecond":b),"millisecond"===b?this.valueOf()<c.valueOf():this.clone().endOf(b).valueOf()<c.valueOf())}function bc(a,b,c,d){return d=d||"()",("("===d[0]?this.isAfter(a,c):!this.isBefore(a,c))&&(")"===d[1]?this.isBefore(b,c):!this.isAfter(b,c))}function cc(a,b){var c,d=s(a)?a:tb(a);return!(!this.isValid()||!d.isValid())&&(b=K(b||"millisecond"),"millisecond"===b?this.valueOf()===d.valueOf():(c=d.valueOf(),this.clone().startOf(b).valueOf()<=c&&c<=this.clone().endOf(b).valueOf()))}function dc(a,b){return this.isSame(a,b)||this.isAfter(a,b)}function ec(a,b){return this.isSame(a,b)||this.isBefore(a,b)}function fc(a,b,c){var d,e,f,g;return this.isValid()?(d=Fb(a,this),d.isValid()?(e=6e4*(d.utcOffset()-this.utcOffset()),b=K(b),"year"===b||"month"===b||"quarter"===b?(g=gc(this,d),"quarter"===b?g/=3:"year"===b&&(g/=12)):(f=this-d,g="second"===b?f/1e3:"minute"===b?f/6e4:"hour"===b?f/36e5:"day"===b?(f-e)/864e5:"week"===b?(f-e)/6048e5:f),c?g:t(g)):NaN):NaN}function gc(a,b){var c,d,e=12*(b.year()-a.year())+(b.month()-a.month()),f=a.clone().add(e,"months");return b-f<0?(c=a.clone().add(e-1,"months"),d=(b-f)/(f-c)):(c=a.clone().add(e+1,"months"),d=(b-f)/(c-f)),-(e+d)||0}function hc(){return this.clone().locale("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")}function ic(){if(!this.isValid())return null;var a=this.clone().utc();return a.year()<0||a.year()>9999?X(a,"YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]"):z(Date.prototype.toISOString)?this.toDate().toISOString():X(a,"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")}function jc(){if(!this.isValid())return"moment.invalid(/* "+this._i+" */)";var a="moment",b="";this.isLocal()||(a=0===this.utcOffset()?"moment.utc":"moment.parseZone",b="Z");var c="["+a+'("]',d=0<=this.year()&&this.year()<=9999?"YYYY":"YYYYYY",e="-MM-DD[T]HH:mm:ss.SSS",f=b+'[")]';return this.format(c+d+e+f)}function kc(b){b||(b=this.isUtc()?a.defaultFormatUtc:a.defaultFormat);var c=X(this,b);return this.localeData().postformat(c)}function lc(a,b){return this.isValid()&&(s(a)&&a.isValid()||tb(a).isValid())?Sb({to:this,from:a}).locale(this.locale()).humanize(!b):this.localeData().invalidDate()}function mc(a){return this.from(tb(),a)}function nc(a,b){return this.isValid()&&(s(a)&&a.isValid()||tb(a).isValid())?Sb({from:this,to:a}).locale(this.locale()).humanize(!b):this.localeData().invalidDate()}function oc(a){return this.to(tb(),a)}function pc(a){var b;return void 0===a?this._locale._abbr:(b=bb(a),null!=b&&(this._locale=b),this)}function qc(){return this._locale}function rc(a){switch(a=K(a)){case"year":this.month(0);case"quarter":case"month":this.date(1);case"week":case"isoWeek":case"day":case"date":this.hours(0);case"hour":this.minutes(0);case"minute":this.seconds(0);case"second":this.milliseconds(0)}return"week"===a&&this.weekday(0),"isoWeek"===a&&this.isoWeekday(1),"quarter"===a&&this.month(3*Math.floor(this.month()/3)),this}function sc(a){return a=K(a),void 0===a||"millisecond"===a?this:("date"===a&&(a="day"),this.startOf(a).add(1,"isoWeek"===a?"week":a).subtract(1,"ms"))}function tc(){return this._d.valueOf()-6e4*(this._offset||0)}function uc(){return Math.floor(this.valueOf()/1e3)}function vc(){return new Date(this.valueOf())}function wc(){var a=this;return[a.year(),a.month(),a.date(),a.hour(),a.minute(),a.second(),a.millisecond()]}function xc(){var a=this;return{years:a.year(),months:a.month(),date:a.date(),hours:a.hours(),minutes:a.minutes(),seconds:a.seconds(),milliseconds:a.milliseconds()}}function yc(){return this.isValid()?this.toISOString():null}function zc(){return o(this)}function Ac(){
-return k({},n(this))}function Bc(){return n(this).overflow}function Cc(){return{input:this._i,format:this._f,locale:this._locale,isUTC:this._isUTC,strict:this._strict}}function Dc(a,b){U(0,[a,a.length],0,b)}function Ec(a){return Ic.call(this,a,this.week(),this.weekday(),this.localeData()._week.dow,this.localeData()._week.doy)}function Fc(a){return Ic.call(this,a,this.isoWeek(),this.isoWeekday(),1,4)}function Gc(){return xa(this.year(),1,4)}function Hc(){var a=this.localeData()._week;return xa(this.year(),a.dow,a.doy)}function Ic(a,b,c,d,e){var f;return null==a?wa(this,d,e).year:(f=xa(a,d,e),b>f&&(b=f),Jc.call(this,a,b,c,d,e))}function Jc(a,b,c,d,e){var f=va(a,b,c,d,e),g=ta(f.year,0,f.dayOfYear);return this.year(g.getUTCFullYear()),this.month(g.getUTCMonth()),this.date(g.getUTCDate()),this}function Kc(a){return null==a?Math.ceil((this.month()+1)/3):this.month(3*(a-1)+this.month()%3)}function Lc(a){var b=Math.round((this.clone().startOf("day")-this.clone().startOf("year"))/864e5)+1;return null==a?b:this.add(a-b,"d")}function Mc(a,b){b[ke]=u(1e3*("0."+a))}function Nc(){return this._isUTC?"UTC":""}function Oc(){return this._isUTC?"Coordinated Universal Time":""}function Pc(a){return tb(1e3*a)}function Qc(){return tb.apply(null,arguments).parseZone()}function Rc(a){return a}function Sc(a,b,c,d){var e=bb(),f=l().set(d,b);return e[c](f,a)}function Tc(a,b,c){if(g(a)&&(b=a,a=void 0),a=a||"",null!=b)return Sc(a,b,c,"month");var d,e=[];for(d=0;d<12;d++)e[d]=Sc(a,d,c,"month");return e}function Uc(a,b,c,d){"boolean"==typeof a?(g(b)&&(c=b,b=void 0),b=b||""):(b=a,c=b,a=!1,g(b)&&(c=b,b=void 0),b=b||"");var e=bb(),f=a?e._week.dow:0;if(null!=c)return Sc(b,(c+f)%7,d,"day");var h,i=[];for(h=0;h<7;h++)i[h]=Sc(b,(h+f)%7,d,"day");return i}function Vc(a,b){return Tc(a,b,"months")}function Wc(a,b){return Tc(a,b,"monthsShort")}function Xc(a,b,c){return Uc(a,b,c,"weekdays")}function Yc(a,b,c){return Uc(a,b,c,"weekdaysShort")}function Zc(a,b,c){return Uc(a,b,c,"weekdaysMin")}function $c(){var a=this._data;return this._milliseconds=df(this._milliseconds),this._days=df(this._days),this._months=df(this._months),a.milliseconds=df(a.milliseconds),a.seconds=df(a.seconds),a.minutes=df(a.minutes),a.hours=df(a.hours),a.months=df(a.months),a.years=df(a.years),this}function _c(a,b,c,d){var e=Sb(b,c);return a._milliseconds+=d*e._milliseconds,a._days+=d*e._days,a._months+=d*e._months,a._bubble()}function ad(a,b){return _c(this,a,b,1)}function bd(a,b){return _c(this,a,b,-1)}function cd(a){return a<0?Math.floor(a):Math.ceil(a)}function dd(){var a,b,c,d,e,f=this._milliseconds,g=this._days,h=this._months,i=this._data;return f>=0&&g>=0&&h>=0||f<=0&&g<=0&&h<=0||(f+=864e5*cd(fd(h)+g),g=0,h=0),i.milliseconds=f%1e3,a=t(f/1e3),i.seconds=a%60,b=t(a/60),i.minutes=b%60,c=t(b/60),i.hours=c%24,g+=t(c/24),e=t(ed(g)),h+=e,g-=cd(fd(e)),d=t(h/12),h%=12,i.days=g,i.months=h,i.years=d,this}function ed(a){return 4800*a/146097}function fd(a){return 146097*a/4800}function gd(a){if(!this.isValid())return NaN;var b,c,d=this._milliseconds;if(a=K(a),"month"===a||"year"===a)return b=this._days+d/864e5,c=this._months+ed(b),"month"===a?c:c/12;switch(b=this._days+Math.round(fd(this._months)),a){case"week":return b/7+d/6048e5;case"day":return b+d/864e5;case"hour":return 24*b+d/36e5;case"minute":return 1440*b+d/6e4;case"second":return 86400*b+d/1e3;case"millisecond":return Math.floor(864e5*b)+d;default:throw new Error("Unknown unit "+a)}}function hd(){return this.isValid()?this._milliseconds+864e5*this._days+this._months%12*2592e6+31536e6*u(this._months/12):NaN}function id(a){return function(){return this.as(a)}}function jd(a){return a=K(a),this.isValid()?this[a+"s"]():NaN}function kd(a){return function(){return this.isValid()?this._data[a]:NaN}}function ld(){return t(this.days()/7)}function md(a,b,c,d,e){return e.relativeTime(b||1,!!c,a,d)}function nd(a,b,c){var d=Sb(a).abs(),e=uf(d.as("s")),f=uf(d.as("m")),g=uf(d.as("h")),h=uf(d.as("d")),i=uf(d.as("M")),j=uf(d.as("y")),k=e<=vf.ss&&["s",e]||e<vf.s&&["ss",e]||f<=1&&["m"]||f<vf.m&&["mm",f]||g<=1&&["h"]||g<vf.h&&["hh",g]||h<=1&&["d"]||h<vf.d&&["dd",h]||i<=1&&["M"]||i<vf.M&&["MM",i]||j<=1&&["y"]||["yy",j];return k[2]=b,k[3]=+a>0,k[4]=c,md.apply(null,k)}function od(a){return void 0===a?uf:"function"==typeof a&&(uf=a,!0)}function pd(a,b){return void 0!==vf[a]&&(void 0===b?vf[a]:(vf[a]=b,"s"===a&&(vf.ss=b-1),!0))}function qd(a){if(!this.isValid())return this.localeData().invalidDate();var b=this.localeData(),c=nd(this,!a,b);return a&&(c=b.pastFuture(+this,c)),b.postformat(c)}function rd(){if(!this.isValid())return this.localeData().invalidDate();var a,b,c,d=wf(this._milliseconds)/1e3,e=wf(this._days),f=wf(this._months);a=t(d/60),b=t(a/60),d%=60,a%=60,c=t(f/12),f%=12;var g=c,h=f,i=e,j=b,k=a,l=d,m=this.asSeconds();return m?(m<0?"-":"")+"P"+(g?g+"Y":"")+(h?h+"M":"")+(i?i+"D":"")+(j||k||l?"T":"")+(j?j+"H":"")+(k?k+"M":"")+(l?l+"S":""):"P0D"}var sd,td;td=Array.prototype.some?Array.prototype.some:function(a){for(var b=Object(this),c=b.length>>>0,d=0;d<c;d++)if(d in b&&a.call(this,b[d],d,b))return!0;return!1};var ud=td,vd=a.momentProperties=[],wd=!1,xd={};a.suppressDeprecationWarnings=!1,a.deprecationHandler=null;var yd;yd=Object.keys?Object.keys:function(a){var b,c=[];for(b in a)j(a,b)&&c.push(b);return c};var zd,Ad=yd,Bd={sameDay:"[Today at] LT",nextDay:"[Tomorrow at] LT",nextWeek:"dddd [at] LT",lastDay:"[Yesterday at] LT",lastWeek:"[Last] dddd [at] LT",sameElse:"L"},Cd={LTS:"h:mm:ss A",LT:"h:mm A",L:"MM/DD/YYYY",LL:"MMMM D, YYYY",LLL:"MMMM D, YYYY h:mm A",LLLL:"dddd, MMMM D, YYYY h:mm A"},Dd="Invalid date",Ed="%d",Fd=/\d{1,2}/,Gd={future:"in %s",past:"%s ago",s:"a few seconds",ss:"%d seconds",m:"a minute",mm:"%d minutes",h:"an hour",hh:"%d hours",d:"a day",dd:"%d days",M:"a month",MM:"%d months",y:"a year",yy:"%d years"},Hd={},Id={},Jd=/(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g,Kd=/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,Ld={},Md={},Nd=/\d/,Od=/\d\d/,Pd=/\d{3}/,Qd=/\d{4}/,Rd=/[+-]?\d{6}/,Sd=/\d\d?/,Td=/\d\d\d\d?/,Ud=/\d\d\d\d\d\d?/,Vd=/\d{1,3}/,Wd=/\d{1,4}/,Xd=/[+-]?\d{1,6}/,Yd=/\d+/,Zd=/[+-]?\d+/,$d=/Z|[+-]\d\d:?\d\d/gi,_d=/Z|[+-]\d\d(?::?\d\d)?/gi,ae=/[+-]?\d+(\.\d{1,3})?/,be=/[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i,ce={},de={},ee=0,fe=1,ge=2,he=3,ie=4,je=5,ke=6,le=7,me=8;zd=Array.prototype.indexOf?Array.prototype.indexOf:function(a){var b;for(b=0;b<this.length;++b)if(this[b]===a)return b;return-1};var ne=zd;U("M",["MM",2],"Mo",function(){return this.month()+1}),U("MMM",0,0,function(a){return this.localeData().monthsShort(this,a)}),U("MMMM",0,0,function(a){return this.localeData().months(this,a)}),J("month","M"),M("month",8),Z("M",Sd),Z("MM",Sd,Od),Z("MMM",function(a,b){return b.monthsShortRegex(a)}),Z("MMMM",function(a,b){return b.monthsRegex(a)}),ba(["M","MM"],function(a,b){b[fe]=u(a)-1}),ba(["MMM","MMMM"],function(a,b,c,d){var e=c._locale.monthsParse(a,d,c._strict);null!=e?b[fe]=e:n(c).invalidMonth=a});var oe=/D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/,pe="January_February_March_April_May_June_July_August_September_October_November_December".split("_"),qe="Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),re=be,se=be;U("Y",0,0,function(){var a=this.year();return a<=9999?""+a:"+"+a}),U(0,["YY",2],0,function(){return this.year()%100}),U(0,["YYYY",4],0,"year"),U(0,["YYYYY",5],0,"year"),U(0,["YYYYYY",6,!0],0,"year"),J("year","y"),M("year",1),Z("Y",Zd),Z("YY",Sd,Od),Z("YYYY",Wd,Qd),Z("YYYYY",Xd,Rd),Z("YYYYYY",Xd,Rd),ba(["YYYYY","YYYYYY"],ee),ba("YYYY",function(b,c){c[ee]=2===b.length?a.parseTwoDigitYear(b):u(b)}),ba("YY",function(b,c){c[ee]=a.parseTwoDigitYear(b)}),ba("Y",function(a,b){b[ee]=parseInt(a,10)}),a.parseTwoDigitYear=function(a){return u(a)+(u(a)>68?1900:2e3)};var te=O("FullYear",!0);U("w",["ww",2],"wo","week"),U("W",["WW",2],"Wo","isoWeek"),J("week","w"),J("isoWeek","W"),M("week",5),M("isoWeek",5),Z("w",Sd),Z("ww",Sd,Od),Z("W",Sd),Z("WW",Sd,Od),ca(["w","ww","W","WW"],function(a,b,c,d){b[d.substr(0,1)]=u(a)});var ue={dow:0,doy:6};U("d",0,"do","day"),U("dd",0,0,function(a){return this.localeData().weekdaysMin(this,a)}),U("ddd",0,0,function(a){return this.localeData().weekdaysShort(this,a)}),U("dddd",0,0,function(a){return this.localeData().weekdays(this,a)}),U("e",0,0,"weekday"),U("E",0,0,"isoWeekday"),J("day","d"),J("weekday","e"),J("isoWeekday","E"),M("day",11),M("weekday",11),M("isoWeekday",11),Z("d",Sd),Z("e",Sd),Z("E",Sd),Z("dd",function(a,b){return b.weekdaysMinRegex(a)}),Z("ddd",function(a,b){return b.weekdaysShortRegex(a)}),Z("dddd",function(a,b){return b.weekdaysRegex(a)}),ca(["dd","ddd","dddd"],function(a,b,c,d){var e=c._locale.weekdaysParse(a,d,c._strict);null!=e?b.d=e:n(c).invalidWeekday=a}),ca(["d","e","E"],function(a,b,c,d){b[d]=u(a)});var ve="Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),we="Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),xe="Su_Mo_Tu_We_Th_Fr_Sa".split("_"),ye=be,ze=be,Ae=be;U("H",["HH",2],0,"hour"),U("h",["hh",2],0,Ra),U("k",["kk",2],0,Sa),U("hmm",0,0,function(){return""+Ra.apply(this)+T(this.minutes(),2)}),U("hmmss",0,0,function(){return""+Ra.apply(this)+T(this.minutes(),2)+T(this.seconds(),2)}),U("Hmm",0,0,function(){return""+this.hours()+T(this.minutes(),2)}),U("Hmmss",0,0,function(){return""+this.hours()+T(this.minutes(),2)+T(this.seconds(),2)}),Ta("a",!0),Ta("A",!1),J("hour","h"),M("hour",13),Z("a",Ua),Z("A",Ua),Z("H",Sd),Z("h",Sd),Z("k",Sd),Z("HH",Sd,Od),Z("hh",Sd,Od),Z("kk",Sd,Od),Z("hmm",Td),Z("hmmss",Ud),Z("Hmm",Td),Z("Hmmss",Ud),ba(["H","HH"],he),ba(["k","kk"],function(a,b,c){var d=u(a);b[he]=24===d?0:d}),ba(["a","A"],function(a,b,c){c._isPm=c._locale.isPM(a),c._meridiem=a}),ba(["h","hh"],function(a,b,c){b[he]=u(a),n(c).bigHour=!0}),ba("hmm",function(a,b,c){var d=a.length-2;b[he]=u(a.substr(0,d)),b[ie]=u(a.substr(d)),n(c).bigHour=!0}),ba("hmmss",function(a,b,c){var d=a.length-4,e=a.length-2;b[he]=u(a.substr(0,d)),b[ie]=u(a.substr(d,2)),b[je]=u(a.substr(e)),n(c).bigHour=!0}),ba("Hmm",function(a,b,c){var d=a.length-2;b[he]=u(a.substr(0,d)),b[ie]=u(a.substr(d))}),ba("Hmmss",function(a,b,c){var d=a.length-4,e=a.length-2;b[he]=u(a.substr(0,d)),b[ie]=u(a.substr(d,2)),b[je]=u(a.substr(e))});var Be,Ce=/[ap]\.?m?\.?/i,De=O("Hours",!0),Ee={calendar:Bd,longDateFormat:Cd,invalidDate:Dd,ordinal:Ed,dayOfMonthOrdinalParse:Fd,relativeTime:Gd,months:pe,monthsShort:qe,week:ue,weekdays:ve,weekdaysMin:xe,weekdaysShort:we,meridiemParse:Ce},Fe={},Ge={},He=/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,Ie=/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,Je=/Z|[+-]\d\d(?::?\d\d)?/,Ke=[["YYYYYY-MM-DD",/[+-]\d{6}-\d\d-\d\d/],["YYYY-MM-DD",/\d{4}-\d\d-\d\d/],["GGGG-[W]WW-E",/\d{4}-W\d\d-\d/],["GGGG-[W]WW",/\d{4}-W\d\d/,!1],["YYYY-DDD",/\d{4}-\d{3}/],["YYYY-MM",/\d{4}-\d\d/,!1],["YYYYYYMMDD",/[+-]\d{10}/],["YYYYMMDD",/\d{8}/],["GGGG[W]WWE",/\d{4}W\d{3}/],["GGGG[W]WW",/\d{4}W\d{2}/,!1],["YYYYDDD",/\d{7}/]],Le=[["HH:mm:ss.SSSS",/\d\d:\d\d:\d\d\.\d+/],["HH:mm:ss,SSSS",/\d\d:\d\d:\d\d,\d+/],["HH:mm:ss",/\d\d:\d\d:\d\d/],["HH:mm",/\d\d:\d\d/],["HHmmss.SSSS",/\d\d\d\d\d\d\.\d+/],["HHmmss,SSSS",/\d\d\d\d\d\d,\d+/],["HHmmss",/\d\d\d\d\d\d/],["HHmm",/\d\d\d\d/],["HH",/\d\d/]],Me=/^\/?Date\((\-?\d+)/i,Ne=/^((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d?\d\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(?:\d\d)?\d\d\s)(\d\d:\d\d)(\:\d\d)?(\s(?:UT|GMT|[ECMP][SD]T|[A-IK-Za-ik-z]|[+-]\d{4}))$/;a.createFromInputFallback=x("value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are discouraged and will be removed in an upcoming major release. Please refer to http://momentjs.com/guides/#/warnings/js-date/ for more info.",function(a){a._d=new Date(a._i+(a._useUTC?" UTC":""))}),a.ISO_8601=function(){},a.RFC_2822=function(){};var Oe=x("moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var a=tb.apply(null,arguments);return this.isValid()&&a.isValid()?a<this?this:a:p()}),Pe=x("moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var a=tb.apply(null,arguments);return this.isValid()&&a.isValid()?a>this?this:a:p()}),Qe=function(){return Date.now?Date.now():+new Date},Re=["year","quarter","month","week","day","hour","minute","second","millisecond"];Db("Z",":"),Db("ZZ",""),Z("Z",_d),Z("ZZ",_d),ba(["Z","ZZ"],function(a,b,c){c._useUTC=!0,c._tzm=Eb(_d,a)});var Se=/([\+\-]|\d\d)/gi;a.updateOffset=function(){};var Te=/^(\-)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/,Ue=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/;Sb.fn=Ab.prototype,Sb.invalid=zb;var Ve=Wb(1,"add"),We=Wb(-1,"subtract");a.defaultFormat="YYYY-MM-DDTHH:mm:ssZ",a.defaultFormatUtc="YYYY-MM-DDTHH:mm:ss[Z]";var Xe=x("moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.",function(a){return void 0===a?this.localeData():this.locale(a)});U(0,["gg",2],0,function(){return this.weekYear()%100}),U(0,["GG",2],0,function(){return this.isoWeekYear()%100}),Dc("gggg","weekYear"),Dc("ggggg","weekYear"),Dc("GGGG","isoWeekYear"),Dc("GGGGG","isoWeekYear"),J("weekYear","gg"),J("isoWeekYear","GG"),M("weekYear",1),M("isoWeekYear",1),Z("G",Zd),Z("g",Zd),Z("GG",Sd,Od),Z("gg",Sd,Od),Z("GGGG",Wd,Qd),Z("gggg",Wd,Qd),Z("GGGGG",Xd,Rd),Z("ggggg",Xd,Rd),ca(["gggg","ggggg","GGGG","GGGGG"],function(a,b,c,d){b[d.substr(0,2)]=u(a)}),ca(["gg","GG"],function(b,c,d,e){c[e]=a.parseTwoDigitYear(b)}),U("Q",0,"Qo","quarter"),J("quarter","Q"),M("quarter",7),Z("Q",Nd),ba("Q",function(a,b){b[fe]=3*(u(a)-1)}),U("D",["DD",2],"Do","date"),J("date","D"),M("date",9),Z("D",Sd),Z("DD",Sd,Od),Z("Do",function(a,b){return a?b._dayOfMonthOrdinalParse||b._ordinalParse:b._dayOfMonthOrdinalParseLenient}),ba(["D","DD"],ge),ba("Do",function(a,b){b[ge]=u(a.match(Sd)[0],10)});var Ye=O("Date",!0);U("DDD",["DDDD",3],"DDDo","dayOfYear"),J("dayOfYear","DDD"),M("dayOfYear",4),Z("DDD",Vd),Z("DDDD",Pd),ba(["DDD","DDDD"],function(a,b,c){c._dayOfYear=u(a)}),U("m",["mm",2],0,"minute"),J("minute","m"),M("minute",14),Z("m",Sd),Z("mm",Sd,Od),ba(["m","mm"],ie);var Ze=O("Minutes",!1);U("s",["ss",2],0,"second"),J("second","s"),M("second",15),Z("s",Sd),Z("ss",Sd,Od),ba(["s","ss"],je);var $e=O("Seconds",!1);U("S",0,0,function(){return~~(this.millisecond()/100)}),U(0,["SS",2],0,function(){return~~(this.millisecond()/10)}),U(0,["SSS",3],0,"millisecond"),U(0,["SSSS",4],0,function(){return 10*this.millisecond()}),U(0,["SSSSS",5],0,function(){return 100*this.millisecond()}),U(0,["SSSSSS",6],0,function(){return 1e3*this.millisecond()}),U(0,["SSSSSSS",7],0,function(){return 1e4*this.millisecond()}),U(0,["SSSSSSSS",8],0,function(){return 1e5*this.millisecond()}),U(0,["SSSSSSSSS",9],0,function(){return 1e6*this.millisecond()}),J("millisecond","ms"),M("millisecond",16),Z("S",Vd,Nd),Z("SS",Vd,Od),Z("SSS",Vd,Pd);var _e;for(_e="SSSS";_e.length<=9;_e+="S")Z(_e,Yd);for(_e="S";_e.length<=9;_e+="S")ba(_e,Mc);var af=O("Milliseconds",!1);U("z",0,0,"zoneAbbr"),U("zz",0,0,"zoneName");var bf=r.prototype;bf.add=Ve,bf.calendar=Zb,bf.clone=$b,bf.diff=fc,bf.endOf=sc,bf.format=kc,bf.from=lc,bf.fromNow=mc,bf.to=nc,bf.toNow=oc,bf.get=R,bf.invalidAt=Bc,bf.isAfter=_b,bf.isBefore=ac,bf.isBetween=bc,bf.isSame=cc,bf.isSameOrAfter=dc,bf.isSameOrBefore=ec,bf.isValid=zc,bf.lang=Xe,bf.locale=pc,bf.localeData=qc,bf.max=Pe,bf.min=Oe,bf.parsingFlags=Ac,bf.set=S,bf.startOf=rc,bf.subtract=We,bf.toArray=wc,bf.toObject=xc,bf.toDate=vc,bf.toISOString=ic,bf.inspect=jc,bf.toJSON=yc,bf.toString=hc,bf.unix=uc,bf.valueOf=tc,bf.creationData=Cc,bf.year=te,bf.isLeapYear=ra,bf.weekYear=Ec,bf.isoWeekYear=Fc,bf.quarter=bf.quarters=Kc,bf.month=ka,bf.daysInMonth=la,bf.week=bf.weeks=Ba,bf.isoWeek=bf.isoWeeks=Ca,bf.weeksInYear=Hc,bf.isoWeeksInYear=Gc,bf.date=Ye,bf.day=bf.days=Ka,bf.weekday=La,bf.isoWeekday=Ma,bf.dayOfYear=Lc,bf.hour=bf.hours=De,bf.minute=bf.minutes=Ze,bf.second=bf.seconds=$e,bf.millisecond=bf.milliseconds=af,bf.utcOffset=Hb,bf.utc=Jb,bf.local=Kb,bf.parseZone=Lb,bf.hasAlignedHourOffset=Mb,bf.isDST=Nb,bf.isLocal=Pb,bf.isUtcOffset=Qb,bf.isUtc=Rb,bf.isUTC=Rb,bf.zoneAbbr=Nc,bf.zoneName=Oc,bf.dates=x("dates accessor is deprecated. Use date instead.",Ye),bf.months=x("months accessor is deprecated. Use month instead",ka),bf.years=x("years accessor is deprecated. Use year instead",te),bf.zone=x("moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/",Ib),bf.isDSTShifted=x("isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information",Ob);var cf=C.prototype;cf.calendar=D,cf.longDateFormat=E,cf.invalidDate=F,cf.ordinal=G,cf.preparse=Rc,cf.postformat=Rc,cf.relativeTime=H,cf.pastFuture=I,cf.set=A,cf.months=fa,cf.monthsShort=ga,cf.monthsParse=ia,cf.monthsRegex=na,cf.monthsShortRegex=ma,cf.week=ya,cf.firstDayOfYear=Aa,cf.firstDayOfWeek=za,cf.weekdays=Fa,cf.weekdaysMin=Ha,cf.weekdaysShort=Ga,cf.weekdaysParse=Ja,cf.weekdaysRegex=Na,cf.weekdaysShortRegex=Oa,cf.weekdaysMinRegex=Pa,cf.isPM=Va,cf.meridiem=Wa,$a("en",{dayOfMonthOrdinalParse:/\d{1,2}(th|st|nd|rd)/,ordinal:function(a){var b=a%10,c=1===u(a%100/10)?"th":1===b?"st":2===b?"nd":3===b?"rd":"th";return a+c}}),a.lang=x("moment.lang is deprecated. Use moment.locale instead.",$a),a.langData=x("moment.langData is deprecated. Use moment.localeData instead.",bb);var df=Math.abs,ef=id("ms"),ff=id("s"),gf=id("m"),hf=id("h"),jf=id("d"),kf=id("w"),lf=id("M"),mf=id("y"),nf=kd("milliseconds"),of=kd("seconds"),pf=kd("minutes"),qf=kd("hours"),rf=kd("days"),sf=kd("months"),tf=kd("years"),uf=Math.round,vf={ss:44,s:45,m:45,h:22,d:26,M:11},wf=Math.abs,xf=Ab.prototype;return xf.isValid=yb,xf.abs=$c,xf.add=ad,xf.subtract=bd,xf.as=gd,xf.asMilliseconds=ef,xf.asSeconds=ff,xf.asMinutes=gf,xf.asHours=hf,xf.asDays=jf,xf.asWeeks=kf,xf.asMonths=lf,xf.asYears=mf,xf.valueOf=hd,xf._bubble=dd,xf.get=jd,xf.milliseconds=nf,xf.seconds=of,xf.minutes=pf,xf.hours=qf,xf.days=rf,xf.weeks=ld,xf.months=sf,xf.years=tf,xf.humanize=qd,xf.toISOString=rd,xf.toString=rd,xf.toJSON=rd,xf.locale=pc,xf.localeData=qc,xf.toIsoString=x("toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)",rd),xf.lang=Xe,U("X",0,0,"unix"),U("x",0,0,"valueOf"),Z("x",Zd),Z("X",ae),ba("X",function(a,b,c){c._d=new Date(1e3*parseFloat(a,10))}),ba("x",function(a,b,c){c._d=new Date(u(a))}),a.version="2.18.1",b(tb),a.fn=bf,a.min=vb,a.max=wb,a.now=Qe,a.utc=l,a.unix=Pc,a.months=Vc,a.isDate=h,a.locale=$a,a.invalid=p,a.duration=Sb,a.isMoment=s,a.weekdays=Xc,a.parseZone=Qc,a.localeData=bb,a.isDuration=Bb,a.monthsShort=Wc,a.weekdaysMin=Zc,a.defineLocale=_a,a.updateLocale=ab,a.locales=cb,a.weekdaysShort=Yc,a.normalizeUnits=K,a.relativeTimeRounding=od,a.relativeTimeThreshold=pd,a.calendarFormat=Yb,a.prototype=bf,a});
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):e.moment=t()}(this,function(){"use strict";function e(){return Qe.apply(null,arguments)}function t(e){return e instanceof Array||"[object Array]"===Object.prototype.toString.call(e)}function n(e){return null!=e&&"[object Object]"===Object.prototype.toString.call(e)}function s(e){return void 0===e}function i(e){return"number"==typeof e||"[object Number]"===Object.prototype.toString.call(e)}function r(e){return e instanceof Date||"[object Date]"===Object.prototype.toString.call(e)}function a(e,t){var n,s=[];for(n=0;n<e.length;++n)s.push(t(e[n],n));return s}function o(e,t){return Object.prototype.hasOwnProperty.call(e,t)}function u(e,t){for(var n in t)o(t,n)&&(e[n]=t[n]);return o(t,"toString")&&(e.toString=t.toString),o(t,"valueOf")&&(e.valueOf=t.valueOf),e}function l(e,t,n,s){return ge(e,t,n,s,!0).utc()}function d(e){return null==e._pf&&(e._pf={empty:!1,unusedTokens:[],unusedInput:[],overflow:-2,charsLeftOver:0,nullInput:!1,invalidMonth:null,invalidFormat:!1,userInvalidated:!1,iso:!1,parsedDateParts:[],meridiem:null,rfc2822:!1,weekdayMismatch:!1}),e._pf}function h(e){if(null==e._isValid){var t=d(e),n=Xe.call(t.parsedDateParts,function(e){return null!=e}),s=!isNaN(e._d.getTime())&&t.overflow<0&&!t.empty&&!t.invalidMonth&&!t.invalidWeekday&&!t.weekdayMismatch&&!t.nullInput&&!t.invalidFormat&&!t.userInvalidated&&(!t.meridiem||t.meridiem&&n);if(e._strict&&(s=s&&0===t.charsLeftOver&&0===t.unusedTokens.length&&void 0===t.bigHour),null!=Object.isFrozen&&Object.isFrozen(e))return s;e._isValid=s}return e._isValid}function c(e){var t=l(NaN);return null!=e?u(d(t),e):d(t).userInvalidated=!0,t}function f(e,t){var n,i,r;if(s(t._isAMomentObject)||(e._isAMomentObject=t._isAMomentObject),s(t._i)||(e._i=t._i),s(t._f)||(e._f=t._f),s(t._l)||(e._l=t._l),s(t._strict)||(e._strict=t._strict),s(t._tzm)||(e._tzm=t._tzm),s(t._isUTC)||(e._isUTC=t._isUTC),s(t._offset)||(e._offset=t._offset),s(t._pf)||(e._pf=d(t)),s(t._locale)||(e._locale=t._locale),Ke.length>0)for(n=0;n<Ke.length;n++)s(r=t[i=Ke[n]])||(e[i]=r);return e}function m(t){f(this,t),this._d=new Date(null!=t._d?t._d.getTime():NaN),this.isValid()||(this._d=new Date(NaN)),!1===et&&(et=!0,e.updateOffset(this),et=!1)}function _(e){return e instanceof m||null!=e&&null!=e._isAMomentObject}function y(e){return e<0?Math.ceil(e)||0:Math.floor(e)}function g(e){var t=+e,n=0;return 0!==t&&isFinite(t)&&(n=y(t)),n}function p(e,t,n){var s,i=Math.min(e.length,t.length),r=Math.abs(e.length-t.length),a=0;for(s=0;s<i;s++)(n&&e[s]!==t[s]||!n&&g(e[s])!==g(t[s]))&&a++;return a+r}function w(t){!1===e.suppressDeprecationWarnings&&"undefined"!=typeof console&&console.warn&&console.warn("Deprecation warning: "+t)}function v(t,n){var s=!0;return u(function(){if(null!=e.deprecationHandler&&e.deprecationHandler(null,t),s){for(var i,r=[],a=0;a<arguments.length;a++){if(i="","object"==typeof arguments[a]){i+="\n["+a+"] ";for(var o in arguments[0])i+=o+": "+arguments[0][o]+", ";i=i.slice(0,-2)}else i=arguments[a];r.push(i)}w(t+"\nArguments: "+Array.prototype.slice.call(r).join("")+"\n"+(new Error).stack),s=!1}return n.apply(this,arguments)},n)}function M(t,n){null!=e.deprecationHandler&&e.deprecationHandler(t,n),tt[t]||(w(n),tt[t]=!0)}function S(e){return e instanceof Function||"[object Function]"===Object.prototype.toString.call(e)}function D(e,t){var s,i=u({},e);for(s in t)o(t,s)&&(n(e[s])&&n(t[s])?(i[s]={},u(i[s],e[s]),u(i[s],t[s])):null!=t[s]?i[s]=t[s]:delete i[s]);for(s in e)o(e,s)&&!o(t,s)&&n(e[s])&&(i[s]=u({},i[s]));return i}function k(e){null!=e&&this.set(e)}function Y(e,t){var n=e.toLowerCase();st[n]=st[n+"s"]=st[t]=e}function O(e){return"string"==typeof e?st[e]||st[e.toLowerCase()]:void 0}function T(e){var t,n,s={};for(n in e)o(e,n)&&(t=O(n))&&(s[t]=e[n]);return s}function x(e,t){it[e]=t}function b(e,t,n){var s=""+Math.abs(e),i=t-s.length;return(e>=0?n?"+":"":"-")+Math.pow(10,Math.max(0,i)).toString().substr(1)+s}function P(e,t,n,s){var i=s;"string"==typeof s&&(i=function(){return this[s]()}),e&&(ut[e]=i),t&&(ut[t[0]]=function(){return b(i.apply(this,arguments),t[1],t[2])}),n&&(ut[n]=function(){return this.localeData().ordinal(i.apply(this,arguments),e)})}function W(e){return e.match(/\[[\s\S]/)?e.replace(/^\[|\]$/g,""):e.replace(/\\/g,"")}function H(e,t){return e.isValid()?(t=R(t,e.localeData()),ot[t]=ot[t]||function(e){var t,n,s=e.match(rt);for(t=0,n=s.length;t<n;t++)ut[s[t]]?s[t]=ut[s[t]]:s[t]=W(s[t]);return function(t){var i,r="";for(i=0;i<n;i++)r+=S(s[i])?s[i].call(t,e):s[i];return r}}(t),ot[t](e)):e.localeData().invalidDate()}function R(e,t){function n(e){return t.longDateFormat(e)||e}var s=5;for(at.lastIndex=0;s>=0&&at.test(e);)e=e.replace(at,n),at.lastIndex=0,s-=1;return e}function C(e,t,n){Yt[e]=S(t)?t:function(e,s){return e&&n?n:t}}function F(e,t){return o(Yt,e)?Yt[e](t._strict,t._locale):new RegExp(function(e){return U(e.replace("\\","").replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g,function(e,t,n,s,i){return t||n||s||i}))}(e))}function U(e){return e.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&")}function L(e,t){var n,s=t;for("string"==typeof e&&(e=[e]),i(t)&&(s=function(e,n){n[t]=g(e)}),n=0;n<e.length;n++)Ot[e[n]]=s}function N(e,t){L(e,function(e,n,s,i){s._w=s._w||{},t(e,s._w,s,i)})}function G(e,t,n){null!=t&&o(Ot,e)&&Ot[e](t,n._a,n,e)}function V(e){return E(e)?366:365}function E(e){return e%4==0&&e%100!=0||e%400==0}function I(t,n){return function(s){return null!=s?(j(this,t,s),e.updateOffset(this,n),this):A(this,t)}}function A(e,t){return e.isValid()?e._d["get"+(e._isUTC?"UTC":"")+t]():NaN}function j(e,t,n){e.isValid()&&!isNaN(n)&&("FullYear"===t&&E(e.year())&&1===e.month()&&29===e.date()?e._d["set"+(e._isUTC?"UTC":"")+t](n,e.month(),Z(n,e.month())):e._d["set"+(e._isUTC?"UTC":"")+t](n))}function Z(e,t){if(isNaN(e)||isNaN(t))return NaN;var n=function(e,t){return(e%t+t)%t}(t,12);return e+=(t-n)/12,1===n?E(e)?29:28:31-n%7%2}function z(e,t){var n;if(!e.isValid())return e;if("string"==typeof t)if(/^\d+$/.test(t))t=g(t);else if(t=e.localeData().monthsParse(t),!i(t))return e;return n=Math.min(e.date(),Z(e.year(),t)),e._d["set"+(e._isUTC?"UTC":"")+"Month"](t,n),e}function $(t){return null!=t?(z(this,t),e.updateOffset(this,!0),this):A(this,"Month")}function q(){function e(e,t){return t.length-e.length}var t,n,s=[],i=[],r=[];for(t=0;t<12;t++)n=l([2e3,t]),s.push(this.monthsShort(n,"")),i.push(this.months(n,"")),r.push(this.months(n,"")),r.push(this.monthsShort(n,""));for(s.sort(e),i.sort(e),r.sort(e),t=0;t<12;t++)s[t]=U(s[t]),i[t]=U(i[t]);for(t=0;t<24;t++)r[t]=U(r[t]);this._monthsRegex=new RegExp("^("+r.join("|")+")","i"),this._monthsShortRegex=this._monthsRegex,this._monthsStrictRegex=new RegExp("^("+i.join("|")+")","i"),this._monthsShortStrictRegex=new RegExp("^("+s.join("|")+")","i")}function J(e){var t=new Date(Date.UTC.apply(null,arguments));return e<100&&e>=0&&isFinite(t.getUTCFullYear())&&t.setUTCFullYear(e),t}function B(e,t,n){var s=7+t-n;return-((7+J(e,0,s).getUTCDay()-t)%7)+s-1}function Q(e,t,n,s,i){var r,a,o=1+7*(t-1)+(7+n-s)%7+B(e,s,i);return o<=0?a=V(r=e-1)+o:o>V(e)?(r=e+1,a=o-V(e)):(r=e,a=o),{year:r,dayOfYear:a}}function X(e,t,n){var s,i,r=B(e.year(),t,n),a=Math.floor((e.dayOfYear()-r-1)/7)+1;return a<1?s=a+K(i=e.year()-1,t,n):a>K(e.year(),t,n)?(s=a-K(e.year(),t,n),i=e.year()+1):(i=e.year(),s=a),{week:s,year:i}}function K(e,t,n){var s=B(e,t,n),i=B(e+1,t,n);return(V(e)-s+i)/7}function ee(){function e(e,t){return t.length-e.length}var t,n,s,i,r,a=[],o=[],u=[],d=[];for(t=0;t<7;t++)n=l([2e3,1]).day(t),s=this.weekdaysMin(n,""),i=this.weekdaysShort(n,""),r=this.weekdays(n,""),a.push(s),o.push(i),u.push(r),d.push(s),d.push(i),d.push(r);for(a.sort(e),o.sort(e),u.sort(e),d.sort(e),t=0;t<7;t++)o[t]=U(o[t]),u[t]=U(u[t]),d[t]=U(d[t]);this._weekdaysRegex=new RegExp("^("+d.join("|")+")","i"),this._weekdaysShortRegex=this._weekdaysRegex,this._weekdaysMinRegex=this._weekdaysRegex,this._weekdaysStrictRegex=new RegExp("^("+u.join("|")+")","i"),this._weekdaysShortStrictRegex=new RegExp("^("+o.join("|")+")","i"),this._weekdaysMinStrictRegex=new RegExp("^("+a.join("|")+")","i")}function te(){return this.hours()%12||12}function ne(e,t){P(e,0,0,function(){return this.localeData().meridiem(this.hours(),this.minutes(),t)})}function se(e,t){return t._meridiemParse}function ie(e){return e?e.toLowerCase().replace("_","-"):e}function re(e){var t=null;if(!Xt[e]&&"undefined"!=typeof module&&module&&module.exports)try{t=Jt._abbr;require("./locale/"+e),ae(t)}catch(e){}return Xt[e]}function ae(e,t){var n;return e&&(n=s(t)?ue(e):oe(e,t))&&(Jt=n),Jt._abbr}function oe(e,t){if(null!==t){var n=Qt;if(t.abbr=e,null!=Xt[e])M("defineLocaleOverride","use moment.updateLocale(localeName, config) to change an existing locale. moment.defineLocale(localeName, config) should only be used for creating a new locale See http://momentjs.com/guides/#/warnings/define-locale/ for more info."),n=Xt[e]._config;else if(null!=t.parentLocale){if(null==Xt[t.parentLocale])return Kt[t.parentLocale]||(Kt[t.parentLocale]=[]),Kt[t.parentLocale].push({name:e,config:t}),null;n=Xt[t.parentLocale]._config}return Xt[e]=new k(D(n,t)),Kt[e]&&Kt[e].forEach(function(e){oe(e.name,e.config)}),ae(e),Xt[e]}return delete Xt[e],null}function ue(e){var n;if(e&&e._locale&&e._locale._abbr&&(e=e._locale._abbr),!e)return Jt;if(!t(e)){if(n=re(e))return n;e=[e]}return function(e){for(var t,n,s,i,r=0;r<e.length;){for(t=(i=ie(e[r]).split("-")).length,n=(n=ie(e[r+1]))?n.split("-"):null;t>0;){if(s=re(i.slice(0,t).join("-")))return s;if(n&&n.length>=t&&p(i,n,!0)>=t-1)break;t--}r++}return null}(e)}function le(e){var t,n=e._a;return n&&-2===d(e).overflow&&(t=n[xt]<0||n[xt]>11?xt:n[bt]<1||n[bt]>Z(n[Tt],n[xt])?bt:n[Pt]<0||n[Pt]>24||24===n[Pt]&&(0!==n[Wt]||0!==n[Ht]||0!==n[Rt])?Pt:n[Wt]<0||n[Wt]>59?Wt:n[Ht]<0||n[Ht]>59?Ht:n[Rt]<0||n[Rt]>999?Rt:-1,d(e)._overflowDayOfYear&&(t<Tt||t>bt)&&(t=bt),d(e)._overflowWeeks&&-1===t&&(t=Ct),d(e)._overflowWeekday&&-1===t&&(t=Ft),d(e).overflow=t),e}function de(e,t,n){return null!=e?e:null!=t?t:n}function he(t){var n,s,i,r,a,o=[];if(!t._d){for(i=function(t){var n=new Date(e.now());return t._useUTC?[n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()]:[n.getFullYear(),n.getMonth(),n.getDate()]}(t),t._w&&null==t._a[bt]&&null==t._a[xt]&&function(e){var t,n,s,i,r,a,o,u;if(null!=(t=e._w).GG||null!=t.W||null!=t.E)r=1,a=4,n=de(t.GG,e._a[Tt],X(pe(),1,4).year),s=de(t.W,1),((i=de(t.E,1))<1||i>7)&&(u=!0);else{r=e._locale._week.dow,a=e._locale._week.doy;var l=X(pe(),r,a);n=de(t.gg,e._a[Tt],l.year),s=de(t.w,l.week),null!=t.d?((i=t.d)<0||i>6)&&(u=!0):null!=t.e?(i=t.e+r,(t.e<0||t.e>6)&&(u=!0)):i=r}s<1||s>K(n,r,a)?d(e)._overflowWeeks=!0:null!=u?d(e)._overflowWeekday=!0:(o=Q(n,s,i,r,a),e._a[Tt]=o.year,e._dayOfYear=o.dayOfYear)}(t),null!=t._dayOfYear&&(a=de(t._a[Tt],i[Tt]),(t._dayOfYear>V(a)||0===t._dayOfYear)&&(d(t)._overflowDayOfYear=!0),s=J(a,0,t._dayOfYear),t._a[xt]=s.getUTCMonth(),t._a[bt]=s.getUTCDate()),n=0;n<3&&null==t._a[n];++n)t._a[n]=o[n]=i[n];for(;n<7;n++)t._a[n]=o[n]=null==t._a[n]?2===n?1:0:t._a[n];24===t._a[Pt]&&0===t._a[Wt]&&0===t._a[Ht]&&0===t._a[Rt]&&(t._nextDay=!0,t._a[Pt]=0),t._d=(t._useUTC?J:function(e,t,n,s,i,r,a){var o=new Date(e,t,n,s,i,r,a);return e<100&&e>=0&&isFinite(o.getFullYear())&&o.setFullYear(e),o}).apply(null,o),r=t._useUTC?t._d.getUTCDay():t._d.getDay(),null!=t._tzm&&t._d.setUTCMinutes(t._d.getUTCMinutes()-t._tzm),t._nextDay&&(t._a[Pt]=24),t._w&&void 0!==t._w.d&&t._w.d!==r&&(d(t).weekdayMismatch=!0)}}function ce(e){var t,n,s,i,r,a,o=e._i,u=en.exec(o)||tn.exec(o);if(u){for(d(e).iso=!0,t=0,n=sn.length;t<n;t++)if(sn[t][1].exec(u[1])){i=sn[t][0],s=!1!==sn[t][2];break}if(null==i)return void(e._isValid=!1);if(u[3]){for(t=0,n=rn.length;t<n;t++)if(rn[t][1].exec(u[3])){r=(u[2]||" ")+rn[t][0];break}if(null==r)return void(e._isValid=!1)}if(!s&&null!=r)return void(e._isValid=!1);if(u[4]){if(!nn.exec(u[4]))return void(e._isValid=!1);a="Z"}e._f=i+(r||"")+(a||""),_e(e)}else e._isValid=!1}function fe(e,t,n,s,i,r){var a=[function(e){var t=parseInt(e,10);{if(t<=49)return 2e3+t;if(t<=999)return 1900+t}return t}(e),Vt.indexOf(t),parseInt(n,10),parseInt(s,10),parseInt(i,10)];return r&&a.push(parseInt(r,10)),a}function me(e){var t=on.exec(function(e){return e.replace(/\([^)]*\)|[\n\t]/g," ").replace(/(\s\s+)/g," ").trim()}(e._i));if(t){var n=fe(t[4],t[3],t[2],t[5],t[6],t[7]);if(!function(e,t,n){if(e&&jt.indexOf(e)!==new Date(t[0],t[1],t[2]).getDay())return d(n).weekdayMismatch=!0,n._isValid=!1,!1;return!0}(t[1],n,e))return;e._a=n,e._tzm=function(e,t,n){if(e)return un[e];if(t)return 0;var s=parseInt(n,10),i=s%100;return(s-i)/100*60+i}(t[8],t[9],t[10]),e._d=J.apply(null,e._a),e._d.setUTCMinutes(e._d.getUTCMinutes()-e._tzm),d(e).rfc2822=!0}else e._isValid=!1}function _e(t){if(t._f!==e.ISO_8601)if(t._f!==e.RFC_2822){t._a=[],d(t).empty=!0;var n,s,i,r,a,o=""+t._i,u=o.length,l=0;for(i=R(t._f,t._locale).match(rt)||[],n=0;n<i.length;n++)r=i[n],(s=(o.match(F(r,t))||[])[0])&&((a=o.substr(0,o.indexOf(s))).length>0&&d(t).unusedInput.push(a),o=o.slice(o.indexOf(s)+s.length),l+=s.length),ut[r]?(s?d(t).empty=!1:d(t).unusedTokens.push(r),G(r,s,t)):t._strict&&!s&&d(t).unusedTokens.push(r);d(t).charsLeftOver=u-l,o.length>0&&d(t).unusedInput.push(o),t._a[Pt]<=12&&!0===d(t).bigHour&&t._a[Pt]>0&&(d(t).bigHour=void 0),d(t).parsedDateParts=t._a.slice(0),d(t).meridiem=t._meridiem,t._a[Pt]=function(e,t,n){var s;if(null==n)return t;return null!=e.meridiemHour?e.meridiemHour(t,n):null!=e.isPM?((s=e.isPM(n))&&t<12&&(t+=12),s||12!==t||(t=0),t):t}(t._locale,t._a[Pt],t._meridiem),he(t),le(t)}else me(t);else ce(t)}function ye(o){var l=o._i,y=o._f;return o._locale=o._locale||ue(o._l),null===l||void 0===y&&""===l?c({nullInput:!0}):("string"==typeof l&&(o._i=l=o._locale.preparse(l)),_(l)?new m(le(l)):(r(l)?o._d=l:t(y)?function(e){var t,n,s,i,r;if(0===e._f.length)return d(e).invalidFormat=!0,void(e._d=new Date(NaN));for(i=0;i<e._f.length;i++)r=0,t=f({},e),null!=e._useUTC&&(t._useUTC=e._useUTC),t._f=e._f[i],_e(t),h(t)&&(r+=d(t).charsLeftOver,r+=10*d(t).unusedTokens.length,d(t).score=r,(null==s||r<s)&&(s=r,n=t));u(e,n||t)}(o):y?_e(o):function(o){var u=o._i;s(u)?o._d=new Date(e.now()):r(u)?o._d=new Date(u.valueOf()):"string"==typeof u?function(t){var n=an.exec(t._i);null===n?(ce(t),!1===t._isValid&&(delete t._isValid,me(t),!1===t._isValid&&(delete t._isValid,e.createFromInputFallback(t)))):t._d=new Date(+n[1])}(o):t(u)?(o._a=a(u.slice(0),function(e){return parseInt(e,10)}),he(o)):n(u)?function(e){if(!e._d){var t=T(e._i);e._a=a([t.year,t.month,t.day||t.date,t.hour,t.minute,t.second,t.millisecond],function(e){return e&&parseInt(e,10)}),he(e)}}(o):i(u)?o._d=new Date(u):e.createFromInputFallback(o)}(o),h(o)||(o._d=null),o))}function ge(e,s,i,r,a){var o={};return!0!==i&&!1!==i||(r=i,i=void 0),(n(e)&&function(e){if(Object.getOwnPropertyNames)return 0===Object.getOwnPropertyNames(e).length;var t;for(t in e)if(e.hasOwnProperty(t))return!1;return!0}(e)||t(e)&&0===e.length)&&(e=void 0),o._isAMomentObject=!0,o._useUTC=o._isUTC=a,o._l=i,o._i=e,o._f=s,o._strict=r,function(e){var t=new m(le(ye(e)));return t._nextDay&&(t.add(1,"d"),t._nextDay=void 0),t}(o)}function pe(e,t,n,s){return ge(e,t,n,s,!1)}function we(e,n){var s,i;if(1===n.length&&t(n[0])&&(n=n[0]),!n.length)return pe();for(s=n[0],i=1;i<n.length;++i)n[i].isValid()&&!n[i][e](s)||(s=n[i]);return s}function ve(e){var t=T(e),n=t.year||0,s=t.quarter||0,i=t.month||0,r=t.week||0,a=t.day||0,o=t.hour||0,u=t.minute||0,l=t.second||0,d=t.millisecond||0;this._isValid=function(e){for(var t in e)if(-1===Ut.call(hn,t)||null!=e[t]&&isNaN(e[t]))return!1;for(var n=!1,s=0;s<hn.length;++s)if(e[hn[s]]){if(n)return!1;parseFloat(e[hn[s]])!==g(e[hn[s]])&&(n=!0)}return!0}(t),this._milliseconds=+d+1e3*l+6e4*u+1e3*o*60*60,this._days=+a+7*r,this._months=+i+3*s+12*n,this._data={},this._locale=ue(),this._bubble()}function Me(e){return e instanceof ve}function Se(e){return e<0?-1*Math.round(-1*e):Math.round(e)}function De(e,t){P(e,0,0,function(){var e=this.utcOffset(),n="+";return e<0&&(e=-e,n="-"),n+b(~~(e/60),2)+t+b(~~e%60,2)})}function ke(e,t){var n=(t||"").match(e);if(null===n)return null;var s=((n[n.length-1]||[])+"").match(cn)||["-",0,0],i=60*s[1]+g(s[2]);return 0===i?0:"+"===s[0]?i:-i}function Ye(t,n){var s,i;return n._isUTC?(s=n.clone(),i=(_(t)||r(t)?t.valueOf():pe(t).valueOf())-s.valueOf(),s._d.setTime(s._d.valueOf()+i),e.updateOffset(s,!1),s):pe(t).local()}function Oe(e){return 15*-Math.round(e._d.getTimezoneOffset()/15)}function Te(){return!!this.isValid()&&(this._isUTC&&0===this._offset)}function xe(e,t){var n,s,r,a=e,u=null;return Me(e)?a={ms:e._milliseconds,d:e._days,M:e._months}:i(e)?(a={},t?a[t]=e:a.milliseconds=e):(u=fn.exec(e))?(n="-"===u[1]?-1:1,a={y:0,d:g(u[bt])*n,h:g(u[Pt])*n,m:g(u[Wt])*n,s:g(u[Ht])*n,ms:g(Se(1e3*u[Rt]))*n}):(u=mn.exec(e))?(n="-"===u[1]?-1:(u[1],1),a={y:be(u[2],n),M:be(u[3],n),w:be(u[4],n),d:be(u[5],n),h:be(u[6],n),m:be(u[7],n),s:be(u[8],n)}):null==a?a={}:"object"==typeof a&&("from"in a||"to"in a)&&(r=function(e,t){var n;if(!e.isValid()||!t.isValid())return{milliseconds:0,months:0};t=Ye(t,e),e.isBefore(t)?n=Pe(e,t):((n=Pe(t,e)).milliseconds=-n.milliseconds,n.months=-n.months);return n}(pe(a.from),pe(a.to)),(a={}).ms=r.milliseconds,a.M=r.months),s=new ve(a),Me(e)&&o(e,"_locale")&&(s._locale=e._locale),s}function be(e,t){var n=e&&parseFloat(e.replace(",","."));return(isNaN(n)?0:n)*t}function Pe(e,t){var n={milliseconds:0,months:0};return n.months=t.month()-e.month()+12*(t.year()-e.year()),e.clone().add(n.months,"M").isAfter(t)&&--n.months,n.milliseconds=+t-+e.clone().add(n.months,"M"),n}function We(e,t){return function(n,s){var i,r;return null===s||isNaN(+s)||(M(t,"moment()."+t+"(period, number) is deprecated. Please use moment()."+t+"(number, period). See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info."),r=n,n=s,s=r),n="string"==typeof n?+n:n,i=xe(n,s),He(this,i,e),this}}function He(t,n,s,i){var r=n._milliseconds,a=Se(n._days),o=Se(n._months);t.isValid()&&(i=null==i||i,o&&z(t,A(t,"Month")+o*s),a&&j(t,"Date",A(t,"Date")+a*s),r&&t._d.setTime(t._d.valueOf()+r*s),i&&e.updateOffset(t,a||o))}function Re(e,t){var n,s=12*(t.year()-e.year())+(t.month()-e.month()),i=e.clone().add(s,"months");return n=t-i<0?(t-i)/(i-e.clone().add(s-1,"months")):(t-i)/(e.clone().add(s+1,"months")-i),-(s+n)||0}function Ce(e){var t;return void 0===e?this._locale._abbr:(null!=(t=ue(e))&&(this._locale=t),this)}function Fe(){return this._locale}function Ue(e,t){P(0,[e,e.length],0,t)}function Le(e,t,n,s,i){var r;return null==e?X(this,s,i).year:(r=K(e,s,i),t>r&&(t=r),function(e,t,n,s,i){var r=Q(e,t,n,s,i),a=J(r.year,0,r.dayOfYear);return this.year(a.getUTCFullYear()),this.month(a.getUTCMonth()),this.date(a.getUTCDate()),this}.call(this,e,t,n,s,i))}function Ne(e,t){t[Rt]=g(1e3*("0."+e))}function Ge(e){return e}function Ve(e,t,n,s){var i=ue(),r=l().set(s,t);return i[n](r,e)}function Ee(e,t,n){if(i(e)&&(t=e,e=void 0),e=e||"",null!=t)return Ve(e,t,n,"month");var s,r=[];for(s=0;s<12;s++)r[s]=Ve(e,s,n,"month");return r}function Ie(e,t,n,s){"boolean"==typeof e?(i(t)&&(n=t,t=void 0),t=t||""):(n=t=e,e=!1,i(t)&&(n=t,t=void 0),t=t||"");var r=ue(),a=e?r._week.dow:0;if(null!=n)return Ve(t,(n+a)%7,s,"day");var o,u=[];for(o=0;o<7;o++)u[o]=Ve(t,(o+a)%7,s,"day");return u}function Ae(e,t,n,s){var i=xe(t,n);return e._milliseconds+=s*i._milliseconds,e._days+=s*i._days,e._months+=s*i._months,e._bubble()}function je(e){return e<0?Math.floor(e):Math.ceil(e)}function Ze(e){return 4800*e/146097}function ze(e){return 146097*e/4800}function $e(e){return function(){return this.as(e)}}function qe(e){return function(){return this.isValid()?this._data[e]:NaN}}function Je(e){return(e>0)-(e<0)||+e}function Be(){if(!this.isValid())return this.localeData().invalidDate();var e,t,n=An(this._milliseconds)/1e3,s=An(this._days),i=An(this._months);t=y((e=y(n/60))/60),n%=60,e%=60;var r=y(i/12),a=i%=12,o=s,u=t,l=e,d=n?n.toFixed(3).replace(/\.?0+$/,""):"",h=this.asSeconds();if(!h)return"P0D";var c=h<0?"-":"",f=Je(this._months)!==Je(h)?"-":"",m=Je(this._days)!==Je(h)?"-":"",_=Je(this._milliseconds)!==Je(h)?"-":"";return c+"P"+(r?f+r+"Y":"")+(a?f+a+"M":"")+(o?m+o+"D":"")+(u||l||d?"T":"")+(u?_+u+"H":"")+(l?_+l+"M":"")+(d?_+d+"S":"")}var Qe,Xe;Xe=Array.prototype.some?Array.prototype.some:function(e){for(var t=Object(this),n=t.length>>>0,s=0;s<n;s++)if(s in t&&e.call(this,t[s],s,t))return!0;return!1};var Ke=e.momentProperties=[],et=!1,tt={};e.suppressDeprecationWarnings=!1,e.deprecationHandler=null;var nt;nt=Object.keys?Object.keys:function(e){var t,n=[];for(t in e)o(e,t)&&n.push(t);return n};var st={},it={},rt=/(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g,at=/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,ot={},ut={},lt=/\d/,dt=/\d\d/,ht=/\d{3}/,ct=/\d{4}/,ft=/[+-]?\d{6}/,mt=/\d\d?/,_t=/\d\d\d\d?/,yt=/\d\d\d\d\d\d?/,gt=/\d{1,3}/,pt=/\d{1,4}/,wt=/[+-]?\d{1,6}/,vt=/\d+/,Mt=/[+-]?\d+/,St=/Z|[+-]\d\d:?\d\d/gi,Dt=/Z|[+-]\d\d(?::?\d\d)?/gi,kt=/[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i,Yt={},Ot={},Tt=0,xt=1,bt=2,Pt=3,Wt=4,Ht=5,Rt=6,Ct=7,Ft=8;P("Y",0,0,function(){var e=this.year();return e<=9999?""+e:"+"+e}),P(0,["YY",2],0,function(){return this.year()%100}),P(0,["YYYY",4],0,"year"),P(0,["YYYYY",5],0,"year"),P(0,["YYYYYY",6,!0],0,"year"),Y("year","y"),x("year",1),C("Y",Mt),C("YY",mt,dt),C("YYYY",pt,ct),C("YYYYY",wt,ft),C("YYYYYY",wt,ft),L(["YYYYY","YYYYYY"],Tt),L("YYYY",function(t,n){n[Tt]=2===t.length?e.parseTwoDigitYear(t):g(t)}),L("YY",function(t,n){n[Tt]=e.parseTwoDigitYear(t)}),L("Y",function(e,t){t[Tt]=parseInt(e,10)}),e.parseTwoDigitYear=function(e){return g(e)+(g(e)>68?1900:2e3)};var Ut,Lt=I("FullYear",!0);Ut=Array.prototype.indexOf?Array.prototype.indexOf:function(e){var t;for(t=0;t<this.length;++t)if(this[t]===e)return t;return-1},P("M",["MM",2],"Mo",function(){return this.month()+1}),P("MMM",0,0,function(e){return this.localeData().monthsShort(this,e)}),P("MMMM",0,0,function(e){return this.localeData().months(this,e)}),Y("month","M"),x("month",8),C("M",mt),C("MM",mt,dt),C("MMM",function(e,t){return t.monthsShortRegex(e)}),C("MMMM",function(e,t){return t.monthsRegex(e)}),L(["M","MM"],function(e,t){t[xt]=g(e)-1}),L(["MMM","MMMM"],function(e,t,n,s){var i=n._locale.monthsParse(e,s,n._strict);null!=i?t[xt]=i:d(n).invalidMonth=e});var Nt=/D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/,Gt="January_February_March_April_May_June_July_August_September_October_November_December".split("_"),Vt="Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),Et=kt,It=kt;P("w",["ww",2],"wo","week"),P("W",["WW",2],"Wo","isoWeek"),Y("week","w"),Y("isoWeek","W"),x("week",5),x("isoWeek",5),C("w",mt),C("ww",mt,dt),C("W",mt),C("WW",mt,dt),N(["w","ww","W","WW"],function(e,t,n,s){t[s.substr(0,1)]=g(e)});P("d",0,"do","day"),P("dd",0,0,function(e){return this.localeData().weekdaysMin(this,e)}),P("ddd",0,0,function(e){return this.localeData().weekdaysShort(this,e)}),P("dddd",0,0,function(e){return this.localeData().weekdays(this,e)}),P("e",0,0,"weekday"),P("E",0,0,"isoWeekday"),Y("day","d"),Y("weekday","e"),Y("isoWeekday","E"),x("day",11),x("weekday",11),x("isoWeekday",11),C("d",mt),C("e",mt),C("E",mt),C("dd",function(e,t){return t.weekdaysMinRegex(e)}),C("ddd",function(e,t){return t.weekdaysShortRegex(e)}),C("dddd",function(e,t){return t.weekdaysRegex(e)}),N(["dd","ddd","dddd"],function(e,t,n,s){var i=n._locale.weekdaysParse(e,s,n._strict);null!=i?t.d=i:d(n).invalidWeekday=e}),N(["d","e","E"],function(e,t,n,s){t[s]=g(e)});var At="Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),jt="Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),Zt="Su_Mo_Tu_We_Th_Fr_Sa".split("_"),zt=kt,$t=kt,qt=kt;P("H",["HH",2],0,"hour"),P("h",["hh",2],0,te),P("k",["kk",2],0,function(){return this.hours()||24}),P("hmm",0,0,function(){return""+te.apply(this)+b(this.minutes(),2)}),P("hmmss",0,0,function(){return""+te.apply(this)+b(this.minutes(),2)+b(this.seconds(),2)}),P("Hmm",0,0,function(){return""+this.hours()+b(this.minutes(),2)}),P("Hmmss",0,0,function(){return""+this.hours()+b(this.minutes(),2)+b(this.seconds(),2)}),ne("a",!0),ne("A",!1),Y("hour","h"),x("hour",13),C("a",se),C("A",se),C("H",mt),C("h",mt),C("k",mt),C("HH",mt,dt),C("hh",mt,dt),C("kk",mt,dt),C("hmm",_t),C("hmmss",yt),C("Hmm",_t),C("Hmmss",yt),L(["H","HH"],Pt),L(["k","kk"],function(e,t,n){var s=g(e);t[Pt]=24===s?0:s}),L(["a","A"],function(e,t,n){n._isPm=n._locale.isPM(e),n._meridiem=e}),L(["h","hh"],function(e,t,n){t[Pt]=g(e),d(n).bigHour=!0}),L("hmm",function(e,t,n){var s=e.length-2;t[Pt]=g(e.substr(0,s)),t[Wt]=g(e.substr(s)),d(n).bigHour=!0}),L("hmmss",function(e,t,n){var s=e.length-4,i=e.length-2;t[Pt]=g(e.substr(0,s)),t[Wt]=g(e.substr(s,2)),t[Ht]=g(e.substr(i)),d(n).bigHour=!0}),L("Hmm",function(e,t,n){var s=e.length-2;t[Pt]=g(e.substr(0,s)),t[Wt]=g(e.substr(s))}),L("Hmmss",function(e,t,n){var s=e.length-4,i=e.length-2;t[Pt]=g(e.substr(0,s)),t[Wt]=g(e.substr(s,2)),t[Ht]=g(e.substr(i))});var Jt,Bt=I("Hours",!0),Qt={calendar:{sameDay:"[Today at] LT",nextDay:"[Tomorrow at] LT",nextWeek:"dddd [at] LT",lastDay:"[Yesterday at] LT",lastWeek:"[Last] dddd [at] LT",sameElse:"L"},longDateFormat:{LTS:"h:mm:ss A",LT:"h:mm A",L:"MM/DD/YYYY",LL:"MMMM D, YYYY",LLL:"MMMM D, YYYY h:mm A",LLLL:"dddd, MMMM D, YYYY h:mm A"},invalidDate:"Invalid date",ordinal:"%d",dayOfMonthOrdinalParse:/\d{1,2}/,relativeTime:{future:"in %s",past:"%s ago",s:"a few seconds",ss:"%d seconds",m:"a minute",mm:"%d minutes",h:"an hour",hh:"%d hours",d:"a day",dd:"%d days",M:"a month",MM:"%d months",y:"a year",yy:"%d years"},months:Gt,monthsShort:Vt,week:{dow:0,doy:6},weekdays:At,weekdaysMin:Zt,weekdaysShort:jt,meridiemParse:/[ap]\.?m?\.?/i},Xt={},Kt={},en=/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,tn=/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,nn=/Z|[+-]\d\d(?::?\d\d)?/,sn=[["YYYYYY-MM-DD",/[+-]\d{6}-\d\d-\d\d/],["YYYY-MM-DD",/\d{4}-\d\d-\d\d/],["GGGG-[W]WW-E",/\d{4}-W\d\d-\d/],["GGGG-[W]WW",/\d{4}-W\d\d/,!1],["YYYY-DDD",/\d{4}-\d{3}/],["YYYY-MM",/\d{4}-\d\d/,!1],["YYYYYYMMDD",/[+-]\d{10}/],["YYYYMMDD",/\d{8}/],["GGGG[W]WWE",/\d{4}W\d{3}/],["GGGG[W]WW",/\d{4}W\d{2}/,!1],["YYYYDDD",/\d{7}/]],rn=[["HH:mm:ss.SSSS",/\d\d:\d\d:\d\d\.\d+/],["HH:mm:ss,SSSS",/\d\d:\d\d:\d\d,\d+/],["HH:mm:ss",/\d\d:\d\d:\d\d/],["HH:mm",/\d\d:\d\d/],["HHmmss.SSSS",/\d\d\d\d\d\d\.\d+/],["HHmmss,SSSS",/\d\d\d\d\d\d,\d+/],["HHmmss",/\d\d\d\d\d\d/],["HHmm",/\d\d\d\d/],["HH",/\d\d/]],an=/^\/?Date\((\-?\d+)/i,on=/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,un={UT:0,GMT:0,EDT:-240,EST:-300,CDT:-300,CST:-360,MDT:-360,MST:-420,PDT:-420,PST:-480};e.createFromInputFallback=v("value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are discouraged and will be removed in an upcoming major release. Please refer to http://momentjs.com/guides/#/warnings/js-date/ for more info.",function(e){e._d=new Date(e._i+(e._useUTC?" UTC":""))}),e.ISO_8601=function(){},e.RFC_2822=function(){};var ln=v("moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var e=pe.apply(null,arguments);return this.isValid()&&e.isValid()?e<this?this:e:c()}),dn=v("moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var e=pe.apply(null,arguments);return this.isValid()&&e.isValid()?e>this?this:e:c()}),hn=["year","quarter","month","week","day","hour","minute","second","millisecond"];De("Z",":"),De("ZZ",""),C("Z",Dt),C("ZZ",Dt),L(["Z","ZZ"],function(e,t,n){n._useUTC=!0,n._tzm=ke(Dt,e)});var cn=/([\+\-]|\d\d)/gi;e.updateOffset=function(){};var fn=/^(\-|\+)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/,mn=/^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;xe.fn=ve.prototype,xe.invalid=function(){return xe(NaN)};var _n=We(1,"add"),yn=We(-1,"subtract");e.defaultFormat="YYYY-MM-DDTHH:mm:ssZ",e.defaultFormatUtc="YYYY-MM-DDTHH:mm:ss[Z]";var gn=v("moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.",function(e){return void 0===e?this.localeData():this.locale(e)});P(0,["gg",2],0,function(){return this.weekYear()%100}),P(0,["GG",2],0,function(){return this.isoWeekYear()%100}),Ue("gggg","weekYear"),Ue("ggggg","weekYear"),Ue("GGGG","isoWeekYear"),Ue("GGGGG","isoWeekYear"),Y("weekYear","gg"),Y("isoWeekYear","GG"),x("weekYear",1),x("isoWeekYear",1),C("G",Mt),C("g",Mt),C("GG",mt,dt),C("gg",mt,dt),C("GGGG",pt,ct),C("gggg",pt,ct),C("GGGGG",wt,ft),C("ggggg",wt,ft),N(["gggg","ggggg","GGGG","GGGGG"],function(e,t,n,s){t[s.substr(0,2)]=g(e)}),N(["gg","GG"],function(t,n,s,i){n[i]=e.parseTwoDigitYear(t)}),P("Q",0,"Qo","quarter"),Y("quarter","Q"),x("quarter",7),C("Q",lt),L("Q",function(e,t){t[xt]=3*(g(e)-1)}),P("D",["DD",2],"Do","date"),Y("date","D"),x("date",9),C("D",mt),C("DD",mt,dt),C("Do",function(e,t){return e?t._dayOfMonthOrdinalParse||t._ordinalParse:t._dayOfMonthOrdinalParseLenient}),L(["D","DD"],bt),L("Do",function(e,t){t[bt]=g(e.match(mt)[0])});var pn=I("Date",!0);P("DDD",["DDDD",3],"DDDo","dayOfYear"),Y("dayOfYear","DDD"),x("dayOfYear",4),C("DDD",gt),C("DDDD",ht),L(["DDD","DDDD"],function(e,t,n){n._dayOfYear=g(e)}),P("m",["mm",2],0,"minute"),Y("minute","m"),x("minute",14),C("m",mt),C("mm",mt,dt),L(["m","mm"],Wt);var wn=I("Minutes",!1);P("s",["ss",2],0,"second"),Y("second","s"),x("second",15),C("s",mt),C("ss",mt,dt),L(["s","ss"],Ht);var vn=I("Seconds",!1);P("S",0,0,function(){return~~(this.millisecond()/100)}),P(0,["SS",2],0,function(){return~~(this.millisecond()/10)}),P(0,["SSS",3],0,"millisecond"),P(0,["SSSS",4],0,function(){return 10*this.millisecond()}),P(0,["SSSSS",5],0,function(){return 100*this.millisecond()}),P(0,["SSSSSS",6],0,function(){return 1e3*this.millisecond()}),P(0,["SSSSSSS",7],0,function(){return 1e4*this.millisecond()}),P(0,["SSSSSSSS",8],0,function(){return 1e5*this.millisecond()}),P(0,["SSSSSSSSS",9],0,function(){return 1e6*this.millisecond()}),Y("millisecond","ms"),x("millisecond",16),C("S",gt,lt),C("SS",gt,dt),C("SSS",gt,ht);var Mn;for(Mn="SSSS";Mn.length<=9;Mn+="S")C(Mn,vt);for(Mn="S";Mn.length<=9;Mn+="S")L(Mn,Ne);var Sn=I("Milliseconds",!1);P("z",0,0,"zoneAbbr"),P("zz",0,0,"zoneName");var Dn=m.prototype;Dn.add=_n,Dn.calendar=function(t,n){var s=t||pe(),i=Ye(s,this).startOf("day"),r=e.calendarFormat(this,i)||"sameElse",a=n&&(S(n[r])?n[r].call(this,s):n[r]);return this.format(a||this.localeData().calendar(r,this,pe(s)))},Dn.clone=function(){return new m(this)},Dn.diff=function(e,t,n){var s,i,r;if(!this.isValid())return NaN;if(!(s=Ye(e,this)).isValid())return NaN;switch(i=6e4*(s.utcOffset()-this.utcOffset()),t=O(t)){case"year":r=Re(this,s)/12;break;case"month":r=Re(this,s);break;case"quarter":r=Re(this,s)/3;break;case"second":r=(this-s)/1e3;break;case"minute":r=(this-s)/6e4;break;case"hour":r=(this-s)/36e5;break;case"day":r=(this-s-i)/864e5;break;case"week":r=(this-s-i)/6048e5;break;default:r=this-s}return n?r:y(r)},Dn.endOf=function(e){return void 0===(e=O(e))||"millisecond"===e?this:("date"===e&&(e="day"),this.startOf(e).add(1,"isoWeek"===e?"week":e).subtract(1,"ms"))},Dn.format=function(t){t||(t=this.isUtc()?e.defaultFormatUtc:e.defaultFormat);var n=H(this,t);return this.localeData().postformat(n)},Dn.from=function(e,t){return this.isValid()&&(_(e)&&e.isValid()||pe(e).isValid())?xe({to:this,from:e}).locale(this.locale()).humanize(!t):this.localeData().invalidDate()},Dn.fromNow=function(e){return this.from(pe(),e)},Dn.to=function(e,t){return this.isValid()&&(_(e)&&e.isValid()||pe(e).isValid())?xe({from:this,to:e}).locale(this.locale()).humanize(!t):this.localeData().invalidDate()},Dn.toNow=function(e){return this.to(pe(),e)},Dn.get=function(e){return e=O(e),S(this[e])?this[e]():this},Dn.invalidAt=function(){return d(this).overflow},Dn.isAfter=function(e,t){var n=_(e)?e:pe(e);return!(!this.isValid()||!n.isValid())&&("millisecond"===(t=O(s(t)?"millisecond":t))?this.valueOf()>n.valueOf():n.valueOf()<this.clone().startOf(t).valueOf())},Dn.isBefore=function(e,t){var n=_(e)?e:pe(e);return!(!this.isValid()||!n.isValid())&&("millisecond"===(t=O(s(t)?"millisecond":t))?this.valueOf()<n.valueOf():this.clone().endOf(t).valueOf()<n.valueOf())},Dn.isBetween=function(e,t,n,s){return("("===(s=s||"()")[0]?this.isAfter(e,n):!this.isBefore(e,n))&&(")"===s[1]?this.isBefore(t,n):!this.isAfter(t,n))},Dn.isSame=function(e,t){var n,s=_(e)?e:pe(e);return!(!this.isValid()||!s.isValid())&&("millisecond"===(t=O(t||"millisecond"))?this.valueOf()===s.valueOf():(n=s.valueOf(),this.clone().startOf(t).valueOf()<=n&&n<=this.clone().endOf(t).valueOf()))},Dn.isSameOrAfter=function(e,t){return this.isSame(e,t)||this.isAfter(e,t)},Dn.isSameOrBefore=function(e,t){return this.isSame(e,t)||this.isBefore(e,t)},Dn.isValid=function(){return h(this)},Dn.lang=gn,Dn.locale=Ce,Dn.localeData=Fe,Dn.max=dn,Dn.min=ln,Dn.parsingFlags=function(){return u({},d(this))},Dn.set=function(e,t){if("object"==typeof e)for(var n=function(e){var t=[];for(var n in e)t.push({unit:n,priority:it[n]});return t.sort(function(e,t){return e.priority-t.priority}),t}(e=T(e)),s=0;s<n.length;s++)this[n[s].unit](e[n[s].unit]);else if(e=O(e),S(this[e]))return this[e](t);return this},Dn.startOf=function(e){switch(e=O(e)){case"year":this.month(0);case"quarter":case"month":this.date(1);case"week":case"isoWeek":case"day":case"date":this.hours(0);case"hour":this.minutes(0);case"minute":this.seconds(0);case"second":this.milliseconds(0)}return"week"===e&&this.weekday(0),"isoWeek"===e&&this.isoWeekday(1),"quarter"===e&&this.month(3*Math.floor(this.month()/3)),this},Dn.subtract=yn,Dn.toArray=function(){return[this.year(),this.month(),this.date(),this.hour(),this.minute(),this.second(),this.millisecond()]},Dn.toObject=function(){return{years:this.year(),months:this.month(),date:this.date(),hours:this.hours(),minutes:this.minutes(),seconds:this.seconds(),milliseconds:this.milliseconds()}},Dn.toDate=function(){return new Date(this.valueOf())},Dn.toISOString=function(e){if(!this.isValid())return null;var t=!0!==e,n=t?this.clone().utc():this;return n.year()<0||n.year()>9999?H(n,t?"YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]":"YYYYYY-MM-DD[T]HH:mm:ss.SSSZ"):S(Date.prototype.toISOString)?t?this.toDate().toISOString():new Date(this._d.valueOf()).toISOString().replace("Z",H(n,"Z")):H(n,t?"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]":"YYYY-MM-DD[T]HH:mm:ss.SSSZ")},Dn.inspect=function(){if(!this.isValid())return"moment.invalid(/* "+this._i+" */)";var e="moment",t="";this.isLocal()||(e=0===this.utcOffset()?"moment.utc":"moment.parseZone",t="Z");var n="["+e+'("]',s=0<=this.year()&&this.year()<=9999?"YYYY":"YYYYYY",i=t+'[")]';return this.format(n+s+"-MM-DD[T]HH:mm:ss.SSS"+i)},Dn.toJSON=function(){return this.isValid()?this.toISOString():null},Dn.toString=function(){return this.clone().locale("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")},Dn.unix=function(){return Math.floor(this.valueOf()/1e3)},Dn.valueOf=function(){return this._d.valueOf()-6e4*(this._offset||0)},Dn.creationData=function(){return{input:this._i,format:this._f,locale:this._locale,isUTC:this._isUTC,strict:this._strict}},Dn.year=Lt,Dn.isLeapYear=function(){return E(this.year())},Dn.weekYear=function(e){return Le.call(this,e,this.week(),this.weekday(),this.localeData()._week.dow,this.localeData()._week.doy)},Dn.isoWeekYear=function(e){return Le.call(this,e,this.isoWeek(),this.isoWeekday(),1,4)},Dn.quarter=Dn.quarters=function(e){return null==e?Math.ceil((this.month()+1)/3):this.month(3*(e-1)+this.month()%3)},Dn.month=$,Dn.daysInMonth=function(){return Z(this.year(),this.month())},Dn.week=Dn.weeks=function(e){var t=this.localeData().week(this);return null==e?t:this.add(7*(e-t),"d")},Dn.isoWeek=Dn.isoWeeks=function(e){var t=X(this,1,4).week;return null==e?t:this.add(7*(e-t),"d")},Dn.weeksInYear=function(){var e=this.localeData()._week;return K(this.year(),e.dow,e.doy)},Dn.isoWeeksInYear=function(){return K(this.year(),1,4)},Dn.date=pn,Dn.day=Dn.days=function(e){if(!this.isValid())return null!=e?this:NaN;var t=this._isUTC?this._d.getUTCDay():this._d.getDay();return null!=e?(e=function(e,t){return"string"!=typeof e?e:isNaN(e)?"number"==typeof(e=t.weekdaysParse(e))?e:null:parseInt(e,10)}(e,this.localeData()),this.add(e-t,"d")):t},Dn.weekday=function(e){if(!this.isValid())return null!=e?this:NaN;var t=(this.day()+7-this.localeData()._week.dow)%7;return null==e?t:this.add(e-t,"d")},Dn.isoWeekday=function(e){if(!this.isValid())return null!=e?this:NaN;if(null!=e){var t=function(e,t){return"string"==typeof e?t.weekdaysParse(e)%7||7:isNaN(e)?null:e}(e,this.localeData());return this.day(this.day()%7?t:t-7)}return this.day()||7},Dn.dayOfYear=function(e){var t=Math.round((this.clone().startOf("day")-this.clone().startOf("year"))/864e5)+1;return null==e?t:this.add(e-t,"d")},Dn.hour=Dn.hours=Bt,Dn.minute=Dn.minutes=wn,Dn.second=Dn.seconds=vn,Dn.millisecond=Dn.milliseconds=Sn,Dn.utcOffset=function(t,n,s){var i,r=this._offset||0;if(!this.isValid())return null!=t?this:NaN;if(null!=t){if("string"==typeof t){if(null===(t=ke(Dt,t)))return this}else Math.abs(t)<16&&!s&&(t*=60);return!this._isUTC&&n&&(i=Oe(this)),this._offset=t,this._isUTC=!0,null!=i&&this.add(i,"m"),r!==t&&(!n||this._changeInProgress?He(this,xe(t-r,"m"),1,!1):this._changeInProgress||(this._changeInProgress=!0,e.updateOffset(this,!0),this._changeInProgress=null)),this}return this._isUTC?r:Oe(this)},Dn.utc=function(e){return this.utcOffset(0,e)},Dn.local=function(e){return this._isUTC&&(this.utcOffset(0,e),this._isUTC=!1,e&&this.subtract(Oe(this),"m")),this},Dn.parseZone=function(){if(null!=this._tzm)this.utcOffset(this._tzm,!1,!0);else if("string"==typeof this._i){var e=ke(St,this._i);null!=e?this.utcOffset(e):this.utcOffset(0,!0)}return this},Dn.hasAlignedHourOffset=function(e){return!!this.isValid()&&(e=e?pe(e).utcOffset():0,(this.utcOffset()-e)%60==0)},Dn.isDST=function(){return this.utcOffset()>this.clone().month(0).utcOffset()||this.utcOffset()>this.clone().month(5).utcOffset()},Dn.isLocal=function(){return!!this.isValid()&&!this._isUTC},Dn.isUtcOffset=function(){return!!this.isValid()&&this._isUTC},Dn.isUtc=Te,Dn.isUTC=Te,Dn.zoneAbbr=function(){return this._isUTC?"UTC":""},Dn.zoneName=function(){return this._isUTC?"Coordinated Universal Time":""},Dn.dates=v("dates accessor is deprecated. Use date instead.",pn),Dn.months=v("months accessor is deprecated. Use month instead",$),Dn.years=v("years accessor is deprecated. Use year instead",Lt),Dn.zone=v("moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/",function(e,t){return null!=e?("string"!=typeof e&&(e=-e),this.utcOffset(e,t),this):-this.utcOffset()}),Dn.isDSTShifted=v("isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information",function(){if(!s(this._isDSTShifted))return this._isDSTShifted;var e={};if(f(e,this),(e=ye(e))._a){var t=e._isUTC?l(e._a):pe(e._a);this._isDSTShifted=this.isValid()&&p(e._a,t.toArray())>0}else this._isDSTShifted=!1;return this._isDSTShifted});var kn=k.prototype;kn.calendar=function(e,t,n){var s=this._calendar[e]||this._calendar.sameElse;return S(s)?s.call(t,n):s},kn.longDateFormat=function(e){var t=this._longDateFormat[e],n=this._longDateFormat[e.toUpperCase()];return t||!n?t:(this._longDateFormat[e]=n.replace(/MMMM|MM|DD|dddd/g,function(e){return e.slice(1)}),this._longDateFormat[e])},kn.invalidDate=function(){return this._invalidDate},kn.ordinal=function(e){return this._ordinal.replace("%d",e)},kn.preparse=Ge,kn.postformat=Ge,kn.relativeTime=function(e,t,n,s){var i=this._relativeTime[n];return S(i)?i(e,t,n,s):i.replace(/%d/i,e)},kn.pastFuture=function(e,t){var n=this._relativeTime[e>0?"future":"past"];return S(n)?n(t):n.replace(/%s/i,t)},kn.set=function(e){var t,n;for(n in e)S(t=e[n])?this[n]=t:this["_"+n]=t;this._config=e,this._dayOfMonthOrdinalParseLenient=new RegExp((this._dayOfMonthOrdinalParse.source||this._ordinalParse.source)+"|"+/\d{1,2}/.source)},kn.months=function(e,n){return e?t(this._months)?this._months[e.month()]:this._months[(this._months.isFormat||Nt).test(n)?"format":"standalone"][e.month()]:t(this._months)?this._months:this._months.standalone},kn.monthsShort=function(e,n){return e?t(this._monthsShort)?this._monthsShort[e.month()]:this._monthsShort[Nt.test(n)?"format":"standalone"][e.month()]:t(this._monthsShort)?this._monthsShort:this._monthsShort.standalone},kn.monthsParse=function(e,t,n){var s,i,r;if(this._monthsParseExact)return function(e,t,n){var s,i,r,a=e.toLocaleLowerCase();if(!this._monthsParse)for(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[],s=0;s<12;++s)r=l([2e3,s]),this._shortMonthsParse[s]=this.monthsShort(r,"").toLocaleLowerCase(),this._longMonthsParse[s]=this.months(r,"").toLocaleLowerCase();return n?"MMM"===t?-1!==(i=Ut.call(this._shortMonthsParse,a))?i:null:-1!==(i=Ut.call(this._longMonthsParse,a))?i:null:"MMM"===t?-1!==(i=Ut.call(this._shortMonthsParse,a))?i:-1!==(i=Ut.call(this._longMonthsParse,a))?i:null:-1!==(i=Ut.call(this._longMonthsParse,a))?i:-1!==(i=Ut.call(this._shortMonthsParse,a))?i:null}.call(this,e,t,n);for(this._monthsParse||(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[]),s=0;s<12;s++){if(i=l([2e3,s]),n&&!this._longMonthsParse[s]&&(this._longMonthsParse[s]=new RegExp("^"+this.months(i,"").replace(".","")+"$","i"),this._shortMonthsParse[s]=new RegExp("^"+this.monthsShort(i,"").replace(".","")+"$","i")),n||this._monthsParse[s]||(r="^"+this.months(i,"")+"|^"+this.monthsShort(i,""),this._monthsParse[s]=new RegExp(r.replace(".",""),"i")),n&&"MMMM"===t&&this._longMonthsParse[s].test(e))return s;if(n&&"MMM"===t&&this._shortMonthsParse[s].test(e))return s;if(!n&&this._monthsParse[s].test(e))return s}},kn.monthsRegex=function(e){return this._monthsParseExact?(o(this,"_monthsRegex")||q.call(this),e?this._monthsStrictRegex:this._monthsRegex):(o(this,"_monthsRegex")||(this._monthsRegex=It),this._monthsStrictRegex&&e?this._monthsStrictRegex:this._monthsRegex)},kn.monthsShortRegex=function(e){return this._monthsParseExact?(o(this,"_monthsRegex")||q.call(this),e?this._monthsShortStrictRegex:this._monthsShortRegex):(o(this,"_monthsShortRegex")||(this._monthsShortRegex=Et),this._monthsShortStrictRegex&&e?this._monthsShortStrictRegex:this._monthsShortRegex)},kn.week=function(e){return X(e,this._week.dow,this._week.doy).week},kn.firstDayOfYear=function(){return this._week.doy},kn.firstDayOfWeek=function(){return this._week.dow},kn.weekdays=function(e,n){return e?t(this._weekdays)?this._weekdays[e.day()]:this._weekdays[this._weekdays.isFormat.test(n)?"format":"standalone"][e.day()]:t(this._weekdays)?this._weekdays:this._weekdays.standalone},kn.weekdaysMin=function(e){return e?this._weekdaysMin[e.day()]:this._weekdaysMin},kn.weekdaysShort=function(e){return e?this._weekdaysShort[e.day()]:this._weekdaysShort},kn.weekdaysParse=function(e,t,n){var s,i,r;if(this._weekdaysParseExact)return function(e,t,n){var s,i,r,a=e.toLocaleLowerCase();if(!this._weekdaysParse)for(this._weekdaysParse=[],this._shortWeekdaysParse=[],this._minWeekdaysParse=[],s=0;s<7;++s)r=l([2e3,1]).day(s),this._minWeekdaysParse[s]=this.weekdaysMin(r,"").toLocaleLowerCase(),this._shortWeekdaysParse[s]=this.weekdaysShort(r,"").toLocaleLowerCase(),this._weekdaysParse[s]=this.weekdays(r,"").toLocaleLowerCase();return n?"dddd"===t?-1!==(i=Ut.call(this._weekdaysParse,a))?i:null:"ddd"===t?-1!==(i=Ut.call(this._shortWeekdaysParse,a))?i:null:-1!==(i=Ut.call(this._minWeekdaysParse,a))?i:null:"dddd"===t?-1!==(i=Ut.call(this._weekdaysParse,a))?i:-1!==(i=Ut.call(this._shortWeekdaysParse,a))?i:-1!==(i=Ut.call(this._minWeekdaysParse,a))?i:null:"ddd"===t?-1!==(i=Ut.call(this._shortWeekdaysParse,a))?i:-1!==(i=Ut.call(this._weekdaysParse,a))?i:-1!==(i=Ut.call(this._minWeekdaysParse,a))?i:null:-1!==(i=Ut.call(this._minWeekdaysParse,a))?i:-1!==(i=Ut.call(this._weekdaysParse,a))?i:-1!==(i=Ut.call(this._shortWeekdaysParse,a))?i:null}.call(this,e,t,n);for(this._weekdaysParse||(this._weekdaysParse=[],this._minWeekdaysParse=[],this._shortWeekdaysParse=[],this._fullWeekdaysParse=[]),s=0;s<7;s++){if(i=l([2e3,1]).day(s),n&&!this._fullWeekdaysParse[s]&&(this._fullWeekdaysParse[s]=new RegExp("^"+this.weekdays(i,"").replace(".",".?")+"$","i"),this._shortWeekdaysParse[s]=new RegExp("^"+this.weekdaysShort(i,"").replace(".",".?")+"$","i"),this._minWeekdaysParse[s]=new RegExp("^"+this.weekdaysMin(i,"").replace(".",".?")+"$","i")),this._weekdaysParse[s]||(r="^"+this.weekdays(i,"")+"|^"+this.weekdaysShort(i,"")+"|^"+this.weekdaysMin(i,""),this._weekdaysParse[s]=new RegExp(r.replace(".",""),"i")),n&&"dddd"===t&&this._fullWeekdaysParse[s].test(e))return s;if(n&&"ddd"===t&&this._shortWeekdaysParse[s].test(e))return s;if(n&&"dd"===t&&this._minWeekdaysParse[s].test(e))return s;if(!n&&this._weekdaysParse[s].test(e))return s}},kn.weekdaysRegex=function(e){return this._weekdaysParseExact?(o(this,"_weekdaysRegex")||ee.call(this),e?this._weekdaysStrictRegex:this._weekdaysRegex):(o(this,"_weekdaysRegex")||(this._weekdaysRegex=zt),this._weekdaysStrictRegex&&e?this._weekdaysStrictRegex:this._weekdaysRegex)},kn.weekdaysShortRegex=function(e){return this._weekdaysParseExact?(o(this,"_weekdaysRegex")||ee.call(this),e?this._weekdaysShortStrictRegex:this._weekdaysShortRegex):(o(this,"_weekdaysShortRegex")||(this._weekdaysShortRegex=$t),this._weekdaysShortStrictRegex&&e?this._weekdaysShortStrictRegex:this._weekdaysShortRegex)},kn.weekdaysMinRegex=function(e){return this._weekdaysParseExact?(o(this,"_weekdaysRegex")||ee.call(this),e?this._weekdaysMinStrictRegex:this._weekdaysMinRegex):(o(this,"_weekdaysMinRegex")||(this._weekdaysMinRegex=qt),this._weekdaysMinStrictRegex&&e?this._weekdaysMinStrictRegex:this._weekdaysMinRegex)},kn.isPM=function(e){return"p"===(e+"").toLowerCase().charAt(0)},kn.meridiem=function(e,t,n){return e>11?n?"pm":"PM":n?"am":"AM"},ae("en",{dayOfMonthOrdinalParse:/\d{1,2}(th|st|nd|rd)/,ordinal:function(e){var t=e%10;return e+(1===g(e%100/10)?"th":1===t?"st":2===t?"nd":3===t?"rd":"th")}}),e.lang=v("moment.lang is deprecated. Use moment.locale instead.",ae),e.langData=v("moment.langData is deprecated. Use moment.localeData instead.",ue);var Yn=Math.abs,On=$e("ms"),Tn=$e("s"),xn=$e("m"),bn=$e("h"),Pn=$e("d"),Wn=$e("w"),Hn=$e("M"),Rn=$e("y"),Cn=qe("milliseconds"),Fn=qe("seconds"),Un=qe("minutes"),Ln=qe("hours"),Nn=qe("days"),Gn=qe("months"),Vn=qe("years"),En=Math.round,In={ss:44,s:45,m:45,h:22,d:26,M:11},An=Math.abs,jn=ve.prototype;return jn.isValid=function(){return this._isValid},jn.abs=function(){var e=this._data;return this._milliseconds=Yn(this._milliseconds),this._days=Yn(this._days),this._months=Yn(this._months),e.milliseconds=Yn(e.milliseconds),e.seconds=Yn(e.seconds),e.minutes=Yn(e.minutes),e.hours=Yn(e.hours),e.months=Yn(e.months),e.years=Yn(e.years),this},jn.add=function(e,t){return Ae(this,e,t,1)},jn.subtract=function(e,t){return Ae(this,e,t,-1)},jn.as=function(e){if(!this.isValid())return NaN;var t,n,s=this._milliseconds;if("month"===(e=O(e))||"year"===e)return t=this._days+s/864e5,n=this._months+Ze(t),"month"===e?n:n/12;switch(t=this._days+Math.round(ze(this._months)),e){case"week":return t/7+s/6048e5;case"day":return t+s/864e5;case"hour":return 24*t+s/36e5;case"minute":return 1440*t+s/6e4;case"second":return 86400*t+s/1e3;case"millisecond":return Math.floor(864e5*t)+s;default:throw new Error("Unknown unit "+e)}},jn.asMilliseconds=On,jn.asSeconds=Tn,jn.asMinutes=xn,jn.asHours=bn,jn.asDays=Pn,jn.asWeeks=Wn,jn.asMonths=Hn,jn.asYears=Rn,jn.valueOf=function(){return this.isValid()?this._milliseconds+864e5*this._days+this._months%12*2592e6+31536e6*g(this._months/12):NaN},jn._bubble=function(){var e,t,n,s,i,r=this._milliseconds,a=this._days,o=this._months,u=this._data;return r>=0&&a>=0&&o>=0||r<=0&&a<=0&&o<=0||(r+=864e5*je(ze(o)+a),a=0,o=0),u.milliseconds=r%1e3,e=y(r/1e3),u.seconds=e%60,t=y(e/60),u.minutes=t%60,n=y(t/60),u.hours=n%24,a+=y(n/24),i=y(Ze(a)),o+=i,a-=je(ze(i)),s=y(o/12),o%=12,u.days=a,u.months=o,u.years=s,this},jn.clone=function(){return xe(this)},jn.get=function(e){return e=O(e),this.isValid()?this[e+"s"]():NaN},jn.milliseconds=Cn,jn.seconds=Fn,jn.minutes=Un,jn.hours=Ln,jn.days=Nn,jn.weeks=function(){return y(this.days()/7)},jn.months=Gn,jn.years=Vn,jn.humanize=function(e){if(!this.isValid())return this.localeData().invalidDate();var t=this.localeData(),n=function(e,t,n){var s=xe(e).abs(),i=En(s.as("s")),r=En(s.as("m")),a=En(s.as("h")),o=En(s.as("d")),u=En(s.as("M")),l=En(s.as("y")),d=i<=In.ss&&["s",i]||i<In.s&&["ss",i]||r<=1&&["m"]||r<In.m&&["mm",r]||a<=1&&["h"]||a<In.h&&["hh",a]||o<=1&&["d"]||o<In.d&&["dd",o]||u<=1&&["M"]||u<In.M&&["MM",u]||l<=1&&["y"]||["yy",l];return d[2]=t,d[3]=+e>0,d[4]=n,function(e,t,n,s,i){return i.relativeTime(t||1,!!n,e,s)}.apply(null,d)}(this,!e,t);return e&&(n=t.pastFuture(+this,n)),t.postformat(n)},jn.toISOString=Be,jn.toString=Be,jn.toJSON=Be,jn.locale=Ce,jn.localeData=Fe,jn.toIsoString=v("toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)",Be),jn.lang=gn,P("X",0,0,"unix"),P("x",0,0,"valueOf"),C("x",Mt),C("X",/[+-]?\d+(\.\d{1,3})?/),L("X",function(e,t,n){n._d=new Date(1e3*parseFloat(e,10))}),L("x",function(e,t,n){n._d=new Date(g(e))}),e.version="2.20.1",function(e){Qe=e}(pe),e.fn=Dn,e.min=function(){return we("isBefore",[].slice.call(arguments,0))},e.max=function(){return we("isAfter",[].slice.call(arguments,0))},e.now=function(){return Date.now?Date.now():+new Date},e.utc=l,e.unix=function(e){return pe(1e3*e)},e.months=function(e,t){return Ee(e,t,"months")},e.isDate=r,e.locale=ae,e.invalid=c,e.duration=xe,e.isMoment=_,e.weekdays=function(e,t,n){return Ie(e,t,n,"weekdays")},e.parseZone=function(){return pe.apply(null,arguments).parseZone()},e.localeData=ue,e.isDuration=Me,e.monthsShort=function(e,t){return Ee(e,t,"monthsShort")},e.weekdaysMin=function(e,t,n){return Ie(e,t,n,"weekdaysMin")},e.defineLocale=oe,e.updateLocale=function(e,t){if(null!=t){var n,s,i=Qt;null!=(s=re(e))&&(i=s._config),(n=new k(t=D(i,t))).parentLocale=Xt[e],Xt[e]=n,ae(e)}else null!=Xt[e]&&(null!=Xt[e].parentLocale?Xt[e]=Xt[e].parentLocale:null!=Xt[e]&&delete Xt[e]);return Xt[e]},e.locales=function(){return nt(Xt)},e.weekdaysShort=function(e,t,n){return Ie(e,t,n,"weekdaysShort")},e.normalizeUnits=O,e.relativeTimeRounding=function(e){return void 0===e?En:"function"==typeof e&&(En=e,!0)},e.relativeTimeThreshold=function(e,t){return void 0!==In[e]&&(void 0===t?In[e]:(In[e]=t,"s"===e&&(In.ss=t-1),!0))},e.calendarFormat=function(e,t){var n=e.diff(t,"days",!0);return n<-6?"sameElse":n<-1?"lastWeek":n<0?"lastDay":n<1?"sameDay":n<2?"nextDay":n<7?"nextWeek":"sameElse"},e.prototype=Dn,e.HTML5_FMT={DATETIME_LOCAL:"YYYY-MM-DDTHH:mm",DATETIME_LOCAL_SECONDS:"YYYY-MM-DDTHH:mm:ss",DATETIME_LOCAL_MS:"YYYY-MM-DDTHH:mm:ss.SSS",DATE:"YYYY-MM-DD",TIME:"HH:mm",TIME_SECONDS:"HH:mm:ss",TIME_MS:"HH:mm:ss.SSS",WEEK:"YYYY-[W]WW",MONTH:"YYYY-MM"},e});
 /**
- * @license AngularJS v1.6.6
+ * @license AngularJS v1.6.5
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -5082,7 +159,7 @@ function minErr(module, ErrorConstructor) {
       return match;
     });
 
-    message += '\nhttp://errors.angularjs.org/1.6.6/' +
+    message += '\nhttp://errors.angularjs.org/1.6.5/' +
       (module ? module + '/' : '') + code;
 
     for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
@@ -7760,11 +2837,11 @@ function toDebugString(obj, maxDepth) {
 var version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
-  full: '1.6.6',
+  full: '1.6.5',
   major: 1,
   minor: 6,
-  dot: 6,
-  codeName: 'interdimensional-cable'
+  dot: 5,
+  codeName: 'toffee-salinization'
 };
 
 
@@ -7910,7 +2987,7 @@ function publishExternalAPI(angular) {
       });
     }
   ])
-  .info({ angularVersion: '1.6.6' });
+  .info({ angularVersion: '1.6.5' });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -13472,31 +8549,6 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     return preAssignBindingsEnabled;
   };
 
-  /**
-   * @ngdoc method
-   * @name  $compileProvider#strictComponentBindingsEnabled
-   *
-   * @param {boolean=} enabled update the strictComponentBindingsEnabled state if provided, otherwise just return the
-   * current strictComponentBindingsEnabled state
-   * @returns {*} current value if used as getter or itself (chaining) if used as setter
-   *
-   * @kind function
-   *
-   * @description
-   * Call this method to enable/disable strict component bindings check. If enabled, the compiler will enforce that
-   * for all bindings of a component that are not set as optional with `?`, an attribute needs to be provided
-   * on the component's HTML tag.
-   *
-   * The default value is false.
-   */
-  var strictComponentBindingsEnabled = false;
-  this.strictComponentBindingsEnabled = function(enabled) {
-    if (isDefined(enabled)) {
-      strictComponentBindingsEnabled = enabled;
-      return this;
-    }
-    return strictComponentBindingsEnabled;
-  };
 
   var TTL = 10;
   /**
@@ -15524,20 +10576,12 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       }
     }
 
-    function strictBindingsCheck(attrName, directiveName) {
-      if (strictComponentBindingsEnabled) {
-        throw $compileMinErr('missingattr',
-          'Attribute \'{0}\' of \'{1}\' is non-optional and must be set!',
-          attrName, directiveName);
-      }
-    }
 
     // Set up $watches for isolate scope and controller bindings.
     function initializeDirectiveBindings(scope, attrs, destination, bindings, directive) {
       var removeWatchCollection = [];
       var initialChanges = {};
       var changes;
-
       forEach(bindings, function initializeBinding(definition, scopeName) {
         var attrName = definition.attrName,
         optional = definition.optional,
@@ -15549,9 +10593,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
           case '@':
             if (!optional && !hasOwnProperty.call(attrs, attrName)) {
-              strictBindingsCheck(attrName, directive.name);
               destination[scopeName] = attrs[attrName] = undefined;
-
             }
             removeWatch = attrs.$observe(attrName, function(value) {
               if (isString(value) || isBoolean(value)) {
@@ -15578,7 +10620,6 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           case '=':
             if (!hasOwnProperty.call(attrs, attrName)) {
               if (optional) break;
-              strictBindingsCheck(attrName, directive.name);
               attrs[attrName] = undefined;
             }
             if (optional && !attrs[attrName]) break;
@@ -15623,7 +10664,6 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           case '<':
             if (!hasOwnProperty.call(attrs, attrName)) {
               if (optional) break;
-              strictBindingsCheck(attrName, directive.name);
               attrs[attrName] = undefined;
             }
             if (optional && !attrs[attrName]) break;
@@ -15649,9 +10689,6 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             break;
 
           case '&':
-            if (!optional && !hasOwnProperty.call(attrs, attrName)) {
-              strictBindingsCheck(attrName, directive.name);
-            }
             // Don't assign Object.prototype method to scope
             parentGet = attrs.hasOwnProperty(attrName) ? $parse(attrs[attrName]) : noop;
 
@@ -16184,7 +11221,7 @@ function $HttpParamSerializerProvider() {
       if (!params) return '';
       var parts = [];
       forEachSorted(params, function(value, key) {
-        if (value === null || isUndefined(value) || isFunction(value)) return;
+        if (value === null || isUndefined(value)) return;
         if (isArray(value)) {
           forEach(value, function(v) {
             parts.push(encodeUriQuery(key)  + '=' + encodeUriQuery(serializeValue(v)));
@@ -16280,15 +11317,10 @@ function defaultHttpResponseTransform(data, headers) {
 
     if (tempData) {
       var contentType = headers('Content-Type');
-      var hasJsonContentType = contentType && (contentType.indexOf(APPLICATION_JSON) === 0);
-
-      if (hasJsonContentType || isJsonLike(tempData)) {
+      if ((contentType && (contentType.indexOf(APPLICATION_JSON) === 0)) || isJsonLike(tempData)) {
         try {
           data = fromJson(tempData);
         } catch (e) {
-          if (!hasJsonContentType) {
-            return data;
-          }
           throw $httpMinErr('baddata', 'Data must be a valid JSON object. Received: "{0}". ' +
           'Parse error: "{1}"', data, e);
         }
@@ -16601,7 +11633,6 @@ function $HttpProvider() {
      *   - **headers** – `{function([headerName])}` – Header getter function.
      *   - **config** – `{Object}` – The configuration object that was used to generate the request.
      *   - **statusText** – `{string}` – HTTP status text of the response.
-     *   - **xhrStatus** – `{string}` – Status of the XMLHttpRequest (`complete`, `error`, `timeout` or `abort`).
      *
      * A response status code between 200 and 299 is considered a success status and will result in
      * the success callback being called. Any response status code outside of that range is
@@ -17443,9 +12474,9 @@ function $HttpProvider() {
           } else {
             // serving from cache
             if (isArray(cachedResp)) {
-              resolvePromise(cachedResp[1], cachedResp[0], shallowCopy(cachedResp[2]), cachedResp[3], cachedResp[4]);
+              resolvePromise(cachedResp[1], cachedResp[0], shallowCopy(cachedResp[2]), cachedResp[3]);
             } else {
-              resolvePromise(cachedResp, 200, {}, 'OK', 'complete');
+              resolvePromise(cachedResp, 200, {}, 'OK');
             }
           }
         } else {
@@ -17502,10 +12533,10 @@ function $HttpProvider() {
        *  - resolves the raw $http promise
        *  - calls $apply
        */
-      function done(status, response, headersString, statusText, xhrStatus) {
+      function done(status, response, headersString, statusText) {
         if (cache) {
           if (isSuccess(status)) {
-            cache.put(url, [status, response, parseHeaders(headersString), statusText, xhrStatus]);
+            cache.put(url, [status, response, parseHeaders(headersString), statusText]);
           } else {
             // remove promise from the cache
             cache.remove(url);
@@ -17513,7 +12544,7 @@ function $HttpProvider() {
         }
 
         function resolveHttpPromise() {
-          resolvePromise(response, status, headersString, statusText, xhrStatus);
+          resolvePromise(response, status, headersString, statusText);
         }
 
         if (useApplyAsync) {
@@ -17528,7 +12559,7 @@ function $HttpProvider() {
       /**
        * Resolves the raw $http promise.
        */
-      function resolvePromise(response, status, headers, statusText, xhrStatus) {
+      function resolvePromise(response, status, headers, statusText) {
         //status: HTTP response status code, 0, -1 (aborted by timeout / promise)
         status = status >= -1 ? status : 0;
 
@@ -17537,13 +12568,12 @@ function $HttpProvider() {
           status: status,
           headers: headersGetter(headers),
           config: config,
-          statusText: statusText,
-          xhrStatus: xhrStatus
+          statusText: statusText
         });
       }
 
       function resolvePromiseWithResult(result) {
-        resolvePromise(result.data, result.status, shallowCopy(result.headers()), result.statusText, result.xhrStatus);
+        resolvePromise(result.data, result.status, shallowCopy(result.headers()), result.statusText);
       }
 
       function removePendingReq() {
@@ -17644,7 +12674,7 @@ function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDoc
       var jsonpDone = jsonpReq(url, callbackPath, function(status, text) {
         // jsonpReq only ever sets status to 200 (OK), 404 (ERROR) or -1 (WAITING)
         var response = (status === 200) && callbacks.getResponse(callbackPath);
-        completeRequest(callback, status, response, '', text, 'complete');
+        completeRequest(callback, status, response, '', text);
         callbacks.removeCallback(callbackPath);
       });
     } else {
@@ -17679,29 +12709,18 @@ function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDoc
             status,
             response,
             xhr.getAllResponseHeaders(),
-            statusText,
-            'complete');
+            statusText);
       };
 
       var requestError = function() {
         // The response is always empty
         // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
-        completeRequest(callback, -1, null, null, '', 'error');
-      };
-
-      var requestAborted = function() {
-        completeRequest(callback, -1, null, null, '', 'abort');
-      };
-
-      var requestTimeout = function() {
-        // The response is always empty
-        // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
-        completeRequest(callback, -1, null, null, '', 'timeout');
+        completeRequest(callback, -1, null, null, '');
       };
 
       xhr.onerror = requestError;
-      xhr.onabort = requestAborted;
-      xhr.ontimeout = requestTimeout;
+      xhr.onabort = requestError;
+      xhr.ontimeout = requestError;
 
       forEach(eventHandlers, function(value, key) {
           xhr.addEventListener(key, value);
@@ -17751,14 +12770,14 @@ function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDoc
       }
     }
 
-    function completeRequest(callback, status, response, headersString, statusText, xhrStatus) {
+    function completeRequest(callback, status, response, headersString, statusText) {
       // cancel timeout and subsequent timeout promise resolution
       if (isDefined(timeoutId)) {
         $browserDefer.cancel(timeoutId);
       }
       jsonpDone = xhr = null;
 
-      callback(status, response, headersString, statusText, xhrStatus);
+      callback(status, response, headersString, statusText);
     }
   };
 
@@ -20384,7 +15403,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
       findConstantAndWatchExpressions(ast.property, $filter, astIsPure);
     }
     ast.constant = ast.object.constant && (!ast.computed || ast.property.constant);
-    ast.toWatch = ast.constant ? [] : [ast];
+    ast.toWatch = [ast];
     break;
   case AST.CallExpression:
     isStatelessFilter = ast.filter ? isStateless($filter, ast.callee.name) : false;
@@ -20393,7 +15412,9 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     forEach(ast.arguments, function(expr) {
       findConstantAndWatchExpressions(expr, $filter, astIsPure);
       allConstants = allConstants && expr.constant;
-      argsToWatch.push.apply(argsToWatch, expr.toWatch);
+      if (!expr.constant) {
+        argsToWatch.push.apply(argsToWatch, expr.toWatch);
+      }
     });
     ast.constant = allConstants;
     ast.toWatch = isStatelessFilter ? argsToWatch : [ast];
@@ -20410,7 +15431,9 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     forEach(ast.elements, function(expr) {
       findConstantAndWatchExpressions(expr, $filter, astIsPure);
       allConstants = allConstants && expr.constant;
-      argsToWatch.push.apply(argsToWatch, expr.toWatch);
+      if (!expr.constant) {
+        argsToWatch.push.apply(argsToWatch, expr.toWatch);
+      }
     });
     ast.constant = allConstants;
     ast.toWatch = argsToWatch;
@@ -20420,14 +15443,17 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     argsToWatch = [];
     forEach(ast.properties, function(property) {
       findConstantAndWatchExpressions(property.value, $filter, astIsPure);
-      allConstants = allConstants && property.value.constant;
-      argsToWatch.push.apply(argsToWatch, property.value.toWatch);
-      if (property.computed) {
-        //`{[key]: value}` implicitly does `key.toString()` which may be non-pure
-        findConstantAndWatchExpressions(property.key, $filter, /*parentIsPure=*/false);
-        allConstants = allConstants && property.key.constant;
-        argsToWatch.push.apply(argsToWatch, property.key.toWatch);
+      allConstants = allConstants && property.value.constant && !property.computed;
+      if (!property.value.constant) {
+        argsToWatch.push.apply(argsToWatch, property.value.toWatch);
       }
+      if (property.computed) {
+        findConstantAndWatchExpressions(property.key, $filter, astIsPure);
+        if (!property.key.constant) {
+          argsToWatch.push.apply(argsToWatch, property.key.toWatch);
+        }
+      }
+
     });
     ast.constant = allConstants;
     ast.toWatch = argsToWatch;
@@ -28023,20 +23049,15 @@ var htmlAnchorDirective = valueFn({
  *
  * ## A note about browser compatibility
  *
- * Internet Explorer and Edge do not support the `details` element, it is
+ * Edge, Firefox, and Internet Explorer do not support the `details` element, it is
  * recommended to use {@link ng.ngShow} and {@link ng.ngHide} instead.
  *
  * @example
      <example name="ng-open">
        <file name="index.html">
-         <label>Toggle details: <input type="checkbox" ng-model="open"></label><br/>
+         <label>Check me check multiple: <input type="checkbox" ng-model="open"></label><br/>
          <details id="details" ng-open="open">
-            <summary>List</summary>
-            <ul>
-              <li>Apple</li>
-              <li>Orange</li>
-              <li>Durian</li>
-            </ul>
+            <summary>Show/Hide me</summary>
          </details>
        </file>
        <file name="protractor.js" type="protractor">
@@ -36144,9 +31165,7 @@ var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function($locale,
  *     more than one tracking expression value resolve to the same key. (This would mean that two distinct objects are
  *     mapped to the same DOM element, which is not possible.)
  *
- *     <div class="alert alert-warning">
- *       <strong>Note:</strong> the `track by` expression must come last - after any filters, and the alias expression.
- *     </div>
+ *     Note that the tracking expression must come last, after any filters, and the alias expression.
  *
  *     For example: `item in items` is equivalent to `item in items track by $id(item)`. This implies that the DOM elements
  *     will be associated by item identity in the array.
@@ -38864,7 +33883,7 @@ $provide.value("$locale", {
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 /**
- * @license AngularJS v1.6.6
+ * @license AngularJS v1.6.8
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -38897,12 +33916,7 @@ var htmlSanitizeWriter;
  * @name ngSanitize
  * @description
  *
- * # ngSanitize
- *
  * The `ngSanitize` module provides functionality to sanitize HTML.
- *
- *
- * <div doc-module-components="ngSanitize"></div>
  *
  * See {@link ngSanitize.$sanitize `$sanitize`} for usage.
  */
@@ -39469,7 +34483,7 @@ function sanitizeText(chars) {
 // define ngSanitize module and register $sanitize service
 angular.module('ngSanitize', [])
   .provider('$sanitize', $SanitizeProvider)
-  .info({ angularVersion: '1.6.6' });
+  .info({ angularVersion: '1.6.8' });
 
 /**
  * @ngdoc filter
@@ -39477,13 +34491,13 @@ angular.module('ngSanitize', [])
  * @kind function
  *
  * @description
- * Finds links in text input and turns them into html links. Supports `http/https/ftp/mailto` and
+ * Finds links in text input and turns them into html links. Supports `http/https/ftp/sftp/mailto` and
  * plain email address links.
  *
  * Requires the {@link ngSanitize `ngSanitize`} module to be installed.
  *
  * @param {string} text Input text.
- * @param {string} target Window (`_blank|_self|_parent|_top`) or named frame to open links in.
+ * @param {string} [target] Window (`_blank|_self|_parent|_top`) or named frame to open links in.
  * @param {object|function(url)} [attributes] Add custom attributes to the link element.
  *
  *    Can be one of:
@@ -39600,7 +34614,7 @@ angular.module('ngSanitize', [])
  */
 angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
   var LINKY_URL_REGEXP =
-        /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i,
+        /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i,
       MAILTO_REGEXP = /^mailto:/i;
 
   var linkyMinErr = angular.$$minErr('linky');
@@ -39671,7 +34685,7 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 })(window, window.angular);
 
 /*
- AngularJS v1.6.6
+ AngularJS v1.6.8
  (c) 2010-2017 Google, Inc. http://angularjs.org
  License: MIT
 */
@@ -39683,7 +34697,7 @@ e=!a[c]||a[c+"-remove"]):-1===b&&(d="removeClass",e=a[c]||a[c+"-add"]);e&&(f[d].
 b){a.style[b[0]]=b[1]}function ca(a,b){return a?b?a+" "+b:a:b}function Ja(a,b,c){var d=Object.create(null),e=a.getComputedStyle(b)||{};t(c,function(a,b){var c=e[a];if(c){var l=c.charAt(0);if("-"===l||"+"===l||0<=l)c=Va(c);0===c&&(c=null);d[b]=c}});return d}function Va(a){var b=0;a=a.split(/\s*,\s*/);t(a,function(a){"s"===a.charAt(a.length-1)&&(a=a.substring(0,a.length-1));a=parseFloat(a)||0;b=b?Math.max(a,b):a});return b}function xa(a){return 0===a||null!=a}function Ka(a,b){var c=Q,d=a+"s";b?c+="Duration":
 d+=" linear all";return[c,d]}function La(){var a=Object.create(null);return{flush:function(){a=Object.create(null)},count:function(b){return(b=a[b])?b.total:0},get:function(b){return(b=a[b])&&b.value},put:function(b,c){a[b]?a[b].total++:a[b]={total:1,value:c}}}}function Ma(a,b,c){t(c,function(c){a[c]=ya(a[c])?a[c]:b.style.getPropertyValue(c)})}var Q,za,Y,Aa;void 0===S.ontransitionend&&void 0!==S.onwebkittransitionend?(Q="WebkitTransition",za="webkitTransitionEnd transitionend"):(Q="transition",za=
 "transitionend");void 0===S.onanimationend&&void 0!==S.onwebkitanimationend?(Y="WebkitAnimation",Aa="webkitAnimationEnd animationend"):(Y="animation",Aa="animationend");var qa=Y+"Delay",Ba=Y+"Duration",la=Q+"Delay",Na=Q+"Duration",Pa=q.$$minErr("ng"),Wa={transitionDuration:Na,transitionDelay:la,transitionProperty:Q+"Property",animationDuration:Ba,animationDelay:qa,animationIterationCount:Y+"IterationCount"},Xa={transitionDuration:Na,transitionDelay:la,animationDuration:Ba,animationDelay:qa},Ca,va,
-t,V,ya,Z,Da,ra,C,P,A,O;q.module("ngAnimate",[],function(){O=q.noop;Ca=q.copy;va=q.extend;A=q.element;t=q.forEach;V=q.isArray;C=q.isString;ra=q.isObject;P=q.isUndefined;ya=q.isDefined;Da=q.isFunction;Z=q.isElement}).info({angularVersion:"1.6.6"}).directive("ngAnimateSwap",["$animate","$rootScope",function(a,b){return{restrict:"A",transclude:"element",terminal:!0,priority:600,link:function(b,d,e,f,n){var G,l;b.$watchCollection(e.ngAnimateSwap||e["for"],function(e){G&&a.leave(G);l&&(l.$destroy(),l=null);
+t,V,ya,Z,Da,ra,C,P,A,O;q.module("ngAnimate",[],function(){O=q.noop;Ca=q.copy;va=q.extend;A=q.element;t=q.forEach;V=q.isArray;C=q.isString;ra=q.isObject;P=q.isUndefined;ya=q.isDefined;Da=q.isFunction;Z=q.isElement}).info({angularVersion:"1.6.8"}).directive("ngAnimateSwap",["$animate","$rootScope",function(a,b){return{restrict:"A",transclude:"element",terminal:!0,priority:600,link:function(b,d,e,f,n){var G,l;b.$watchCollection(e.ngAnimateSwap||e["for"],function(e){G&&a.leave(G);l&&(l.$destroy(),l=null);
 if(e||0===e)l=b.$new(),n(l,function(b){G=b;a.enter(b,null,d)})})}}}]).directive("ngAnimateChildren",["$interpolate",function(a){return{link:function(b,c,d){function e(a){c.data("$$ngAnimateChildren","on"===a||"true"===a)}var f=d.ngAnimateChildren;C(f)&&0===f.length?c.data("$$ngAnimateChildren",!0):(e(a(f)(b)),d.$observe("ngAnimateChildren",e))}}}]).factory("$$rAFScheduler",["$$rAF",function(a){function b(a){d=d.concat(a);c()}function c(){if(d.length){for(var b=d.shift(),n=0;n<b.length;n++)b[n]();
 e||a(function(){e||c()})}}var d,e;d=b.queue=[];b.waitUntilQuiet=function(b){e&&e();e=a(function(){e=null;b();c()})};return b}]).provider("$$animateQueue",["$animateProvider",function(a){function b(a){if(!a)return null;a=a.split(" ");var b=Object.create(null);t(a,function(a){b[a]=!0});return b}function c(a,c){if(a&&c){var d=b(c);return a.split(" ").some(function(a){return d[a]})}}function d(a,b,c){return f[a].some(function(a){return a(b,c)})}function e(a,b){var c=0<(a.addClass||"").length,d=0<(a.removeClass||
 "").length;return b?c&&d:c||d}var f=this.rules={skip:[],cancel:[],join:[]};f.join.push(function(a,b){return!a.structural&&e(a)});f.skip.push(function(a,b){return!a.structural&&!e(a)});f.skip.push(function(a,b){return"leave"===b.event&&a.structural});f.skip.push(function(a,b){return b.structural&&2===b.state&&!a.structural});f.cancel.push(function(a,b){return b.structural&&a.structural});f.cancel.push(function(a,b){return 2===b.state&&a.structural});f.cancel.push(function(a,b){if(b.structural)return!1;
@@ -39706,26 +34720,26 @@ F&&a.addClass(n,F);z&&(a.removeClass(n,z),z=null)},close:K});n.on("$destroy",I);
 c()}})});G(l(c))});return m}}]}]).provider("$animateCss",["$animateProvider",function(a){var b=La(),c=La();this.$get=["$window","$$jqLite","$$AnimateRunner","$timeout","$$forceReflow","$sniffer","$$rAFScheduler","$$animateQueue",function(a,e,f,n,G,l,s,y){function q(a,b){var c=a.parentNode;return(c.$$ngAnimateParentKey||(c.$$ngAnimateParentKey=++M))+"-"+a.getAttribute("class")+"-"+b}function da(g,f,l,n){var m;0<b.count(l)&&(m=c.get(l),m||(f=W(f,"-stagger"),e.addClass(g,f),m=Ja(a,g,n),m.animationDuration=
 Math.max(m.animationDuration,0),m.transitionDuration=Math.max(m.transitionDuration,0),e.removeClass(g,f),c.put(l,m)));return m||{}}function v(a){x.push(a);s.waitUntilQuiet(function(){b.flush();c.flush();for(var a=G(),d=0;d<x.length;d++)x[d](a);x.length=0})}function E(c,g,e){g=b.get(e);g||(g=Ja(a,c,Wa),"infinite"===g.animationIterationCount&&(g.animationIterationCount=1));b.put(e,g);c=g;e=c.animationDelay;g=c.transitionDelay;c.maxDelay=e&&g?Math.max(e,g):e||g;c.maxDuration=Math.max(c.animationDuration*
 c.animationIterationCount,c.transitionDuration);return c}var g=X(e),M=0,x=[];return function(a,c){function d(){m()}function s(){m(!0)}function m(b){if(!(M||ba&&u)){M=!0;u=!1;h.$$skipPreparationClasses||e.removeClass(a,fa);e.removeClass(a,ca);wa(k,!1);pa(k,!1);t(x,function(a){k.style[a[0]]=""});g(a,h);ha(a,h);Object.keys(p).length&&t(p,function(a,b){a?k.style.setProperty(b,a):k.style.removeProperty(b)});if(h.onDone)h.onDone();ea&&ea.length&&a.off(ea.join(" "),z);var c=a.data("$$animateCss");c&&(n.cancel(c[0].timer),
-a.removeData("$$animateCss"));A&&A.complete(!b)}}function L(a){r.blockTransition&&pa(k,a);r.blockKeyframeAnimation&&wa(k,!!a)}function F(){A=new f({end:d,cancel:s});v(O);m();return{$$willAnimate:!1,start:function(){return A},end:d}}function z(a){a.stopPropagation();var b=a.originalEvent||a;a=b.$manualTimeStamp||Date.now();b=parseFloat(b.elapsedTime.toFixed(3));Math.max(a-T,0)>=P&&b>=N&&(ba=!0,m())}function ga(){function b(){if(!M){L(!1);t(x,function(a){k.style[a[0]]=a[1]});g(a,h);e.addClass(a,ca);
-if(r.recalculateTimingStyles){ma=k.getAttribute("class")+" "+fa;ja=q(k,ma);B=E(k,ma,ja);$=B.maxDelay;w=Math.max($,0);N=B.maxDuration;if(0===N){m();return}r.hasTransitions=0<B.transitionDuration;r.hasAnimations=0<B.animationDuration}r.applyAnimationDelay&&($="boolean"!==typeof h.delay&&xa(h.delay)?parseFloat(h.delay):$,w=Math.max($,0),B.animationDelay=$,aa=[qa,$+"s"],x.push(aa),k.style[aa[0]]=aa[1]);P=1E3*w;S=1E3*N;if(h.easing){var d,f=h.easing;r.hasTransitions&&(d=Q+"TimingFunction",x.push([d,f]),
-k.style[d]=f);r.hasAnimations&&(d=Y+"TimingFunction",x.push([d,f]),k.style[d]=f)}B.transitionDuration&&ea.push(za);B.animationDuration&&ea.push(Aa);T=Date.now();var l=P+1.5*S;d=T+l;var f=a.data("$$animateCss")||[],F=!0;if(f.length){var s=f[0];(F=d>s.expectedEndTime)?n.cancel(s.timer):f.push(m)}F&&(l=n(c,l,!1),f[0]={timer:l,expectedEndTime:d},f.push(m),a.data("$$animateCss",f));if(ea.length)a.on(ea.join(" "),z);h.to&&(h.cleanupStyles&&Ma(p,k,Object.keys(h.to)),Ia(a,h))}}function c(){var b=a.data("$$animateCss");
-if(b){for(var d=1;d<b.length;d++)b[d]();a.removeData("$$animateCss")}}if(!M)if(k.parentNode){var d=function(a){if(ba)u&&a&&(u=!1,m());else if(u=!a,B.animationDuration)if(a=wa(k,u),u)x.push(a);else{var b=x,c=b.indexOf(a);0<=a&&b.splice(c,1)}},f=0<Z&&(B.transitionDuration&&0===U.transitionDuration||B.animationDuration&&0===U.animationDuration)&&Math.max(U.animationDelay,U.transitionDelay);f?n(b,Math.floor(f*Z*1E3),!1):b();C.resume=function(){d(!0)};C.pause=function(){d(!1)}}else m()}var h=c||{};h.$$prepared||
-(h=oa(Ca(h)));var p={},k=J(a);if(!k||!k.parentNode||!y.enabled())return F();var x=[],G=a.attr("class"),D=Qa(h),M,u,ba,A,C,w,P,N,S,T,ea=[];if(0===h.duration||!l.animations&&!l.transitions)return F();var ia=h.event&&V(h.event)?h.event.join(" "):h.event,X="",R="";ia&&h.structural?X=W(ia,"ng-",!0):ia&&(X=ia);h.addClass&&(R+=W(h.addClass,"-add"));h.removeClass&&(R.length&&(R+=" "),R+=W(h.removeClass,"-remove"));h.applyClassesEarly&&R.length&&g(a,h);var fa=[X,R].join(" ").trim(),ma=G+" "+fa,ca=W(fa,"-active"),
-G=D.to&&0<Object.keys(D.to).length;if(!(0<(h.keyframeStyle||"").length||G||fa))return F();var ja,U;0<h.stagger?(D=parseFloat(h.stagger),U={transitionDelay:D,animationDelay:D,transitionDuration:0,animationDuration:0}):(ja=q(k,ma),U=da(k,fa,ja,Xa));h.$$skipPreparationClasses||e.addClass(a,fa);h.transitionStyle&&(D=[Q,h.transitionStyle],ka(k,D),x.push(D));0<=h.duration&&(D=0<k.style[Q].length,D=Ka(h.duration,D),ka(k,D),x.push(D));h.keyframeStyle&&(D=[Y,h.keyframeStyle],ka(k,D),x.push(D));var Z=U?0<=
-h.staggerIndex?h.staggerIndex:b.count(ja):0;(ia=0===Z)&&!h.skipBlocking&&pa(k,9999);var B=E(k,ma,ja),$=B.maxDelay;w=Math.max($,0);N=B.maxDuration;var r={};r.hasTransitions=0<B.transitionDuration;r.hasAnimations=0<B.animationDuration;r.hasTransitionAll=r.hasTransitions&&"all"===B.transitionProperty;r.applyTransitionDuration=G&&(r.hasTransitions&&!r.hasTransitionAll||r.hasAnimations&&!r.hasTransitions);r.applyAnimationDuration=h.duration&&r.hasAnimations;r.applyTransitionDelay=xa(h.delay)&&(r.applyTransitionDuration||
-r.hasTransitions);r.applyAnimationDelay=xa(h.delay)&&r.hasAnimations;r.recalculateTimingStyles=0<R.length;if(r.applyTransitionDuration||r.applyAnimationDuration)N=h.duration?parseFloat(h.duration):N,r.applyTransitionDuration&&(r.hasTransitions=!0,B.transitionDuration=N,D=0<k.style[Q+"Property"].length,x.push(Ka(N,D))),r.applyAnimationDuration&&(r.hasAnimations=!0,B.animationDuration=N,x.push([Ba,N+"s"]));if(0===N&&!r.recalculateTimingStyles)return F();if(null!=h.delay){var aa;"boolean"!==typeof h.delay&&
-(aa=parseFloat(h.delay),w=Math.max(aa,0));r.applyTransitionDelay&&x.push([la,aa+"s"]);r.applyAnimationDelay&&x.push([qa,aa+"s"])}null==h.duration&&0<B.transitionDuration&&(r.recalculateTimingStyles=r.recalculateTimingStyles||ia);P=1E3*w;S=1E3*N;h.skipBlocking||(r.blockTransition=0<B.transitionDuration,r.blockKeyframeAnimation=0<B.animationDuration&&0<U.animationDelay&&0===U.animationDuration);h.from&&(h.cleanupStyles&&Ma(p,k,Object.keys(h.from)),Ha(a,h));r.blockTransition||r.blockKeyframeAnimation?
-L(N):h.skipBlocking||pa(k,!1);return{$$willAnimate:!0,end:d,start:function(){if(!M)return C={end:d,cancel:s,resume:null,pause:null},A=new f(C),v(ga),A}}}}]}]).provider("$$animateCssDriver",["$$animationProvider",function(a){a.drivers.push("$$animateCssDriver");this.$get=["$animateCss","$rootScope","$$AnimateRunner","$rootElement","$sniffer","$$jqLite","$document",function(a,c,d,e,f,n,G){function l(a){return a.replace(/\bng-\S+\b/g,"")}function s(a,b){C(a)&&(a=a.split(" "));C(b)&&(b=b.split(" "));
-return a.filter(function(a){return-1===b.indexOf(a)}).join(" ")}function y(c,f,e){function n(a){var b={},c=J(a).getBoundingClientRect();t(["width","height","top","left"],function(a){var d=c[a];switch(a){case "top":d+=v.scrollTop;break;case "left":d+=v.scrollLeft}b[a]=Math.floor(d)+"px"});return b}function G(){var c=l(e.attr("class")||""),d=s(c,m),c=s(m,c),d=a(y,{to:n(e),addClass:"ng-anchor-in "+d,removeClass:"ng-anchor-out "+c,delay:!0});return d.$$willAnimate?d:null}function q(){y.remove();f.removeClass("ng-animate-shim");
-e.removeClass("ng-animate-shim")}var y=A(J(f).cloneNode(!0)),m=l(y.attr("class")||"");f.addClass("ng-animate-shim");e.addClass("ng-animate-shim");y.addClass("ng-anchor");E.append(y);var L;c=function(){var c=a(y,{addClass:"ng-anchor-out",delay:!0,from:n(f)});return c.$$willAnimate?c:null}();if(!c&&(L=G(),!L))return q();var F=c||L;return{start:function(){function a(){c&&c.end()}var b,c=F.start();c.done(function(){c=null;if(!L&&(L=G()))return c=L.start(),c.done(function(){c=null;q();b.complete()}),c;
-q();b.complete()});return b=new d({end:a,cancel:a})}}}function q(a,b,c,f){var e=da(a,O),l=da(b,O),n=[];t(f,function(a){(a=y(c,a.out,a["in"]))&&n.push(a)});if(e||l||0!==n.length)return{start:function(){function a(){t(b,function(a){a.end()})}var b=[];e&&b.push(e.start());l&&b.push(l.start());t(n,function(a){b.push(a.start())});var c=new d({end:a,cancel:a});d.all(b,function(a){c.complete(a)});return c}}}function da(c){var d=c.element,e=c.options||{};c.structural&&(e.event=c.event,e.structural=!0,e.applyClassesEarly=
-!0,"leave"===c.event&&(e.onDone=e.domOperation));e.preparationClasses&&(e.event=ca(e.event,e.preparationClasses));c=a(d,e);return c.$$willAnimate?c:null}if(!f.animations&&!f.transitions)return O;var v=G[0].body;c=J(e);var E=A(c.parentNode&&11===c.parentNode.nodeType||v.contains(c)?c:v);return function(a){return a.from&&a.to?q(a.from,a.to,a.classes,a.anchors):da(a)}}]}]).provider("$$animateJs",["$animateProvider",function(a){this.$get=["$injector","$$AnimateRunner","$$jqLite",function(b,c,d){function e(c){c=
-V(c)?c:c.split(" ");for(var d=[],e={},f=0;f<c.length;f++){var y=c[f],q=a.$$registeredAnimations[y];q&&!e[y]&&(d.push(b.get(q)),e[y]=!0)}return d}var f=X(d);return function(a,b,d,s){function q(){s.domOperation();f(a,s)}function A(a,b,d,e,f){switch(d){case "animate":b=[b,e.from,e.to,f];break;case "setClass":b=[b,g,M,f];break;case "addClass":b=[b,g,f];break;case "removeClass":b=[b,M,f];break;default:b=[b,f]}b.push(e);if(a=a.apply(a,b))if(Da(a.start)&&(a=a.start()),a instanceof c)a.done(f);else if(Da(a))return a;
-return O}function C(a,b,d,e,f){var g=[];t(e,function(e){var l=e[f];l&&g.push(function(){var e,f,h=!1,g=function(a){h||(h=!0,(f||O)(a),e.complete(!a))};e=new c({end:function(){g()},cancel:function(){g(!0)}});f=A(l,a,b,d,function(a){g(!1===a)});return e})});return g}function v(a,b,d,e,f){var g=C(a,b,d,e,f);if(0===g.length){var k,l;"beforeSetClass"===f?(k=C(a,"removeClass",d,e,"beforeRemoveClass"),l=C(a,"addClass",d,e,"beforeAddClass")):"setClass"===f&&(k=C(a,"removeClass",d,e,"removeClass"),l=C(a,"addClass",
-d,e,"addClass"));k&&(g=g.concat(k));l&&(g=g.concat(l))}if(0!==g.length)return function(a){var b=[];g.length&&t(g,function(a){b.push(a())});b.length?c.all(b,a):a();return function(a){t(b,function(b){a?b.cancel():b.end()})}}}var E=!1;3===arguments.length&&ra(d)&&(s=d,d=null);s=oa(s);d||(d=a.attr("class")||"",s.addClass&&(d+=" "+s.addClass),s.removeClass&&(d+=" "+s.removeClass));var g=s.addClass,M=s.removeClass,x=e(d),H,I;if(x.length){var K,J;"leave"===b?(J="leave",K="afterLeave"):(J="before"+b.charAt(0).toUpperCase()+
-b.substr(1),K=b);"enter"!==b&&"move"!==b&&(H=v(a,b,s,x,J));I=v(a,b,s,x,K)}if(H||I){var m;return{$$willAnimate:!0,end:function(){m?m.end():(E=!0,q(),ha(a,s),m=new c,m.complete(!0));return m},start:function(){function b(c){E=!0;q();ha(a,s);m.complete(c)}if(m)return m;m=new c;var d,e=[];H&&e.push(function(a){d=H(a)});e.length?e.push(function(a){q();a(!0)}):q();I&&e.push(function(a){d=I(a)});m.setHost({end:function(){E||((d||O)(void 0),b(void 0))},cancel:function(){E||((d||O)(!0),b(!0))}});c.chain(e,
-b);return m}}}}}]}]).provider("$$animateJsDriver",["$$animationProvider",function(a){a.drivers.push("$$animateJsDriver");this.$get=["$$animateJs","$$AnimateRunner",function(a,c){function d(c){return a(c.element,c.event,c.classes,c.options)}return function(a){if(a.from&&a.to){var b=d(a.from),n=d(a.to);if(b||n)return{start:function(){function a(){return function(){t(d,function(a){a.end()})}}var d=[];b&&d.push(b.start());n&&d.push(n.start());c.all(d,function(a){e.complete(a)});var e=new c({end:a(),cancel:a()});
-return e}}}else return d(a)}}]}])})(window,window.angular);
+a.removeData("$$animateCss"));A&&A.complete(!b)}}function L(a){r.blockTransition&&pa(k,a);r.blockKeyframeAnimation&&wa(k,!!a)}function F(){A=new f({end:d,cancel:s});v(O);m();return{$$willAnimate:!1,start:function(){return A},end:d}}function z(a){a.stopPropagation();var b=a.originalEvent||a;b.target===k&&(a=b.$manualTimeStamp||Date.now(),b=parseFloat(b.elapsedTime.toFixed(3)),Math.max(a-T,0)>=P&&b>=N&&(ba=!0,m()))}function ga(){function b(){if(!M){L(!1);t(x,function(a){k.style[a[0]]=a[1]});g(a,h);
+e.addClass(a,ca);if(r.recalculateTimingStyles){ma=k.getAttribute("class")+" "+fa;ja=q(k,ma);B=E(k,ma,ja);$=B.maxDelay;w=Math.max($,0);N=B.maxDuration;if(0===N){m();return}r.hasTransitions=0<B.transitionDuration;r.hasAnimations=0<B.animationDuration}r.applyAnimationDelay&&($="boolean"!==typeof h.delay&&xa(h.delay)?parseFloat(h.delay):$,w=Math.max($,0),B.animationDelay=$,aa=[qa,$+"s"],x.push(aa),k.style[aa[0]]=aa[1]);P=1E3*w;S=1E3*N;if(h.easing){var d,f=h.easing;r.hasTransitions&&(d=Q+"TimingFunction",
+x.push([d,f]),k.style[d]=f);r.hasAnimations&&(d=Y+"TimingFunction",x.push([d,f]),k.style[d]=f)}B.transitionDuration&&ea.push(za);B.animationDuration&&ea.push(Aa);T=Date.now();var l=P+1.5*S;d=T+l;var f=a.data("$$animateCss")||[],F=!0;if(f.length){var s=f[0];(F=d>s.expectedEndTime)?n.cancel(s.timer):f.push(m)}F&&(l=n(c,l,!1),f[0]={timer:l,expectedEndTime:d},f.push(m),a.data("$$animateCss",f));if(ea.length)a.on(ea.join(" "),z);h.to&&(h.cleanupStyles&&Ma(p,k,Object.keys(h.to)),Ia(a,h))}}function c(){var b=
+a.data("$$animateCss");if(b){for(var d=1;d<b.length;d++)b[d]();a.removeData("$$animateCss")}}if(!M)if(k.parentNode){var d=function(a){if(ba)u&&a&&(u=!1,m());else if(u=!a,B.animationDuration)if(a=wa(k,u),u)x.push(a);else{var b=x,c=b.indexOf(a);0<=a&&b.splice(c,1)}},f=0<Z&&(B.transitionDuration&&0===U.transitionDuration||B.animationDuration&&0===U.animationDuration)&&Math.max(U.animationDelay,U.transitionDelay);f?n(b,Math.floor(f*Z*1E3),!1):b();C.resume=function(){d(!0)};C.pause=function(){d(!1)}}else m()}
+var h=c||{};h.$$prepared||(h=oa(Ca(h)));var p={},k=J(a);if(!k||!k.parentNode||!y.enabled())return F();var x=[],G=a.attr("class"),D=Qa(h),M,u,ba,A,C,w,P,N,S,T,ea=[];if(0===h.duration||!l.animations&&!l.transitions)return F();var ia=h.event&&V(h.event)?h.event.join(" "):h.event,X="",R="";ia&&h.structural?X=W(ia,"ng-",!0):ia&&(X=ia);h.addClass&&(R+=W(h.addClass,"-add"));h.removeClass&&(R.length&&(R+=" "),R+=W(h.removeClass,"-remove"));h.applyClassesEarly&&R.length&&g(a,h);var fa=[X,R].join(" ").trim(),
+ma=G+" "+fa,ca=W(fa,"-active"),G=D.to&&0<Object.keys(D.to).length;if(!(0<(h.keyframeStyle||"").length||G||fa))return F();var ja,U;0<h.stagger?(D=parseFloat(h.stagger),U={transitionDelay:D,animationDelay:D,transitionDuration:0,animationDuration:0}):(ja=q(k,ma),U=da(k,fa,ja,Xa));h.$$skipPreparationClasses||e.addClass(a,fa);h.transitionStyle&&(D=[Q,h.transitionStyle],ka(k,D),x.push(D));0<=h.duration&&(D=0<k.style[Q].length,D=Ka(h.duration,D),ka(k,D),x.push(D));h.keyframeStyle&&(D=[Y,h.keyframeStyle],
+ka(k,D),x.push(D));var Z=U?0<=h.staggerIndex?h.staggerIndex:b.count(ja):0;(ia=0===Z)&&!h.skipBlocking&&pa(k,9999);var B=E(k,ma,ja),$=B.maxDelay;w=Math.max($,0);N=B.maxDuration;var r={};r.hasTransitions=0<B.transitionDuration;r.hasAnimations=0<B.animationDuration;r.hasTransitionAll=r.hasTransitions&&"all"===B.transitionProperty;r.applyTransitionDuration=G&&(r.hasTransitions&&!r.hasTransitionAll||r.hasAnimations&&!r.hasTransitions);r.applyAnimationDuration=h.duration&&r.hasAnimations;r.applyTransitionDelay=
+xa(h.delay)&&(r.applyTransitionDuration||r.hasTransitions);r.applyAnimationDelay=xa(h.delay)&&r.hasAnimations;r.recalculateTimingStyles=0<R.length;if(r.applyTransitionDuration||r.applyAnimationDuration)N=h.duration?parseFloat(h.duration):N,r.applyTransitionDuration&&(r.hasTransitions=!0,B.transitionDuration=N,D=0<k.style[Q+"Property"].length,x.push(Ka(N,D))),r.applyAnimationDuration&&(r.hasAnimations=!0,B.animationDuration=N,x.push([Ba,N+"s"]));if(0===N&&!r.recalculateTimingStyles)return F();if(null!=
+h.delay){var aa;"boolean"!==typeof h.delay&&(aa=parseFloat(h.delay),w=Math.max(aa,0));r.applyTransitionDelay&&x.push([la,aa+"s"]);r.applyAnimationDelay&&x.push([qa,aa+"s"])}null==h.duration&&0<B.transitionDuration&&(r.recalculateTimingStyles=r.recalculateTimingStyles||ia);P=1E3*w;S=1E3*N;h.skipBlocking||(r.blockTransition=0<B.transitionDuration,r.blockKeyframeAnimation=0<B.animationDuration&&0<U.animationDelay&&0===U.animationDuration);h.from&&(h.cleanupStyles&&Ma(p,k,Object.keys(h.from)),Ha(a,h));
+r.blockTransition||r.blockKeyframeAnimation?L(N):h.skipBlocking||pa(k,!1);return{$$willAnimate:!0,end:d,start:function(){if(!M)return C={end:d,cancel:s,resume:null,pause:null},A=new f(C),v(ga),A}}}}]}]).provider("$$animateCssDriver",["$$animationProvider",function(a){a.drivers.push("$$animateCssDriver");this.$get=["$animateCss","$rootScope","$$AnimateRunner","$rootElement","$sniffer","$$jqLite","$document",function(a,c,d,e,f,n,G){function l(a){return a.replace(/\bng-\S+\b/g,"")}function s(a,b){C(a)&&
+(a=a.split(" "));C(b)&&(b=b.split(" "));return a.filter(function(a){return-1===b.indexOf(a)}).join(" ")}function y(c,f,e){function n(a){var b={},c=J(a).getBoundingClientRect();t(["width","height","top","left"],function(a){var d=c[a];switch(a){case "top":d+=v.scrollTop;break;case "left":d+=v.scrollLeft}b[a]=Math.floor(d)+"px"});return b}function G(){var c=l(e.attr("class")||""),d=s(c,m),c=s(m,c),d=a(y,{to:n(e),addClass:"ng-anchor-in "+d,removeClass:"ng-anchor-out "+c,delay:!0});return d.$$willAnimate?
+d:null}function q(){y.remove();f.removeClass("ng-animate-shim");e.removeClass("ng-animate-shim")}var y=A(J(f).cloneNode(!0)),m=l(y.attr("class")||"");f.addClass("ng-animate-shim");e.addClass("ng-animate-shim");y.addClass("ng-anchor");E.append(y);var L;c=function(){var c=a(y,{addClass:"ng-anchor-out",delay:!0,from:n(f)});return c.$$willAnimate?c:null}();if(!c&&(L=G(),!L))return q();var F=c||L;return{start:function(){function a(){c&&c.end()}var b,c=F.start();c.done(function(){c=null;if(!L&&(L=G()))return c=
+L.start(),c.done(function(){c=null;q();b.complete()}),c;q();b.complete()});return b=new d({end:a,cancel:a})}}}function q(a,b,c,f){var e=da(a,O),l=da(b,O),n=[];t(f,function(a){(a=y(c,a.out,a["in"]))&&n.push(a)});if(e||l||0!==n.length)return{start:function(){function a(){t(b,function(a){a.end()})}var b=[];e&&b.push(e.start());l&&b.push(l.start());t(n,function(a){b.push(a.start())});var c=new d({end:a,cancel:a});d.all(b,function(a){c.complete(a)});return c}}}function da(c){var d=c.element,e=c.options||
+{};c.structural&&(e.event=c.event,e.structural=!0,e.applyClassesEarly=!0,"leave"===c.event&&(e.onDone=e.domOperation));e.preparationClasses&&(e.event=ca(e.event,e.preparationClasses));c=a(d,e);return c.$$willAnimate?c:null}if(!f.animations&&!f.transitions)return O;var v=G[0].body;c=J(e);var E=A(c.parentNode&&11===c.parentNode.nodeType||v.contains(c)?c:v);return function(a){return a.from&&a.to?q(a.from,a.to,a.classes,a.anchors):da(a)}}]}]).provider("$$animateJs",["$animateProvider",function(a){this.$get=
+["$injector","$$AnimateRunner","$$jqLite",function(b,c,d){function e(c){c=V(c)?c:c.split(" ");for(var d=[],e={},f=0;f<c.length;f++){var y=c[f],q=a.$$registeredAnimations[y];q&&!e[y]&&(d.push(b.get(q)),e[y]=!0)}return d}var f=X(d);return function(a,b,d,s){function q(){s.domOperation();f(a,s)}function A(a,b,d,e,f){switch(d){case "animate":b=[b,e.from,e.to,f];break;case "setClass":b=[b,g,M,f];break;case "addClass":b=[b,g,f];break;case "removeClass":b=[b,M,f];break;default:b=[b,f]}b.push(e);if(a=a.apply(a,
+b))if(Da(a.start)&&(a=a.start()),a instanceof c)a.done(f);else if(Da(a))return a;return O}function C(a,b,d,e,f){var g=[];t(e,function(e){var l=e[f];l&&g.push(function(){var e,f,h=!1,g=function(a){h||(h=!0,(f||O)(a),e.complete(!a))};e=new c({end:function(){g()},cancel:function(){g(!0)}});f=A(l,a,b,d,function(a){g(!1===a)});return e})});return g}function v(a,b,d,e,f){var g=C(a,b,d,e,f);if(0===g.length){var k,l;"beforeSetClass"===f?(k=C(a,"removeClass",d,e,"beforeRemoveClass"),l=C(a,"addClass",d,e,"beforeAddClass")):
+"setClass"===f&&(k=C(a,"removeClass",d,e,"removeClass"),l=C(a,"addClass",d,e,"addClass"));k&&(g=g.concat(k));l&&(g=g.concat(l))}if(0!==g.length)return function(a){var b=[];g.length&&t(g,function(a){b.push(a())});b.length?c.all(b,a):a();return function(a){t(b,function(b){a?b.cancel():b.end()})}}}var E=!1;3===arguments.length&&ra(d)&&(s=d,d=null);s=oa(s);d||(d=a.attr("class")||"",s.addClass&&(d+=" "+s.addClass),s.removeClass&&(d+=" "+s.removeClass));var g=s.addClass,M=s.removeClass,x=e(d),H,I;if(x.length){var K,
+J;"leave"===b?(J="leave",K="afterLeave"):(J="before"+b.charAt(0).toUpperCase()+b.substr(1),K=b);"enter"!==b&&"move"!==b&&(H=v(a,b,s,x,J));I=v(a,b,s,x,K)}if(H||I){var m;return{$$willAnimate:!0,end:function(){m?m.end():(E=!0,q(),ha(a,s),m=new c,m.complete(!0));return m},start:function(){function b(c){E=!0;q();ha(a,s);m.complete(c)}if(m)return m;m=new c;var d,e=[];H&&e.push(function(a){d=H(a)});e.length?e.push(function(a){q();a(!0)}):q();I&&e.push(function(a){d=I(a)});m.setHost({end:function(){E||((d||
+O)(void 0),b(void 0))},cancel:function(){E||((d||O)(!0),b(!0))}});c.chain(e,b);return m}}}}}]}]).provider("$$animateJsDriver",["$$animationProvider",function(a){a.drivers.push("$$animateJsDriver");this.$get=["$$animateJs","$$AnimateRunner",function(a,c){function d(c){return a(c.element,c.event,c.classes,c.options)}return function(a){if(a.from&&a.to){var b=d(a.from),n=d(a.to);if(b||n)return{start:function(){function a(){return function(){t(d,function(a){a.end()})}}var d=[];b&&d.push(b.start());n&&
+d.push(n.start());c.all(d,function(a){e.complete(a)});var e=new c({end:a(),cancel:a()});return e}}}else return d(a)}}]}])})(window,window.angular);
 //# sourceMappingURL=angular-animate.min.js.map
 
 /*
@@ -39945,7 +34959,7 @@ d.parentNode.scrollTop=d.offsetTop;break;default:c&&P.$apply(function(){angular.
 }).call(this);
 
 /*!
- * angular-translate - v2.15.2 - 2017-06-22
+ * angular-translate - v2.17.0 - 2017-12-21
  * 
  * Copyright (c) 2017 The angular-translate team, Pascal Precht; Licensed MIT
  */
@@ -40387,7 +35401,29 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
       bcp47 : function (tag) {
         var temp = (tag || '').split('_').join('-');
         var parts = temp.split('-');
-        return parts.length > 1 ? (parts[0].toLowerCase() + '-' + parts[1].toUpperCase()) : temp;
+
+        switch (parts.length) {
+          case 1: // language only
+            parts[0] = parts[0].toLowerCase();
+            break;
+          case 2: // language-script or language-region
+            parts[0] = parts[0].toLowerCase();
+            if (parts[1].length === 4) { // parts[1] is script
+              parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
+            } else { // parts[1] is region
+              parts[1] = parts[1].toUpperCase();
+            }
+            break;
+          case 3: // language-script-region
+            parts[0] = parts[0].toLowerCase();
+            parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
+            parts[2] = parts[2].toUpperCase();
+            break;
+          default:
+            return temp;
+        }
+
+        return parts.join('-');
       },
       'iso639-1' : function (tag) {
         var temp = (tag || '').split('_').join('-');
@@ -40396,7 +35432,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
       }
     };
 
-  var version = '2.15.2';
+  var version = '2.17.0';
 
   // tries to determine the browsers language
   var getFirstBrowserLanguage = function () {
@@ -40477,23 +35513,37 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
     return this.toString().replace(/^\s+|\s+$/g, '');
   };
 
+  /**
+   * @name lowercase
+   * @private
+   *
+   * @description
+   * Return the lowercase string only if the type is string
+   *
+   * @returns {string} The string all in lowercase
+   */
+  var lowercase = function (string) {
+    return angular.isString(string) ? string.toLowerCase() : string;
+  };
+
   var negotiateLocale = function (preferred) {
     if (!preferred) {
       return;
     }
 
     var avail = [],
-      locale = angular.lowercase(preferred),
+      locale = lowercase(preferred),
       i = 0,
       n = $availableLanguageKeys.length;
 
     for (; i < n; i++) {
-      avail.push(angular.lowercase($availableLanguageKeys[i]));
+      avail.push(lowercase($availableLanguageKeys[i]));
     }
 
     // Check for an exact match in our list of available keys
-    if (indexOf(avail, locale) > -1) {
-      return preferred;
+    i = indexOf(avail, locale);
+    if (i > -1) {
+      return $availableLanguageKeys[i];
     }
 
     if ($languageKeyAliases) {
@@ -40502,14 +35552,14 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
         if ($languageKeyAliases.hasOwnProperty(langKeyAlias)) {
           var hasWildcardKey = false;
           var hasExactKey = Object.prototype.hasOwnProperty.call($languageKeyAliases, langKeyAlias) &&
-            angular.lowercase(langKeyAlias) === angular.lowercase(preferred);
+            lowercase(langKeyAlias) === lowercase(preferred);
 
           if (langKeyAlias.slice(-1) === '*') {
-            hasWildcardKey = langKeyAlias.slice(0, -1) === preferred.slice(0, langKeyAlias.length - 1);
+            hasWildcardKey = lowercase(langKeyAlias.slice(0, -1)) === lowercase(preferred.slice(0, langKeyAlias.length - 1));
           }
           if (hasExactKey || hasWildcardKey) {
             alias = $languageKeyAliases[langKeyAlias];
-            if (indexOf(avail, angular.lowercase(alias)) > -1) {
+            if (indexOf(avail, lowercase(alias)) > -1) {
               return alias;
             }
           }
@@ -40520,7 +35570,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
     // Check for a language code without region
     var parts = preferred.split('_');
 
-    if (parts.length > 1 && indexOf(avail, angular.lowercase(parts[0])) > -1) {
+    if (parts.length > 1 && indexOf(avail, lowercase(parts[0])) > -1) {
       return parts[0];
     }
 
@@ -40733,6 +35783,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
    * Tells the module which of the registered translation tables to use for translation
    * at initial startup by passing a language key. Similar to `$translateProvider#use`
    * only that it says which language to **prefer**.
+   * It is recommended to call this after {@link pascalprecht.translate.$translate#fallbackLanguage fallbackLanguage()}.
    *
    * @param {string} langKey A language key.
    */
@@ -41141,9 +36192,12 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
    *     en_US => en_US
    *     en-us => en_US
    * * BCP 47 (RFC 4646 & 4647)
+   *     EN => en
    *     en-US => en-US
    *     en_US => en-US
    *     en-us => en-US
+   *     sr-latn => sr-Latn
+   *     sr-latn-rs => sr-Latn-RS
    *
    * See also:
    * * http://en.wikipedia.org/wiki/IETF_language_tag
@@ -41369,11 +36423,12 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
    *                                     This can be optionally an array of translation ids which
    *                                     results that the function returns an object where each key
    *                                     is the translation id and the value the translation.
-   * @param {object=} interpolateParams An object hash for dynamic values
-   * @param {string} interpolationId The id of the interpolation to use
-   * @param {string} defaultTranslationText the optional default translation text that is written as
+   * @param {object=} [interpolateParams={}] An object hash for dynamic values
+   * @param {string=} [interpolationId=undefined] The id of the interpolation to use (use default unless set via useInterpolation())
+   * @param {string=} [defaultTranslationText=undefined] the optional default translation text that is written as
    *                                        as default text in case it is not found in any configured language
-   * @param {string} forceLanguage A language to be used instead of the current language
+   * @param {string=} [forceLanguage=false] A language to be used instead of the current language
+   * @param {string=} [sanitizeStrategy=undefined] force sanitize strategy for this call instead of using the configured one (use default unless set)
    * @returns {object} promise
    */
   this.$get = ['$log', '$injector', '$rootScope', '$q', function ($log, $injector, $rootScope, $q) {
@@ -41386,7 +36441,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
       fallbackIndex,
       startFallbackIteration;
 
-    var $translate = function (translationId, interpolateParams, interpolationId, defaultTranslationText, forceLanguage) {
+    var $translate = function (translationId, interpolateParams, interpolationId, defaultTranslationText, forceLanguage, sanitizeStrategy) {
       if (!$uses && $preferredLanguage) {
         $uses = $preferredLanguage;
       }
@@ -41415,7 +36470,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
               deferred.resolve([translationId, value]);
             };
             // we don't care whether the promise was resolved or rejected; just store the values
-            $translate(translationId, interpolateParams, interpolationId, defaultTranslationText, forceLanguage).then(regardless, regardless);
+            $translate(translationId, interpolateParams, interpolationId, defaultTranslationText, forceLanguage, sanitizeStrategy).then(regardless, regardless);
             return deferred.promise;
           };
           for (var i = 0, c = translationIds.length; i < c; i++) {
@@ -41438,9 +36493,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
       }
 
       var promiseToWaitFor = (function () {
-        var promise = $preferredLanguage ?
-          langPromises[$preferredLanguage] :
-          langPromises[uses];
+        var promise = langPromises[uses] || langPromises[$preferredLanguage];
 
         fallbackIndex = 0;
 
@@ -41472,14 +36525,14 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
         // no promise to wait for? okay. Then there's no loader registered
         // nor is a one pending for language that comes from storage.
         // We can just translate.
-        determineTranslation(translationId, interpolateParams, interpolationId, defaultTranslationText, uses).then(deferred.resolve, deferred.reject);
+        determineTranslation(translationId, interpolateParams, interpolationId, defaultTranslationText, uses, sanitizeStrategy).then(deferred.resolve, deferred.reject);
       } else {
         var promiseResolved = function () {
           // $uses may have changed while waiting
           if (!forceLanguage) {
             uses = $uses;
           }
-          determineTranslation(translationId, interpolateParams, interpolationId, defaultTranslationText, uses).then(deferred.resolve, deferred.reject);
+          determineTranslation(translationId, interpolateParams, interpolationId, defaultTranslationText, uses, sanitizeStrategy).then(deferred.resolve, deferred.reject);
         };
         promiseResolved.displayName = 'promiseResolved';
 
@@ -41893,7 +36946,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
         // If using link, rerun $translate with linked translationId and return it
         if (translation.substr(0, 2) === '@:') {
 
-          $translate(translation.substr(2), interpolateParams, interpolationId, defaultTranslationText, uses)
+          $translate(translation.substr(2), interpolateParams, interpolationId, defaultTranslationText, uses, sanitizeStrategy)
             .then(deferred.resolve, deferred.reject);
         } else {
           //
@@ -42072,6 +37125,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
      *
      * @description
      * Returns the language key for the fallback languages or sets a new fallback stack.
+     * It is recommended to call this before {@link pascalprecht.translate.$translateProvider#preferredLanguage preferredLanguage()}.
      *
      * @param {string=} langKey language String or Array of fallback languages to be used (to change stack at runtime)
      *
@@ -42195,7 +37249,7 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
        *   $scope.text = $translate("HELLO");
        * });
      *
-     * @param {string} [key] Language key
+     * @param {string=} key Language key
      * @return {object|string} Promise with loaded language data or the language key if a falsy param was given.
      */
     $translate.use = function (key) {
@@ -42448,10 +37502,10 @@ function $translate($STORAGE_KEY, $windowProvider, $translateSanitizationProvide
      *                                     This can be optionally an array of translation ids which
      *                                     results that the function's promise returns an object where
      *                                     each key is the translation id and the value the translation.
-     * @param {object} interpolateParams Params
-     * @param {string} interpolationId The id of the interpolation to use
-     * @param {string} forceLanguage A language to be used instead of the current language
-     * @param {string} sanitizeStrategy force sanitize strategy for this call instead of using the configured one
+     * @param {object=} [interpolateParams={}] Params
+     * @param {string=} [interpolationId=undefined] The id of the interpolation to use (use default unless set via useInterpolation())
+     * @param {string=} [forceLanguage=false] A language to be used instead of the current language
+     * @param {string=} [sanitizeStrategy=undefined] force sanitize strategy for this call instead of using the configured one (use default unless set)
      *
      * @return {string|object} translation
      */
@@ -42786,9 +37840,9 @@ function $translateDefaultInterpolation ($interpolate, $translateSanitization) {
    * Since AngularJS 1.5, `value` must not be a string but can be anything input.
    *
    * @param {string} value translation
-   * @param {object} interpolationParams interpolation params
-   * @param {string} context current context (filter, directive, service)
-   * @param {string} sanitizeStrategy sanitize strategy
+   * @param {object} [interpolationParams={}] interpolation params
+   * @param {string} [context=undefined] current context (filter, directive, service)
+   * @param {string} [sanitizeStrategy=undefined] sanitize strategy (use default unless set)
    * @param {string} translationId current translationId
    *
    * @returns {string} interpolated string
@@ -42824,9 +37878,9 @@ angular.module('pascalprecht.translate')
 /**
  * @ngdoc directive
  * @name pascalprecht.translate.directive:translate
- * @requires $interpolate, 
- * @requires $compile, 
- * @requires $parse, 
+ * @requires $interpolate,
+ * @requires $compile,
+ * @requires $parse,
  * @requires $rootScope
  * @restrict AE
  *
@@ -42839,6 +37893,7 @@ angular.module('pascalprecht.translate')
  * @param {string=} translate-values Values to pass into translation id. Can be passed as object literal string or interpolated object.
  * @param {string=} translate-attr-ATTR translate Translation id and put it into ATTR attribute.
  * @param {string=} translate-default will be used unless translation was successful
+ * @param {string=} translate-sanitize-strategy defines locally sanitize strategy
  * @param {boolean=} translate-compile (default true if present) defines locally activation of {@link pascalprecht.translate.$translateProvider#methods_usePostCompiling}
  * @param {boolean=} translate-keep-content (default true if present) defines that in case a KEY could not be translated, that the existing content is left in the innerHTML}
  *
@@ -42933,6 +37988,19 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
     return this.toString().replace(/^\s+|\s+$/g, '');
   };
 
+  /**
+   * @name lowercase
+   * @private
+   *
+   * @description
+   * Return the lowercase string only if the type is string
+   *
+   * @returns {string} The string all in lowercase
+   */
+  var lowercase = function (string) {
+    return angular.isString(string) ? string.toLowerCase() : string;
+  };
+
   return {
     restrict: 'AE',
     scope: true,
@@ -42944,6 +38012,9 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
 
       var translateInterpolation = (tAttr.translateInterpolation) ?
         tAttr.translateInterpolation : undefined;
+
+      var translateSanitizeStrategyExist = (tAttr.translateSanitizeStrategy) ?
+        tAttr.translateSanitizeStrategy : undefined;
 
       var translateValueExist = tElement[0].outerHTML.match(/translate-value-+/i);
 
@@ -42967,7 +38038,7 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
           if (translateValueExist) {
             for (var attr in tAttr) {
               if (Object.prototype.hasOwnProperty.call(iAttr, attr) && attr.substr(0, 14) === 'translateValue' && attr !== 'translateValues') {
-                var attributeName = angular.lowercase(attr.substr(14, 1)) + attr.substr(15);
+                var attributeName = lowercase(attr.substr(14, 1)) + attr.substr(15);
                 interpolateParams[attributeName] = tAttr[attr];
               }
             }
@@ -43048,6 +38119,13 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
           updateTranslations();
         });
 
+        if (translateSanitizeStrategyExist) {
+          iAttr.$observe('translateSanitizeStrategy', function (value) {
+            scope.sanitizeStrategy = $parse(value)(scope.$parent);
+            updateTranslations();
+          });
+        }
+
         if (translateValuesExist) {
           iAttr.$observe('translateValues', function (interpolateParams) {
             if (interpolateParams) {
@@ -43061,7 +38139,7 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
         if (translateValueExist) {
           var observeValueAttribute = function (attrName) {
             iAttr.$observe(attrName, function (value) {
-              var attributeName = angular.lowercase(attrName.substr(14, 1)) + attrName.substr(15);
+              var attributeName = lowercase(attrName.substr(14, 1)) + attrName.substr(15);
               scope.interpolateParams[attributeName] = value;
             });
           };
@@ -43089,7 +38167,7 @@ function translateDirective($translate, $interpolate, $compile, $parse, $rootSco
               translationId = translateNamespace + translationId;
             }
 
-            $translate(translationId, interpolateParams, translateInterpolation, defaultTranslationText, scope.translateLanguage)
+            $translate(translationId, interpolateParams, translateInterpolation, defaultTranslationText, scope.translateLanguage, scope.sanitizeStrategy)
               .then(function (translation) {
                 applyTranslation(translation, scope, true, translateAttr);
               }, function (translationId) {
@@ -43190,6 +38268,7 @@ angular.module('pascalprecht.translate')
  *
  * @param {string=} translate-attr Object literal mapping attributes to translation ids.
  * @param {string=} translate-values Values to pass into the translation ids. Can be passed as object literal string.
+ * @param {string=} translate-sanitize-strategy defines locally sanitize strategy
  *
  * @example
    <example module="ngView">
@@ -43246,6 +38325,7 @@ function translateAttrDirective($translate, $rootScope) {
 
       var translateAttr,
           translateValues,
+          translateSanitizeStrategy,
           previousAttributes = {};
 
       // Main update translations function
@@ -43260,7 +38340,7 @@ function translateAttrDirective($translate, $rootScope) {
           if (scope.translateNamespace && translationId.charAt(0) === '.') {
             translationId = scope.translateNamespace + translationId;
           }
-          $translate(translationId, translateValues, attr.translateInterpolation, undefined, scope.translateLanguage)
+          $translate(translationId, translateValues, attr.translateInterpolation, undefined, scope.translateLanguage, translateSanitizeStrategy)
             .then(function (translation) {
               element.attr(attributeName, translation);
             }, function (translationId) {
@@ -43289,6 +38369,13 @@ function translateAttrDirective($translate, $rootScope) {
         scope,
         attr.translateValues,
         function (newValue) { translateValues = newValue; },
+        updateTranslations
+      );
+      // Watch for sanitize strategy changes
+      watchAttribute(
+        scope,
+        attr.translateSanitizeStrategy,
+        function (newValue) { translateSanitizeStrategy = newValue; },
         updateTranslations
       );
 
@@ -60765,10 +55852,10 @@ trackExceptions:!1,optOut:!1,developerMode:!1},l=["pageTrack","eventTrack","exce
 p.setOptOut=function(a){this.settings.optOut=a,s()},p.getOptOut=function(){return this.settings.optOut};var q={$get:["$injector",function(a){return r(a)}],api:p,settings:j,virtualPageviews:function(a){this.settings.pageTracking.autoTrackVirtualPages=a},trackStates:function(a){this.settings.pageTracking.trackStates=a},trackRoutes:function(a){this.settings.pageTracking.trackRoutes=a},excludeRoutes:function(a){this.settings.pageTracking.excludedRoutes=a},queryKeysWhitelist:function(a){this.settings.pageTracking.queryKeysWhitelisted=a},queryKeysBlacklist:function(a){this.settings.pageTracking.queryKeysBlacklisted=a},firstPageview:function(a){this.settings.pageTracking.autoTrackFirstPage=a},withBase:function(b){this.settings.pageTracking.basePath=b?a.element(document).find("base").attr("href"):""},withAutoBase:function(a){this.settings.pageTracking.autoBasePath=a},trackExceptions:function(a){this.settings.trackExceptions=a},developerMode:function(a){this.settings.developerMode=a}},r=function(b){return a.extend(p,{$inject:b.invoke})},s=function(){h(q,l,g)};
 // Initial register
 h(q,l,g)}function d(b,c,d,e){function f(a){for(var b=0;b<d.settings.pageTracking.excludedRoutes.length;b++){var c=d.settings.pageTracking.excludedRoutes[b];if(c instanceof RegExp&&c.test(a)||a.indexOf(c)>-1)return!0}return!1}function g(a,b){for(var c=[],d=0;d<a.length;d++)b.indexOf(a[d])===-1&&c.push(a[d]);return c}function h(a,b,c){if(/\?/.test(a)&&b.length>0){for(var d=a.split("?"),e=d[0],f=d[1].split("&"),h=[],i=0;i<b.length;i++)for(var j=b[i],k=0;k<f.length;k++)(j instanceof RegExp&&j.test(f[k])||f[k].indexOf(j)>-1)&&h.push(f[k]);var l="white"==c?h:g(f,h);return l.length>0?e+"?"+l.join("&"):e}return a}function i(a){return h(a,d.settings.pageTracking.queryKeysWhitelisted,"white")}function j(a){return h(a,d.settings.pageTracking.queryKeysBlacklisted,"black")}function k(a,b){f(a)||(a=i(a),a=j(a),d.pageTrack(a,b))}d.settings.pageTracking.autoTrackFirstPage&&e.invoke(["$location",function(a){/* Only track the 'first page' if there are no routes or states on the page */
-var b=!0;if(e.has("$route")){var f=e.get("$route");if(f)for(var g in f.routes){b=!1;break}else null===f&&(b=!1)}else if(e.has("$state")){var h=e.get("$state");for(var i in h.get()){b=!1;break}}if(b)if(d.settings.pageTracking.autoBasePath&&(d.settings.pageTracking.basePath=c.location.pathname),d.settings.pageTracking.trackRelativePath){var j=d.settings.pageTracking.basePath+a.url();k(j,a)}else k(a.absUrl(),a)}]),d.settings.pageTracking.autoTrackVirtualPages&&e.invoke(["$location",function(a){d.settings.pageTracking.autoBasePath&&(/* Add the full route to the base. */
+var b=!0;if(e.has("$route")){var f=e.get("$route");if(f)for(var g in f.routes){b=!1;break}else null===f&&(b=!1)}else if(e.has("$state")){var h=e.get("$state");h.get().length>1&&(b=!1)}if(b)if(d.settings.pageTracking.autoBasePath&&(d.settings.pageTracking.basePath=c.location.pathname),d.settings.pageTracking.trackRelativePath){var i=d.settings.pageTracking.basePath+a.url();k(i,a)}else k(a.absUrl(),a)}]),d.settings.pageTracking.autoTrackVirtualPages&&e.invoke(["$location",function(a){d.settings.pageTracking.autoBasePath&&(/* Add the full route to the base. */
 d.settings.pageTracking.basePath=c.location.pathname+"#");var f=!0;if(d.settings.pageTracking.trackRoutes&&e.has("$route")){var g=e.get("$route");if(g)for(var h in g.routes){f=!1;break}else null===g&&(f=!1);b.$on("$routeChangeSuccess",function(b,c){if(!c||!(c.$$route||c).redirectTo){var e=d.settings.pageTracking.basePath+a.url();k(e,a)}})}d.settings.pageTracking.trackStates&&(e.has("$state")&&!e.has("$transitions")&&(f=!1,b.$on("$stateChangeSuccess",function(b,c){var e=d.settings.pageTracking.basePath+a.url();k(e,a)})),e.has("$state")&&e.has("$transitions")&&(f=!1,e.invoke(["$transitions",function(b){b.onSuccess({},function(b){var c=b.options();
 // only track for transitions that would have triggered $stateChangeSuccess
-if(c.notify){var e=d.settings.pageTracking.basePath+a.url();k(e,a)}})}]))),f&&b.$on("$locationChangeSuccess",function(b,c){if(!c||!(c.$$route||c).redirectTo)if(d.settings.pageTracking.trackRelativePath){var e=d.settings.pageTracking.basePath+a.url();k(e,a)}else k(a.absUrl(),a)})}]),d.settings.developerMode&&a.forEach(d,function(a,b){"function"==typeof a&&(d[b]=function(){})})}function e(b){return{restrict:"A",link:function(c,d,e){var f=e.analyticsOn||"click",g={};a.forEach(e.$attr,function(a,b){i(b)&&(g[j(b)]=e[b],e.$observe(b,function(a){g[j(b)]=a}))}),a.element(d[0]).bind(f,function(f){var i=e.analyticsEvent||h(d[0]);g.eventType=f.type,e.analyticsIf&&!c.$eval(e.analyticsIf)||(
+if(c.notify){var e=d.settings.pageTracking.basePath+a.url();k(e,a)}})}]))),f&&b.$on("$locationChangeSuccess",function(b,c){if(!c||!(c.$$route||c).redirectTo)if(d.settings.pageTracking.trackRelativePath){var e=d.settings.pageTracking.basePath+a.url();k(e,a)}else k(a.absUrl(),a)})}]),d.settings.developerMode&&a.forEach(d,function(a,b){"function"==typeof a&&(d[b]=function(){})})}function e(b){return{restrict:"A",link:function(c,d,e){var f=e.analyticsOn||"click",g={};a.forEach(e.$attr,function(a,b){i(b)&&(g[j(b)]=e[b],e.$observe(b,function(a){g[j(b)]=a}))}),a.element(d[0]).on(f,function(f){var i=e.analyticsEvent||h(d[0]);g.eventType=f.type,e.analyticsIf&&!c.$eval(e.analyticsIf)||(
 // Allow components to pass through an expression that gets merged on to the event properties
 // eg. analytics-properites='myComponentScope.someConfigExpression.$analyticsProperties'
 e.analyticsProperties&&a.extend(g,c.$eval(e.analyticsProperties)),b.eventTrack(i,g))})}}}function f(a){a.decorator("$exceptionHandler",["$delegate","$injector",function(a,b){return function(c,d){var e=a(c,d),f=b.get("$analytics");return f.settings.trackExceptions&&f.exceptionTrack(c,d),e}}])}function g(a){return["a:","button:","button:button","button:submit","input:button","input:submit"].indexOf(a.tagName.toLowerCase()+":"+(a.type||""))>=0}function h(a){return g(a)?a.innerText||a.value:a.id||a.name||a.tagName}function i(a){return"analytics"===a.substr(0,9)&&["On","Event","If","Properties","EventType"].indexOf(a.substr(9))===-1}function j(a){var b=a.slice(9);// slice off the 'analytics' prefix
@@ -61059,6 +56146,12 @@ function SwiperFactory (Dom7) {
           if (!s.params.breakpoints) return false;
           var breakpoint = false;
           var points = [], point;
+
+          // If params are passed as a string, parse to a JSON object
+          if( typeof(s.params.breakpoints) === 'string' ){
+            s.params.breakpoints = JSON.parse(s.params.breakpoints);
+          }
+
           for ( point in s.params.breakpoints ) {
               if (s.params.breakpoints.hasOwnProperty(point)) {
                   points.push(point);
@@ -62723,6 +57816,7 @@ function SwiperFactory (Dom7) {
           s.setWrapperTransition(0);
           if (typeof runCallbacks === 'undefined') runCallbacks = true;
           if (s.lazy) s.lazy.onTransitionEnd();
+          s.update();
           if (runCallbacks) {
               s.emit('onTransitionEnd', s);
               if (s.activeIndex !== s.previousIndex) {
@@ -64606,6 +59700,7 @@ function SwiperDirective (Swiper, $rootScope, $timeout) {
       $attribute.prevButton = '.' + $scope.uuid + ' .swiper-button-prev';
 
       $timeout(function() {
+        ($attribute && $attribute.speed) && ($attribute.speed = parseInt($attribute.speed));
         $scope.instance = new Swiper ('.' + $scope.uuid, $attribute);
       });
 
@@ -66422,313 +61517,308 @@ $templateCache.put("directives/toast/toast.html","<div class=\"{{toastClass}} {{
 angular.module('angularPromiseButtons', []);
 
 angular.module('angularPromiseButtons')
-    .directive('promiseBtn', ['angularPromiseButtons', '$parse', '$timeout', '$compile', function(angularPromiseButtons, $parse, $timeout, $compile) {
-        'use strict';
+  .directive('promiseBtn', ['angularPromiseButtons', '$parse', '$timeout', '$compile', function(angularPromiseButtons, $parse, $timeout, $compile) {
+    'use strict';
 
-        return {
-            restrict: 'EA',
-            priority: angularPromiseButtons.config.priority,
-            scope: {
-                promiseBtn: '=',
-                promiseBtnOptions: '=?'
-            },
-            link: function(scope, el, attrs) {
-                // provide configuration
-                var cfg = angularPromiseButtons.config;
-                // later initialized via initPromiseWatcher()
-                var promiseWatcher;
-                //  timeout used
-                var minDurationTimeout;
-                // boolean to determine minDurationTimeout state
-                var minDurationTimeoutDone;
-                // boolean to determine if promise was resolved
-                var promiseDone;
+    return {
+      restrict: 'EA',
+      priority: angularPromiseButtons.config.priority,
+      scope: {
+        promiseBtn: '=',
+        promiseBtnOptions: '=?',
+        ngDisabled: '=?'
+      },
+      link: function(scope, el, attrs) {
+        // provide configuration
+        var cfg = angularPromiseButtons.config;
+        // later initialized via initPromiseWatcher()
+        var promiseWatcher;
+        //  timeout used
+        var minDurationTimeout;
+        // boolean to determine minDurationTimeout state
+        var minDurationTimeoutDone;
+        // boolean to determine if promise was resolved
+        var promiseDone;
 
+        /**
+         * Handles everything to be triggered when the button is set
+         * to loading state.
+         * @param {Object}btnEl
+         */
+        function initLoadingState(btnEl) {
+          if (cfg.btnLoadingClass && !cfg.addClassToCurrentBtnOnly) {
+            btnEl.addClass(cfg.btnLoadingClass);
+          }
+          if (cfg.disableBtn && !cfg.disableCurrentBtnOnly) {
+            btnEl.attr('disabled', 'disabled');
+          }
+        }
 
-                /**
-                 * Handles everything to be triggered when the button is set
-                 * to loading state.
-                 * @param {Object}btnEl
-                 */
-                function initLoadingState(btnEl) {
-                    if (cfg.btnLoadingClass && !cfg.addClassToCurrentBtnOnly) {
-                        btnEl.addClass(cfg.btnLoadingClass);
-                    }
-                    if (cfg.disableBtn && !cfg.disableCurrentBtnOnly) {
-                        btnEl.attr('disabled', 'disabled');
-                    }
-                }
-
-                /**
-                 * Handles everything to be triggered when loading is finished
-                 * @param {Object}btnEl
-                 */
-                function handleLoadingFinished(btnEl) {
-                    if ((!cfg.minDuration || minDurationTimeoutDone) && promiseDone) {
-                        if (cfg.btnLoadingClass) {
-                            btnEl.removeClass(cfg.btnLoadingClass);
-                        }
-                        if (cfg.disableBtn) {
-                            btnEl.removeAttr('disabled');
-                        }
-                    }
-                }
-
-                /**
-                 * Initializes a watcher for the promise. Also takes
-                 * cfg.minDuration into account if given.
-                 * @param {Function}watchExpressionForPromise
-                 * @param {Object}btnEl
-                 */
-                function initPromiseWatcher(watchExpressionForPromise, btnEl) {
-                    // watch promise to resolve or fail
-                    scope.$watch(watchExpressionForPromise, function(mVal) {
-                        minDurationTimeoutDone = false;
-                        promiseDone = false;
-
-                        // create timeout if option is set
-                        if (cfg.minDuration) {
-                            minDurationTimeout = $timeout(function() {
-                                minDurationTimeoutDone = true;
-                                handleLoadingFinished(btnEl);
-                            }, cfg.minDuration);
-                        }
-
-                        // for regular promises
-                        if (mVal && mVal.then) {
-                            initLoadingState(btnEl);
-
-                            // angular promise
-                            if (mVal.finally) {
-                                mVal.finally(function() {
-                                    promiseDone = true;
-                                    handleLoadingFinished(btnEl);
-                                });
-                            }
-                            // ES6 promises
-                            else {
-                                mVal.then(function() {
-                                    promiseDone = true;
-                                    handleLoadingFinished(btnEl);
-                                })
-                                .catch(function() {
-                                    promiseDone = true;
-                                    handleLoadingFinished(btnEl);
-                                });
-                            }
-
-                        }
-                        // for $resource
-                        else if (mVal && mVal.$promise) {
-                            initLoadingState(btnEl);
-                            mVal.$promise.finally(function() {
-                                promiseDone = true;
-                                handleLoadingFinished(btnEl);
-                            });
-                        }
-                    });
-                }
-
-
-                /**
-                 * Get the callbacks from the (String) expression given.
-                 * @param {String}expression
-                 * @returns {Array}
-                 */
-                function getCallbacks(expression) {
-                    return expression
-                    // split by ; to get different functions if any
-                        .split(';')
-                        .map(function(callback) {
-                            // return getter function
-                            return $parse(callback);
-                        });
-                }
-
-                /**
-                 * $compile and append the spinner template to the button.
-                 * @param {Object}btnEl
-                 */
-                function appendSpinnerTpl(btnEl) {
-                    btnEl.append($compile(cfg.spinnerTpl)(scope));
-                }
-
-                /**
-                 * Used to limit loading state to show only for the currently
-                 * clicked button.
-                 * @param {Object}btnEl
-                 */
-                function addHandlersForCurrentBtnOnly(btnEl) {
-                    // handle current button only options via click
-                    if (cfg.addClassToCurrentBtnOnly) {
-                        btnEl.on(cfg.CLICK_EVENT, function() {
-                            btnEl.addClass(cfg.btnLoadingClass);
-                        });
-                    }
-
-                    if (cfg.disableCurrentBtnOnly) {
-                        btnEl.on(cfg.CLICK_EVENT, function() {
-                            btnEl.attr('disabled', 'disabled');
-                        });
-                    }
-                }
-
-                /**
-                 * Used for the function syntax of the promise button directive by
-                 * parsing the expressions provided by the attribute via getCallbacks().
-                 * Unbinds the default event handlers, which is why it might sometimes
-                 * be required to use the promise syntax.
-                 * @param {Object}eventToHandle
-                 * @param {String}attrToParse
-                 * @param {Object}btnEl
-                 */
-                function initHandlingOfViewFunctionsReturningAPromise(eventToHandle, attrToParse, btnEl) {
-                    // we need to use evalAsync here, as
-                    // otherwise the click or submit event
-                    // won't be ready to be replaced
-                    scope.$evalAsync(function() {
-                        var callbacks = getCallbacks(attrs[attrToParse]);
-
-                        // unbind original click event
-                        el.unbind(eventToHandle);
-
-                        // rebind, but this time watching it's return value
-                        el.bind(eventToHandle, function(event) {
-                            // Make sure we run the $digest cycle
-                            scope.$apply(function() {
-                                callbacks.forEach(function(cb) {
-                                    // execute function on parent scope
-                                    // as we're in an isolate scope here
-                                    var promise = cb(scope.$parent, {$event: event});
-
-                                    // only init watcher if not done before
-                                    if (!promiseWatcher) {
-                                        promiseWatcher = initPromiseWatcher(function() {
-                                            return promise;
-                                        }, btnEl);
-                                    }
-                                });
-                            });
-                        });
-                    });
-                }
-
-                /**
-                 * Get's all submit button children of the given element
-                 * @param {Object}formEl
-                 * @returns {Object}
-                 */
-                function getSubmitBtnChildren(formEl) {
-                    var submitBtnEls = [];
-                    var allButtonEls = formEl.find(angularPromiseButtons.config.BTN_SELECTOR);
-
-                    for (var i = 0; i < allButtonEls.length; i++) {
-                        var btnEl = allButtonEls[i];
-                        if (angular.element(btnEl)
-                                .attr('type') === 'submit') {
-                            submitBtnEls.push(btnEl);
-                        }
-                    }
-                    return angular.element(submitBtnEls);
-                }
-
-
-                // INIT
-                // ---------
-
-                // check if there is any value given via attrs.promiseBtn
-                if (!attrs.promiseBtn) {
-                    // handle ngClick function directly returning a promise
-                    if (attrs.hasOwnProperty(cfg.CLICK_ATTR)) {
-                        appendSpinnerTpl(el);
-                        addHandlersForCurrentBtnOnly(el);
-                        initHandlingOfViewFunctionsReturningAPromise(cfg.CLICK_EVENT, cfg.CLICK_ATTR, el);
-                    }
-                    // handle ngSubmit function directly returning a promise
-                    else if (attrs.hasOwnProperty(cfg.SUBMIT_ATTR)) {
-                        // get child submits for form elements
-                        var btnElements = getSubmitBtnChildren(el);
-
-                        appendSpinnerTpl(btnElements);
-                        addHandlersForCurrentBtnOnly(btnElements);
-                        initHandlingOfViewFunctionsReturningAPromise(cfg.SUBMIT_EVENT, cfg.SUBMIT_ATTR, btnElements);
-                    }
-                }
-                // handle promises passed via scope.promiseBtn
-                else {
-                    appendSpinnerTpl(el);
-                    addHandlersForCurrentBtnOnly(el);
-                    // handle promise passed directly via attribute as variable
-                    initPromiseWatcher(function() {
-                        return scope.promiseBtn;
-                    }, el);
-                }
-
-
-                // watch and update options being changed
-                scope.$watch('promiseBtnOptions', function(newVal) {
-                    if (angular.isObject(newVal)) {
-                        cfg = angular.extend({}, cfg, newVal);
-                    }
-                }, true);
-
-                // cleanup
-                scope.$on('$destroy', function() {
-                    $timeout.cancel(minDurationTimeout);
-                });
+        /**
+         * Handles everything to be triggered when loading is finished
+         * @param {Object}btnEl
+         */
+        function handleLoadingFinished(btnEl) {
+          if ((!cfg.minDuration || minDurationTimeoutDone) && promiseDone) {
+            if (cfg.btnLoadingClass) {
+              btnEl.removeClass(cfg.btnLoadingClass);
             }
-        };
-    }]);
+            if (cfg.disableBtn && !scope.ngDisabled) {
+              btnEl.removeAttr('disabled');
+            }
+          }
+        }
+
+        /**
+         * Initializes a watcher for the promise. Also takes
+         * cfg.minDuration into account if given.
+         * @param {Function}watchExpressionForPromise
+         * @param {Object}btnEl
+         */
+        function initPromiseWatcher(watchExpressionForPromise, btnEl) {
+          // watch promise to resolve or fail
+          scope.$watch(watchExpressionForPromise, function(mVal) {
+            minDurationTimeoutDone = false;
+            promiseDone = false;
+
+            // create timeout if option is set
+            if (cfg.minDuration) {
+              minDurationTimeout = $timeout(function() {
+                minDurationTimeoutDone = true;
+                handleLoadingFinished(btnEl);
+              }, cfg.minDuration);
+            }
+
+            // for regular promises
+            if (mVal && mVal.then) {
+              initLoadingState(btnEl);
+
+              // angular promise
+              if (mVal.finally) {
+                mVal.finally(function() {
+                  promiseDone = true;
+                  handleLoadingFinished(btnEl);
+                });
+              }
+              // ES6 promises
+              else {
+                mVal.then(function() {
+                  promiseDone = true;
+                  handleLoadingFinished(btnEl);
+                })
+                  .catch(function() {
+                    promiseDone = true;
+                    handleLoadingFinished(btnEl);
+                  });
+              }
+
+            }
+            // for $resource
+            else if (mVal && mVal.$promise) {
+              initLoadingState(btnEl);
+              mVal.$promise.finally(function() {
+                promiseDone = true;
+                handleLoadingFinished(btnEl);
+              });
+            }
+          });
+        }
+
+        /**
+         * Get the callbacks from the (String) expression given.
+         * @param {String}expression
+         * @returns {Array}
+         */
+        function getCallbacks(expression) {
+          return expression
+          // split by ; to get different functions if any
+            .split(';')
+            .map(function(callback) {
+              // return getter function
+              return $parse(callback);
+            });
+        }
+
+        /**
+         * $compile and append the spinner template to the button.
+         * @param {Object}btnEl
+         */
+        function appendSpinnerTpl(btnEl) {
+          btnEl.append($compile(cfg.spinnerTpl)(scope));
+        }
+
+        /**
+         * Used to limit loading state to show only for the currently
+         * clicked button.
+         * @param {Object}btnEl
+         */
+        function addHandlersForCurrentBtnOnly(btnEl) {
+          // handle current button only options via click
+          if (cfg.addClassToCurrentBtnOnly) {
+            btnEl.on(cfg.CLICK_EVENT, function() {
+              btnEl.addClass(cfg.btnLoadingClass);
+            });
+          }
+
+          if (cfg.disableCurrentBtnOnly) {
+            btnEl.on(cfg.CLICK_EVENT, function() {
+              btnEl.attr('disabled', 'disabled');
+            });
+          }
+        }
+
+        /**
+         * Used for the function syntax of the promise button directive by
+         * parsing the expressions provided by the attribute via getCallbacks().
+         * Unbinds the default event handlers, which is why it might sometimes
+         * be required to use the promise syntax.
+         * @param {Object}eventToHandle
+         * @param {String}attrToParse
+         * @param {Object}btnEl
+         */
+        function initHandlingOfViewFunctionsReturningAPromise(eventToHandle, attrToParse, btnEl) {
+          // we need to use evalAsync here, as
+          // otherwise the click or submit event
+          // won't be ready to be replaced
+          scope.$evalAsync(function() {
+            var callbacks = getCallbacks(attrs[attrToParse]);
+
+            // unbind original click event
+            el.unbind(eventToHandle);
+
+            // rebind, but this time watching it's return value
+            el.bind(eventToHandle, function(event) {
+              // Make sure we run the $digest cycle
+              scope.$apply(function() {
+                callbacks.forEach(function(cb) {
+                  // execute function on parent scope
+                  // as we're in an isolate scope here
+                  var promise = cb(scope.$parent, { $event: event });
+
+                  // only init watcher if not done before
+                  if (!promiseWatcher) {
+                    promiseWatcher = initPromiseWatcher(function() {
+                      return promise;
+                    }, btnEl);
+                  }
+                });
+              });
+            });
+          });
+        }
+
+        /**
+         * Get's all submit button children of the given element
+         * @param {Object}formEl
+         * @returns {Object}
+         */
+        function getSubmitBtnChildren(formEl) {
+          var submitBtnEls = [];
+          var allButtonEls = formEl.find(angularPromiseButtons.config.BTN_SELECTOR);
+
+          for (var i = 0; i < allButtonEls.length; i++) {
+            var btnEl = allButtonEls[i];
+            if (angular.element(btnEl)
+                .attr('type') === 'submit') {
+              submitBtnEls.push(btnEl);
+            }
+          }
+          return angular.element(submitBtnEls);
+        }
+
+        // INIT
+        // ---------
+
+        // check if there is any value given via attrs.promiseBtn
+        if (!attrs.promiseBtn) {
+          // handle ngClick function directly returning a promise
+          if (attrs.hasOwnProperty(cfg.CLICK_ATTR)) {
+            appendSpinnerTpl(el);
+            addHandlersForCurrentBtnOnly(el);
+            initHandlingOfViewFunctionsReturningAPromise(cfg.CLICK_EVENT, cfg.CLICK_ATTR, el);
+          }
+          // handle ngSubmit function directly returning a promise
+          else if (attrs.hasOwnProperty(cfg.SUBMIT_ATTR)) {
+            // get child submits for form elements
+            var btnElements = getSubmitBtnChildren(el);
+
+            appendSpinnerTpl(btnElements);
+            addHandlersForCurrentBtnOnly(btnElements);
+            initHandlingOfViewFunctionsReturningAPromise(cfg.SUBMIT_EVENT, cfg.SUBMIT_ATTR, btnElements);
+          }
+        }
+        // handle promises passed via scope.promiseBtn
+        else {
+          appendSpinnerTpl(el);
+          addHandlersForCurrentBtnOnly(el);
+          // handle promise passed directly via attribute as variable
+          initPromiseWatcher(function() {
+            return scope.promiseBtn;
+          }, el);
+        }
+
+        // watch and update options being changed
+        scope.$watch('promiseBtnOptions', function(newVal) {
+          if (angular.isObject(newVal)) {
+            cfg = angular.extend({}, cfg, newVal);
+          }
+        }, true);
+
+        // cleanup
+        scope.$on('$destroy', function() {
+          $timeout.cancel(minDurationTimeout);
+        });
+      }
+    };
+  }]);
 
 angular.module('angularPromiseButtons')
-    .provider('angularPromiseButtons', function angularPromiseButtonsProvider() {
-        'use strict';
+  .provider('angularPromiseButtons', function angularPromiseButtonsProvider() {
+    'use strict';
 
-        // *****************
-        // DEFAULTS & CONFIG
-        // *****************
+    // *****************
+    // DEFAULTS & CONFIG
+    // *****************
 
-        var config = {
-            spinnerTpl: '<span class="btn-spinner"></span>',
-            priority: 0,
-            disableBtn: true,
-            btnLoadingClass: 'is-loading',
-            addClassToCurrentBtnOnly: false,
-            disableCurrentBtnOnly: false,
-            minDuration: false,
-            CLICK_EVENT: 'click',
-            CLICK_ATTR: 'ngClick',
-            SUBMIT_EVENT: 'submit',
-            SUBMIT_ATTR: 'ngSubmit',
-            BTN_SELECTOR: 'button'
-        };
+    var config = {
+      spinnerTpl: '<span class="btn-spinner"></span>',
+      priority: 0,
+      disableBtn: true,
+      btnLoadingClass: 'is-loading',
+      addClassToCurrentBtnOnly: false,
+      disableCurrentBtnOnly: false,
+      minDuration: false,
+      CLICK_EVENT: 'click',
+      CLICK_ATTR: 'ngClick',
+      SUBMIT_EVENT: 'submit',
+      SUBMIT_ATTR: 'ngSubmit',
+      BTN_SELECTOR: 'button'
+    };
 
-        // *****************
-        // SERVICE-FUNCTIONS
-        // *****************
+    // *****************
+    // SERVICE-FUNCTIONS
+    // *****************
 
+    // *************************
+    // PROVIDER-CONFIG-FUNCTIONS
+    // *************************
 
-        // *************************
-        // PROVIDER-CONFIG-FUNCTIONS
-        // *************************
+    return {
+      extendConfig: function(newConfig) {
+        config = angular.extend(config, newConfig);
+      },
 
+      // ************************************************
+      // ACTUAL FACTORY FUNCTION - used by the directive
+      // ************************************************
+
+      $get: function() {
         return {
-            extendConfig: function(newConfig) {
-                config = angular.extend(config, newConfig);
-            },
-
-
-            // ************************************************
-            // ACTUAL FACTORY FUNCTION - used by the directive
-            // ************************************************
-
-            $get: function() {
-                return {
-                    config: config
-                };
-            }
+          config: config
         };
-    });
+      }
+    };
+  });
 
 
 /*
@@ -68289,7 +63379,7 @@ var myApp = angular.module('myApp', [
 ])
 
 
-var isproduction = false;
+//var isproduction = false;
 // Define all the routes below
 myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider,$sceDelegateProvider,IdleProvider,KeepaliveProvider) {
     var tempateURL = "views/template/template.html"; //Default Template URL
@@ -68334,7 +63424,7 @@ myApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locat
     $urlRouterProvider.otherwise("/");
     $locationProvider.html5Mode(isproduction);
 });
-myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
+myApp.run(['$http', '$cookies','Idle','$rootScope', function ($http, $cookies,Idle,$rootScope) {
 
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.post['X-CSRFToken'] = $cookies.get("csrftoken");
@@ -68355,7 +63445,7 @@ myApp.run(['$http', '$cookies','Idle', function ($http, $cookies,Idle) {
         $(this).css('color', '#fff');
     });  
     Idle.watch();
-    
+    $rootScope.session_id="";
 }]);
 
 // For Language JS
@@ -68414,31 +63504,31 @@ myApp.directive('img', function ($compile, $parse) {
     })
 
 
-    .directive('fancybox', function ($document) {
-        return {
-            restrict: 'EA',
-            replace: false,
-            link: function (scope, element, attr) {
-                var $element = $(element);
-                var target;
-                if (attr.rel) {
-                    target = $("[rel='" + attr.rel + "']");
-                } else {
-                    target = element;
-                }
+    // .directive('fancybox', function ($document) {
+    //     return {
+    //         restrict: 'EA',
+    //         replace: false,
+    //         link: function (scope, element, attr) {
+    //             var $element = $(element);
+    //             var target;
+    //             if (attr.rel) {
+    //                 target = $("[rel='" + attr.rel + "']");
+    //             } else {
+    //                 target = element;
+    //             }
 
-                target.fancybox({
-                    openEffect: 'fade',
-                    closeEffect: 'fade',
-                    closeBtn: true,
-                    padding: 0,
-                    helpers: {
-                        media: {}
-                    }
-                });
-            }
-        };
-    })
+    //             target.fancybox({
+    //                 openEffect: 'fade',
+    //                 closeEffect: 'fade',
+    //                 closeBtn: true,
+    //                 padding: 0,
+    //                 helpers: {
+    //                     media: {}
+    //                 }
+    //             });
+    //         }
+    //     };
+    // })
 
     .directive('autoHeight', function ($compile, $parse) {
         return {
@@ -68807,9 +63897,9 @@ myApp.factory('NavigationService', function () {
     };
 });
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
-    adminurl2 = "http://cingulariti.com:443/Dvois/";
+    adminurl2 = "https://chat.i-on.in/dvois_backend/";
     var adminurl3 = "http://localhost/api/";
-    var adminurl3 = "http://104.46.103.162:8094/api/";
+    var adminurl3 = "https://chat.i-on.in:443/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
@@ -68825,10 +63915,26 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
             }).success(callback);
         },
         // This is a demo Service for POST Method.
+        authenticate: function(formData, callback) {
+            
+            return $http({
+                url:adminurl3+ "Chatbotautocomplete/authenticate",
+                method: 'POST',
+                data: formData
+            })
+        },
         getautocomplete: function(formData, callback) {
             
             return $http({
                 url:adminurl3+ "Chatbotautocomplete/getautocomplete",
+                method: 'POST',
+                data: formData
+            })
+        },
+        officelocator: function(formData, callback) {
+            
+            return $http({
+                url:adminurl3+ "Officelocator/getaddress",
                 method: 'POST',
                 data: formData
             })
@@ -68850,40 +63956,60 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
             })
         },
+        outlocator: function (formData, callback) {
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
+            return $http({
+                url: adminurl2 + 'outlocator/'+formData.user_id+"/",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                data: $httpParamSerializer(fd),
+                dataType:"json"
+            });
+        },
         getCategoryFAQ: function (formData, callback) {
+            //var fd = $.param(formData);
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return $http({
                 url: adminurl2 + 'out/'+formData.user_id+"/",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                data: $.param(formData),
+                data: $httpParamSerializer(fd),
                 dataType:"json"
             });
         },
         outquery: function (formData, callback) {
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return $http({
                 url: adminurl2 + 'outquery/'+formData.user_id+"/",
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
                 method: 'POST',
-                data: $.param(formData),
+                data: $httpParamSerializer(fd),
                 dataType:"json"
             });
         },
         outfeedback:function(formData,callback){
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return    $http({
                 url:adminurl2+'outfeedback/'+formData.user_id+"/",
                 method: 'POST',
-                data:$.param(formData),
+                data: $httpParamSerializer(fd),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
             });
             
             
         },
         getDthlinkRes:function(formData,callback){
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
             return    $http({
                 url:adminurl2+'outDTL/'+formData.user_id+"/",
                 //url: adminUrl3 + 'Chatbotautolist/getDthlink',
                 method: 'POST',
-                data:$.param(formData),
+                data: $httpParamSerializer(fd),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
             });
             
@@ -68933,32 +64059,73 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
-
+        $rootScope.gotsession=false;
         angular.element(document).ready(function () {
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            apiService.authenticate({}).then( function (response) {
+                console.log(response);
+                if(response.data.data.value=="False")
+                {
+                    $rootScope.gotsession = false;    
+                }
+                else if(response.data.data.value=="True")
+                {
+                    $rootScope.gotsession = true;
+                }
+                else
+                {
+                    $rootScope.gotsession = false;
+                }
+            });
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
-                $cookies.put("csrftoken",response.data.csrf_token);
-                $cookies.put("session_id",response.data.session_id);
-                $.jStorage.set("csrftoken",response.data.csrf_token);
+                if(!response.data.session_id)
+                {
+                    $rootScope.gotsession = false;    
+                }
+                else
+                {
+                    $rootScope.gotsession = true;
+                    $rootScope.session_object = response.data.session_object;
+                    $.jStorage.set("session_object",response.data.session_object);
+                    $cookies.put("csrftoken",response.data.csrf_token);
+                    $cookies.put("session_id",response.data.session_id);
+                    $.jStorage.set("csrftoken",response.data.csrf_token);
+                    $.jStorage.set("session_id",response.data.session_id);
+                    $rootScope.session_id=response.data.session_id;
+                }
                 //console.log(response.data);
             });
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position){
-                    $scope.$apply(function(){
-                        $scope.position = position;
-                        console.log(position);
-                    });
-                });
-            }
+            $.ajax({
+                url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
+                dataType: "json",
+                async: true,
+                cache: false,
+                timeout: 3000,
+                type: "GET",
+                success: function (data) {
+                    console.log(data,"live user");
+                    
+                },
+            });
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.getCurrentPosition(function(position){
+            //         $scope.$apply(function(){
+            //             $scope.position = position;
+            //             console.log(position);
+            //         });
+            //     });
+            // }
         });
         
 
@@ -68966,13 +64133,19 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
     })
 
-    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle) {
+    .controller('ChatCtrl', function ($scope, $rootScope,TemplateService, $timeout,$http,apiService,$state,$sce,$cookies,$location,$compile,$uibModal,$stateParams,Idle,$httpParamSerializer) {
        //angular.element(document).ready(function () {
             $scope.$on('IdleStart', function() {
                 // the user appears to have gone idle
                 console.log("Idle started");
             });
        //});
+        $rootScope.trustSrc = function(src) {
+            return $sce.trustAsResourceUrl(src);
+            //return $sce.getTrustedResourceUrl(src);
+        };
+       $rootScope.cust_Name="";
+       $rootScope.CustomerID="";
         $rootScope.$on('IdleTimeout', function() {
             // var scope = angular.element(document.getElementById('changepwd')).scope();
             // scope.logout();
@@ -69004,40 +64177,66 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             }
         });
         var username=$location.search().username; 
-        var password=$location.search().password;
+        var customerid=$location.search().customerid; 
+        //var password=$location.search().password;
         $scope.timerflag=true;
-        if(username && password)
+        $scope.sendtobackend = false;
+        if(username)
         {   
-            if($.jStorage.get("username") && $.jStorage.get("username")==username)
+            if($.jStorage.get("username"))
             {
+                if($.jStorage.get("customerDetails"))
+                {
+                    var cust_det = $.jStorage.get("customerDetails");
+                
+                    $rootScope.cust_Name = cust_det.Name;
+                    $rootScope.CustomerID = cust_det.CustomerID;
+                }
                 
             }
             else
             {
 
-            
-                console.log(username);
-                console.log(password);
-                console.log("Exist");
-                var formData = {customer:username,pword:password};
+                $rootScope.cust_Name = username;
+                $rootScope.CustomerID = customerid;
+                var c_d={};
+                c_d.Name=username;
+                c_d.CustomerID=customerid;
+                $.jStorage.set("customerDetails",c_d);
+                //console.log(username);
+                //console.log(password);
+                //console.log("Exist");
+                //var formData = {customer:username,pword:password};
                 angular.element(document).ready(function () {
-                    var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
-                    $.ajax({
-                        url: url,
-                        dataType: "json",
-                        async: true,
-                        cache: false,
-                        timeout: 3000,
-                        headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
-                        type: "GET",
-                        success: function (data) {
-                            console.log(data,"crm");
-                            $.jStorage.set("customerDetails",data.customerDetails);
-                            $.jStorage.set("guidance",data.guidance);
-                            $.jStorage.set("username",username);
-                            location.reload();
-                        },
-                    });
+                    // var url = 'http://adserver.i-on.in:9000/crm?customer='+username+'&pword='+password;
+                    // //var url = 'http://adserver.i-on.in:9001/getAccountDetails?customer='+username;
+                    
+                    // $.ajax({
+                    //     url: url,
+                    //     dataType: "json",
+                    //     async: true,
+                    //     cache: false,
+                    //     timeout: 3000,
+                    //     headers: { "AuthKey": "685e968a14eaeeade097555e514cf2c1" },
+                    //     type: "GET",
+                    //     success: function (data) {
+                    //         console.log(data,"crm");
+                    //         if(data.customerDetails)
+                    //         {
+                    //             $rootScope.cust_Name = data.customerDetails.Name;
+                    //             $rootScope.CustomerID = data.customerDetails.CustomerID;
+                    //             $.jStorage.set("customerDetails",data.customerDetails);
+                    //             location.reload();
+                    //         }
+                    //         else {
+                                
+                                
+                                
+                    //         }
+                    //         $.jStorage.set("guidance",data.guidance);
+                    //         $.jStorage.set("username",username);
+                    //     },
+                    // });
                 });
             }
             // apiService.serverlogin(formData).then(function (callback){
@@ -69082,7 +64281,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //console.log(Browser.getParentUrl());
         $rootScope.validDomain = false;
         var referrerurl = $scope.getParentUrl();
-        if(referrerurl == null || referrerurl == "http://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
+        if(referrerurl == null || referrerurl == "https://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
             $rootScope.validDomain = true;
         $rootScope.validDomain = true;
         $rootScope.languagelist = [
@@ -69091,6 +64290,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             {id:"mr" , name:"Marathi"},
             {id:"gu" , name:"Gujarati"},
             {id:"ta" , name:"Tamil"},
+            {id:"kn",name:"Kannada"},
+            {id:"te",name:"Telugu"},
         ];
         $rootScope.changeLanguage = function(lang) {
             $rootScope.selectedLanguage = lang;
@@ -69244,7 +64445,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.pushQuestionMsg(index,link);
         };
         $rootScope.getCategoryFAQ = function(category) {
-            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            $scope.formData = { user_input:category._id,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
             //console.log($scope.formData);
             apiService.getCategoryFAQ($scope.formData).then( function (response) {
                 $rootScope.links = response.data;
@@ -69364,10 +64565,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         {
             $rootScope.firstMsg = true;
             var cust = $.jStorage.get("customerDetails");
-            var cust_name = "";
-            if(cust.Name)
-                cust_name = cust.Name;
-            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or press the technical queries button below",type:"SYS_FIRST"};
+            // var cust_name = "";
+            // if(cust && cust.Name)
+            //     cust_name = cust.Name;
+            var cust_name = $rootScope.cust_Name;
+            var msg = {Text:"Hi "+cust_name+", I'm your I-on assistant , ask me something from the faq or click on any of the buttons below",type:"SYS_FIRST"};
             //msg = {Text:"Hi, How may I help you ?",type:"SYS_FIRST"};
             $rootScope.pushSystemMsg(0,msg);  
         }
@@ -69572,24 +64774,24 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.getmaillink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>Customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>Customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.getcallink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>18001209636</a>",type:"SYS_AUTO"};
+                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>1800-120-9636</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>18001035466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.mailus = function(){
@@ -69852,6 +65054,40 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     $rootScope.showChatwindow();
         // else
         //     $rootScope.minimizeChatwindow();
+        $rootScope.showPincodeform = function() {
+            var msg = {type:"SYS_LOCATOR"};
+            $rootScope.pushSystemMsg(0,msg); 
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            
+            var mysessiondata = $.jStorage.get("session_object");
+            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
+            //mysessiondata = mysessiondata.toObject();
+            //var mergedObject = angular.extend(formData, mysessiondata);
+            //var formData = mergedObject;
+            apiService.outlocator(formdata).then( function (data) {
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
+            });
+        };
+        $rootScope.locatorformSubmit = function(formdata) {
+            
+            apiService.officelocator(formdata).then( function (response) {
+                if(!response.data.value || response.data.data.length == 0)
+                {
+                    //alert("Currently we are unavailable at this location");
+                    var msg = {type:"SYS_PINERR",error:"Currently we are unavailable at this location"};
+                    $rootScope.pushSystemMsg(0,msg); 
+                }
+                    
+                else
+                {
+                    var msg = {type:"SYS_PINADDR",address:response.data.data,responsedata:response.data.data};
+                    $rootScope.pushSystemMsg(0,msg); 
+                    //alert(response.data.data.address);
+                }
+            });
+        };
         $rootScope.showQuerybtn = function() {
             var msg = {type:"SYS_QUERY"};
             $rootScope.pushSystemMsg(0,msg); 
@@ -69880,21 +65116,37 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //     });
         // };
         $rootScope.getProcessTree = function(process) {
+            $rootScope.scrollChatWindow();
+            Idle.setIdle(120);
+            Idle.watch();
+            $.jStorage.set("timer",35);
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
-            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            var mysessiondata = $.jStorage.get("session_object");
+            formData = {customer_id:customer_id,customer_name:customer_name ,user_input:process,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
                
             $rootScope.showMsgLoader = true;
+            $scope.sendtobackend = true;
+            
+            //mysessiondata = mysessiondata.toObject();
+            //var mergedObject = angular.extend(formData, mysessiondata);
+            //var formData = mergedObject;
             apiService.outquery(formData).then(function (data){
-                    
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
+                $scope.timerflag = true;
+                $scope.sendtobackend = false;
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="text")
                     {
@@ -69937,15 +65189,17 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg);
                 $scope.timerflag = true; 
+                $scope.sendtobackend = false;
                 $rootScope.showMsgLoader=false;
             });
         };
         $rootScope.getDthlinkRes = function(stage,dthlink,Journey_Name) {
             //console.log(colno,lineno,dthlink);
             //mysession = $.jStorage.get("sessiondata");
+            $rootScope.scrollChatWindow();
             var mysession = {};
             
             //console.log(stage+"-"+dthlink);
@@ -69960,22 +65214,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // formData.DTHlink = dthlink;
             formData = mysession;
             formData.csrfmiddlewaretoken=$rootScope.getCookie("csrftoken");
-            formData.user_id=$cookies.get("session_id");
+            formData.user_id=$rootScope.session_id;
             //console.log(formData);
+            var mysessiondata = $.jStorage.get("session_object");
+            //mysessiondata = mysessiondata.toObject();
+            //var mergedObject = angular.extend(formData, mysessiondata);
+            //var formData = mergedObject;
+            //formData.session_object = mysessiondata;
             $rootScope.showMsgLoader = true;
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             formData.customer_id = customer_id;
             formData.customer_name = customer_name;
             apiService.getDthlinkRes(formData).then(function (data){
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
                 angular.forEach(data.data.tiledlist, function(value, key) {
                     if(value.type=="DTHyperlink")
                     {
@@ -69985,7 +65248,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 $rootScope.showMsgLoader=false;
             });
@@ -70023,30 +65286,50 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.showMsgLoader = false; 
         };
         $rootScope.getSystemMsg = function(id,value){
+            Idle.setIdle(120);
+            Idle.watch();
+            $.jStorage.set("timer",35);
             //console.log("id",id);
             var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
             //CsrfTokenService.getCookie("csrftoken").then(function(token) {
-                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id") };
-                //var mysessiondata = $.jStorage.get("sessiondata");
+                var mysessiondata = $.jStorage.get("session_object");
+                $scope.formData = { customer_id:customer_id,customer_name:customer_name,user_input:value,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
+                
                 //mysessiondata = mysessiondata.toObject();
-                //mysessiondata.data = {id:parseInt(id),Text:value};
-				//mysessiondata.data = {id:id,Text:value};
-                //$rootScope.formData = mysessiondata;
+                //var mergedObject = angular.extend($scope.formData, mysessiondata);
+                //$scope.formData = mergedObject;
                 $timeout(function(){
                     $(".chatinput").val("");
                 });
                 $scope.timerflag = false;
+                $scope.sendtobackend = true;
+                $timeout(function(){
+                    console.log($scope.timerflag,"timer");
+                    console.log($scope.sendtobackend,"send");
+                    if(!$scope.timerflag && $scope.sendtobackend)
+                    {
+                        msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
+                        $rootScope.pushSystemMsg(0,msg); 
+                        //$rootScope.showMsgLoader=false;
+                        $scope.timerflag = true;
+                    }
+                },7000);
                 apiService.getCategoryFAQ($scope.formData).then(function (data){
-					$scope.timerflag = true;
+                    $scope.timerflag = true;
+                    $scope.sendtobackend = false;
+                    $rootScope.session_object = data.data.session_object;
+                    $.jStorage.set("session_object",data.data.session_object);
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
@@ -70103,21 +65386,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
                     //console.log(reason);
-                    msg = {Text:"Nope ! didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a>",type:"SYS_EMPTY_RES"};
+                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
+                    $scope.sendtobackend = false;
                 });
             //});
-            $timeout(function(){
-                if(!$scope.timerflag)
-                {
-                    msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
-                    $rootScope.pushSystemMsg(0,msg); 
-                    //$rootScope.showMsgLoader=false;
-                    $scope.timerflag = true;
-                }
-            },7000);
+            
         };
         
         
@@ -70227,20 +65503,27 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             msg = {Text:"Thank you very much! Talk to you soon.",type:"SYS_EMPTY_RES"};
             $rootScope.pushSystemMsg(0,msg);
             $rootScope.disablefeedback = true;
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"POSITIVE" };
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            var mysessiondata = $.jStorage.get("session_object");
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"POSITIVE" };
             
+            //mysessiondata = mysessiondata.toObject();
+            // var mergedObject = angular.extend(formData, mysessiondata);
+            // var formData = mergedObject;
             apiService.outfeedback(formData).then(function (data){
-
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
             });
         };
         $rootScope.$dislikemodalInstance = {};
@@ -70274,20 +65557,27 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             msg = {Text:"Thanks! for taking the time to provide feedback, This will help me improve.",type:"SYS_EMPTY_RES"};
             $rootScope.pushSystemMsg(0,msg);
             $rootScope.disablefeedback = true;
-            var cust = $.jStorage.get("customerDetails");
-            if(cust)
-            {
-                var customer_id = cust.CustomerID;
-                var customer_name = cust.Name;
-            }
-            else {
-                var customer_id ="";
-                var customer_name ="";
-            }
-            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$cookies.get("session_id"),feedback:"NEGATIVE" };
+            // var cust = $.jStorage.get("customerDetails");
+            // if(cust)
+            // {
+            //     var customer_id = cust.CustomerID;
+            //     var customer_name = cust.Name;
+            // }
+            // else {
+            //     var customer_id ="";
+            //     var customer_name ="";
+            // }
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            var mysessiondata = $.jStorage.get("session_object");
+            var formData = { customer_id:customer_id,customer_name:customer_name,user_input:suggestion,csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id,feedback:"NEGATIVE" };
             
+            //mysessiondata = mysessiondata.toObject();
+            //var mergedObject = angular.extend(formData, mysessiondata);
+            //var formData = mergedObject;
             apiService.outfeedback(formData).then(function (data){
-
+                $rootScope.session_object = data.data.session_object;
+                $.jStorage.set("session_object",data.data.session_object);
             });
         };
         
@@ -70333,7 +65623,7 @@ myApp.controller('headerCtrl', function ($scope, TemplateService) {
     $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
         $(window).scrollTop(0);
     });
-    $.fancybox.close(true);
+    //$.fancybox.close(true);
 });
 myApp.controller('languageCtrl', function ($scope, TemplateService, $translate, $rootScope) {
     $scope.changeLanguage = function () {

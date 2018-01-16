@@ -10039,7 +10039,7 @@ button.btn.q_btn:hover {
   60% {
     text-shadow: 0.25em 0 0 black, 0.5em 0 0 transparent; }
   80%, 100% {
-    text-shadow: .25em 0 0 black, .5em 0 0 black; } }
+    text-shadow: .25em 0 0 black, .5em 0 0 black; } }
 
 @keyframes dots {
   0%, 20% {
@@ -10051,7 +10051,7 @@ button.btn.q_btn:hover {
   60% {
     text-shadow: 0.25em 0 0 black, 0.5em 0 0 transparent; }
   80%, 100% {
-    text-shadow: .25em 0 0 black, .5em 0 0 black; } }
+    text-shadow: .25em 0 0 black, .5em 0 0 black; } }
 
 *, :before, :after {
   box-sizing: border-box; }
@@ -13470,5 +13470,3 @@ a.ui-button:active,
 
 .fancybox-nav.fancybox-prev span {
   background-image: url(../img/prev.png); }
-
-/*# sourceMappingURL=import.css.map */
