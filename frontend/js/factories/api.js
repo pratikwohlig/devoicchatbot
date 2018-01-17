@@ -28,7 +28,7 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
         getautocomplete: function(formData, callback) {
             
             return $http({
-                url:adminurl3+ "Chatbotautocomplete/getautocomplete",
+                url:adminurl3+ "Journey/getautocomplete",
                 method: 'POST',
                 data: formData
             })
