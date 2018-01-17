@@ -71,7 +71,49 @@ var model = {
             console.log(found.toString());
             callback(null, JSON.parse(found));
         });
-        /*var spawn = require("child_process").spawn;
+		
+		
+		/*
+		 var spawn = require("child_process").spawn;
+        var process = spawn('python',['C:\\Users\\Administrator\\auth\\licence_validate2.py',"chat.i-on.in"], {detached: true});
+        //process.unref();
+        
+        process.stdout.on('data',function(chunk){
+
+            var textChunk = chunk.toString('utf8');// buffer to string
+			console.log("data", textChunk);
+            json_data = JSON.parse(chunk);
+            //console.log("tts",json_data);
+            //console.log("chunk",chunk);
+            //util.log(chunk);
+            //console.log("data", chunk);
+            callback(null, json_data);
+            
+        });
+
+        process.on('close', function (code) {
+            console.log("close",code);
+        });
+		
+        process.stderr.on('data', function (data) {
+            console.log('stderr: ' + data);
+        });
+        process.stdout.on('error', function( err ) {
+            if (err.code == "EPIPE") {
+                console.log("error",err);
+                py.exit(0);
+            }
+			callback(err,null);
+        });
+        process.stdout.on('end', function(){
+        	//var str = dataString.substring(1,dataString.length);
+        	console.log("end");
+        });
+        process.stdin.write(JSON.stringify(data));
+
+        process.stdin.end();*/
+		
+		/*var spawn = require("child_process").spawn;
         var process1 = spawn('cmd',['C:\\Users\\Administrator\\auth\\licence_validate.exe'], {detached: true});
         process1.stdout.on(parameters,function(chunk){
 
