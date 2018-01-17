@@ -63899,7 +63899,7 @@ myApp.factory('NavigationService', function () {
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
     adminurl2 = "https://chat.i-on.in/dvois_backend/";
     var adminurl3 = "http://localhost/api/";
-    var adminurl3 = "https://chat.i-on.in/api/";
+    var adminurl3 = "https://chat.i-on.in:443/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
