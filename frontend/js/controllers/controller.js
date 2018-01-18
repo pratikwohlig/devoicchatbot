@@ -636,7 +636,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
                     $rootScope.showMsgLoader=false;
                     $rootScope.scrollChatWindow();
-                },2000);
+                },0);
             }
             
             // value2.queslink = $sce.trustAsHtml(value2.queslink);
