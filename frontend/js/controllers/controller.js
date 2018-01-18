@@ -552,7 +552,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             var value2 = $rootScope.links;
-            if(value2[id].link != "" )
+            if(value2[id].link != "" && value2[id].link)
             {
                 var linkdata="";
                 var prev_res = false;
