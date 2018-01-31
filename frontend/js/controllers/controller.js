@@ -51,18 +51,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 }
                 //console.log(response.data);
             });
-            $.ajax({
-                url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
-                dataType: "json",
-                async: true,
-                cache: false,
-                timeout: 3000,
-                type: "GET",
-                success: function (data) {
-                    console.log(data,"live user");
+            // $.ajax({
+            //     url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
+            //     dataType: "json",
+            //     async: true,
+            //     cache: false,
+            //     timeout: 3000,
+            //     type: "GET",
+            //     success: function (data) {
+            //         console.log(data,"live user");
                     
-                },
-            });
+            //     },
+            // });
             // if (navigator.geolocation) {
             //     navigator.geolocation.getCurrentPosition(function(position){
             //         $scope.$apply(function(){
@@ -229,7 +229,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //console.log(Browser.getParentUrl());
         $rootScope.validDomain = false;
         var referrerurl = $scope.getParentUrl();
-        if(referrerurl == null || referrerurl == "https://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
+        console.log(referrerurl);
+        if(referrerurl == null || referrerurl == "https://chat.i-on.in/" || referrerurl == "http://localhost/flatlab/")
             $rootScope.validDomain = true;
         $rootScope.validDomain = true;
         $rootScope.languagelist = [
