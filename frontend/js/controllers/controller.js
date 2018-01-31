@@ -90,7 +90,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //return $sce.getTrustedResourceUrl(src);
         };
         $(document).on('click', '.net_speed_test', function(){ 
-            window.open('http://customer.i-on.in:8080/speedTest?customer='+$rootScope.CustomerID, '_blank');
+            window.open('http://customer.i-on.in:8080/speedTest?customer='+$rootScope.cust_Name, '_blank');
         });
         $rootScope.cust_Name="";
         $rootScope.CustomerID="";
