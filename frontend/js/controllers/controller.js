@@ -89,8 +89,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             return $sce.trustAsResourceUrl(src);
             //return $sce.getTrustedResourceUrl(src);
         };
-       $rootScope.cust_Name="";
-       $rootScope.CustomerID="";
+        $(document).on('click', '.net_speed_test', function(){ 
+            window.open('http://customer.i-on.in:8080/speedTest?customer='+$rootScope.CustomerID, '_blank');
+        });
+        $rootScope.cust_Name="";
+        $rootScope.CustomerID="";
         $rootScope.$on('IdleTimeout', function() {
             // var scope = angular.element(document.getElementById('changepwd')).scope();
             // scope.logout();
