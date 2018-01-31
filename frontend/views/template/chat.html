@@ -169,6 +169,11 @@
                                                            
                                                         <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:400}}" ></span>...
                                                     </div>
+                                                    <div class="faqmore" ng-if="chatRes.Text.length < 300" >
+                                                        
+                                                        <span class="cat_faq" comp-translater content="{{chatRes.Text}}"></span>
+                                                        
+                                                    </div>
                                                     <div class="text-center" ng-if="chatRes.Text.length > 400">
                                                         <button type="button" class="btn btn-xs btn-info texttoggle" >View More</button>
                                                     </div>
