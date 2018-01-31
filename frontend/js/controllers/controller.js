@@ -470,10 +470,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 }
                 var languageid = $.jStorage.get("language");
                 $scope.formData = {"text": chatText,"language":languageid };
-                apiService.translate($scope.formData).then( function (response) {
-                    //$(".chatinput").val(response.data.data);
-                    //console.log(response.data.data);
-                });
+                // apiService.translate($scope.formData).then( function (response) {
+                //     //$(".chatinput").val(response.data.data);
+                //     //console.log(response.data.data);
+                // });
             }
         };
         $rootScope.showFAQAns = function(e) {
@@ -531,19 +531,37 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$(this).parent().parent().find('.faqless').toggle();
             //$(this).parent().parent().find(".faqless").children('.faqmore').toggle("fast").promise().done(function(){
             //$(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast").promise().done(function(){
-                if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
-                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
-                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
-                    
+
+
+                if ($(this).parents().find('.faqmore').is(':visible') === true ){
+                    //$(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                    $(this).parents().find('.faqmore').fadeOut("fast");
+                    $(this).parents().find('.faqless').fadeIn("fast");
                     $(e).text("View More");
                     console.log("Notvisible");
                 }
                 else {
-                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
-                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                    //$(this).parents().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                    $(this).parents().find('.faqmore').fadeIn("fast");
+                    $(this).parents().find('.faqless').fadeOut("fast");
                     $(e).text("View Less");
                     console.log("visible");
                 }
+
+                //old
+                // if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
+                //     $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                //     $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
+                    
+                //     $(e).text("View More");
+                //     console.log("Notvisible");
+                // }
+                // else {
+                //     $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                //     $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                //     $(e).text("View Less");
+                //     console.log("visible");
+                // }
             //});
             //$timeout(function() {
                 
@@ -882,15 +900,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                             $('#faqs_dropdown').animate({scrollTop: chatHeight});
                         });
                         var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
-                        console.log(l_index,"index");
-                        console.log(value,"que");
-                        console.log($rootScope.links,"link");
+                        // console.log(l_index,"index");
+                        // console.log(value,"que");
+                        // console.log($rootScope.answers,"link");
                         var value2 = $rootScope.links;
-                        if($rootScope.autolink != "" )
+                        if($rootScope.autolink != "" || $rootScope.autolink)
                         {
                             var linkdata="";
                             var prev_res = false;
-                            console.log("First link");
+                            //console.log("First link");
                             final_link = $rootScope.autolink.split("<br>");
                             var languageid = $.jStorage.get("language");
                             $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
@@ -908,10 +926,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         
                         else
                         {    
-                            console.log("2nd link",$rootScope.answers);
+                            //console.log("2nd link",$rootScope.answers);
                             var linkdata="";
                             var prev_res = false;
-                            if(autolink != "")
+                            if(autolink != "" && autolink)
                             {
                                 final_link = autolink.split("<br>");
                                 var languageid = $.jStorage.get("language");

@@ -139,31 +139,18 @@
                                         <div class=" clearfix" ng-if="list.position==='left' && list.msg.tiledlist ">
                                             <div class="sysChatRes"  ng-repeat="chatRes in list.msg.tiledlist">
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='text'">
-                                                    <p class="lastmsg" ng-if="chatRes.Text.length <= 651">
-                                                        <!-- <ng-bind-html ng-bind-html = "chatRes.Text|newlines">
-                                                            
-                                                            {{chatRes.Text}}
-                                                            
-                                                        </ng-bind-html>  -->
+                                                    <!-- <p class="lastmsg" ng-if="chatRes.Text.length <= 651">
+                                                        
                                                         <span class="cat_faq" comp-translater content="{{chatRes.Text}}"></span>
-                                                        <!-- <myTranslate ng-if="chatRes.Text !=='' && chatRes.Text" comp-translate="{{chatRes.Text}}" >
-
-                                                        </myTranslate>  -->
+                                                        
                                                     </p>
                                                     <p class="lastmsg" >
                                                         <span class="faqless" >
-                                                            <!-- <span ng-bind-html = "chatRes.Text|newlines|limitTo:651" ng-if="chatRes.Text.length > 651">
-                                                                
-                                                                {{chatRes.Text}}
-                                                            </span> -->
+                                                           
                                                             <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:651}}" ng-if="chatRes.Text.length > 651"></span>
                                                             <span class="faqdot" ng-if="chatRes.Text.length > 651">...</span>
                                                             <span class="faqmore" ng-if="chatRes.Text.length > 651" style="display:none;">
-                                                                <!-- <span ng-bind-html = "chatRes.Text|newlines|limitTo:651:651">
-                                                                    
-                                                                    {{chatRes.Text}}
-                                                                    
-                                                                </span> -->
+                                                                
                                                                 <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:651:651}}" ></span>
                                                             </span>
                                                         </span>
@@ -171,6 +158,18 @@
                                                     </p>
                                                     
                                                     <div class="text-center" ng-if="chatRes.Text.length > 651">
+                                                        <button type="button" class="btn btn-xs btn-info texttoggle" >View More</button>
+                                                    </div> -->
+                                                    <div class="faqmore" ng-if="chatRes.Text.length > 400" style="display:none;">
+                                                        
+                                                        <span class="cat_faq" comp-translater content="{{chatRes.Text}}"></span>
+                                                        
+                                                    </div>
+                                                    <div class="faqless"  ng-if="chatRes.Text.length > 400" >
+                                                           
+                                                        <span class="cat_faq" comp-translater content="{{chatRes.Text|limitTo:400}}" ></span>...
+                                                    </div>
+                                                    <div class="text-center" ng-if="chatRes.Text.length > 400">
                                                         <button type="button" class="btn btn-xs btn-info texttoggle" >View More</button>
                                                     </div>
                                                 </div>
@@ -185,7 +184,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="chatType" ng-if="list.msg.tiledlist[0].type==='FAQ'">
-                                                    <p comp-translate="Please select an option:">:</p>
+                                                    <p comp-translate="I did not understand that. Did you mean?">:</p>
                                                     <ol class="quesList" >
                                                         <li ng-repeat="faqlist in chatRes.FAQ">
                                                         <div class="viewquesans">
