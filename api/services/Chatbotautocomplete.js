@@ -1,8 +1,8 @@
 var schema = new Schema({
-    questions: {
+    Questions: {
         type: String,
     },
-    answers: {
+    Answers: {
         type: String,
     },
     que_ans: {
@@ -35,8 +35,8 @@ var model = {
         searchstring=data.string;
         searchstring = "/"+searchstring+"/";
         Chatbotautocomplete.find({
-            questions:{ $regex: '.*' + data.string + '.*',$options:"i" }
-        }, { answers: 1, questions: 1,category:1,link:1 }).limit(4).exec(function (err, found) {
+            Questions:{ $regex: '.*' + data.string + '.*',$options:"i" }
+        }, { Answers: 1, Questions: 1,category:1,link:1 }).limit(4).exec(function (err, found) {
             if (err) {
                 callback(err, null);
             } 
