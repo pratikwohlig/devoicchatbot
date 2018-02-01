@@ -11,10 +11,10 @@ var schema = new Schema({
     final: {
         type:String,
     },
-    category: {
+    Category: {
        type:String,
     }, 
-    link: {
+    Link: {
        type:String,
    },
 });
@@ -36,7 +36,7 @@ var model = {
         searchstring = "/"+searchstring+"/";
         Chatbotautocomplete.find({
             Questions:{ $regex: '.*' + data.string + '.*',$options:"i" }
-        }, { Answers: 1, Questions: 1,category:1,link:1 }).limit(4).exec(function (err, found) {
+        }, { Answers: 1, Questions: 1,Category:1,Link:1 }).limit(4).exec(function (err, found) {
             if (err) {
                 callback(err, null);
             } 
