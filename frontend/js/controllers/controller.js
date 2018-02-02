@@ -1156,7 +1156,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the FAQ panel on the left.",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg);
                 $scope.timerflag = true; 
                 $scope.sendtobackend = false;
@@ -1215,7 +1215,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the panel on the left.",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 $rootScope.showMsgLoader=false;
             });
@@ -1252,6 +1252,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.pushQuesMsg(index,value);
             $rootScope.showMsgLoader = false; 
         };
+        $(document).on('click', '.portalapplink', function(e){ 
+            var index = $(this).attr('data-id');
+            var htmlcont = $(this).parents().find(".answer"+index).html();
+            msg = {Text:htmlcont,type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg); 
+        });
         $rootScope.getSystemMsg = function(id,value){
             Idle.setIdle(120);
             Idle.watch();
@@ -1282,8 +1288,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $scope.timerflag = false;
                 $scope.sendtobackend = true;
                 $timeout(function(){
-                    console.log($scope.timerflag,"timer");
-                    console.log($scope.sendtobackend,"send");
+                    // console.log($scope.timerflag,"timer");
+                    // console.log($scope.sendtobackend,"send");
                     if(!$scope.timerflag && $scope.sendtobackend)
                     {
                         msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
@@ -1300,8 +1306,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
-                        	$rootScope.pushSystemMsg(0,data.data);
-                            $rootScope.showMsgLoader = false;
+                            if(value.link)
+                            {
+                                answer1 = value.Text.split("(2nd)");
+                                console.log(answer1);
+                                data.data.tiledlist[0].answer_1 = answer1[0];
+                                data.data.tiledlist[0].answer_2 = answer1[1];
+                                final_link = value.link.split("<br>");
+                                var s_i =1;
+                                var linkdata="";
+                                angular.forEach(final_link, function(value2, key2) {
+                                    linkdata += "<p class='portalapplink' data-id='"+s_i+"' >"+value2+"</p>";
+                                    s_i++;
+                                });
+                                data.data.tiledlist[0].link = linkdata;
+                                $rootScope.pushSystemMsg(0,data.data);
+                                $rootScope.showMsgLoader = false;
+                                //value3.queslink=answer1;    
+                            }
+                            else
+                            {
+                                $rootScope.pushSystemMsg(0,data.data);
+                                $rootScope.showMsgLoader = false;
+                            }
+                            
+                        	
                             
                             if(value.category && value.category != '')
                             {
@@ -1352,8 +1381,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
-                    //console.log(reason);
-                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                    console.log(reason);
+                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the FAQ panel on the left.",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                     $scope.timerflag = true;

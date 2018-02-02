@@ -9745,7 +9745,7 @@ a.dthyperlink:hover {
 
 .right .chat-body {
   background: #EF9C6D;
-  color: #fff;
+  color: #000;
   border-top-right-radius: 0em;
   box-shadow: -1px 1px 1px 0px rgba(0, 0, 0, 0.4);
   display: table;
@@ -9903,11 +9903,11 @@ div#all_questions {
   font-family: "Roboto-Light"; }
 
 div#all_questions a {
-  color: #fff;
+  color: #000;
   font-size: 12px; }
 
 .questions hr {
-  background-color: #C0C0C0;
+  background-color: #000;
   margin: 10px 0; }
 
 .categorybreadcrumb {
