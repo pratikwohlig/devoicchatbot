@@ -50,6 +50,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.session_id=response.data.session_id;
                 }
                 //console.log(response.data);
+            }).catch(function(){
+                $rootScope.gotsession = true;    
             });
             // $.ajax({
             //     url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
