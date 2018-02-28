@@ -32,6 +32,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 {
                     $rootScope.gotsession = false;
                 }
+            }).catch(function (reason) {
+                $rootScope.gotsession = true;
             });
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 if(!response.data.session_id)
@@ -571,7 +573,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             
         });
         $scope.outcategorymsg = function() {
-            
+
         };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
