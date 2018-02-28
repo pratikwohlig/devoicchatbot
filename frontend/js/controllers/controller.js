@@ -17,24 +17,22 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
-            apiService.authenticate({}).then( function (response) {
-                console.log(response);
-                if(response.data.data.value=="False")
-                {
-                    $rootScope.gotsession = false;    
-					$rootScope.gotsession = true;    
-                }
-                else if(response.data.data.value=="True")
-                {
-                    $rootScope.gotsession = true;
-                }
-                else
-                {
-                    $rootScope.gotsession = false;
-                }
-            }).catch(function (reason) {
-                $rootScope.gotsession = true;
-            });
+            // apiService.authenticate({}).then( function (response) {
+            //     console.log(response);
+            //     if(response.data.data.value=="False")
+            //     {
+            //         $rootScope.gotsession = false;    
+			// 		$rootScope.gotsession = true;    
+            //     }
+            //     else if(response.data.data.value=="True")
+            //     {
+            //         $rootScope.gotsession = true;
+            //     }
+            //     else
+            //     {
+            //         $rootScope.gotsession = false;
+            //     }
+            // });
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 if(!response.data.session_id)
                 {
@@ -573,7 +571,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             
         });
         $scope.outcategorymsg = function() {
-
+            
         };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
