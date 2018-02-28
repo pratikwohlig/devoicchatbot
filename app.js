@@ -23,16 +23,16 @@
 process.chdir(__dirname);
 var mongoose;
 mongoose = require('mongoose');
-
-global["database"] = "Dvois";
-mongoose.Promise = global.Promise;
-//'mongodb://dvoicadmin:' + encodeURI('dvoicadmin@1234') + '@localhost:27017/' + database,
-global.username = "exponentia";
-global.password = "DVchat_123";
-global.host = "localhost";
-global.port = "27029";
-global.url = 'mongodb://' + username + ':' + (password) + '@' + host + ':' + port + '/' + database;
-global.mongourl = url;
+global["database"] = "dvois";
+// global["database"] = "Dvois";
+// mongoose.Promise = global.Promise;
+// //'mongodb://dvoicadmin:' + encodeURI('dvoicadmin@1234') + '@localhost:27017/' + database,
+// global.username = "exponentia";
+// global.password = "DVchat_123";
+// global.host = "localhost";
+// global.port = "27029";
+// global.url = 'mongodb://' + username + ':' + (password) + '@' + host + ':' + port + '/' + database;
+// global.mongourl = url;
 //mongoose.connect('mongodb://dvoicadmin:dvoicadmin_1234@localhost:27017/'+database, {
 mongoose.connect(mongourl, {
     useMongoClient: true,
