@@ -3,7 +3,45 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
-        $rootScope.gotsession=false;
+        $rootScope.gotsession=true;
+        function getParameterByName(name, url) {
+            if (!url) url = $rootScope.referrerurl;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        function getJsonFromUrl(hashBased) {
+            var query;
+            if(hashBased) {
+                var pos = location.href.indexOf("?");
+                if(pos==-1) return [];
+                query = location.href.substr(pos+1);
+            } else {
+                query = location.search.substr(1);
+            }
+            var result = {};
+            query.split("&").forEach(function(part) {
+                if(!part) return;
+                part = part.split("+").join(" "); // replace every + with space, regexp-free version
+                var eq = part.indexOf("=");
+                var key = eq>-1 ? part.substr(0,eq) : part;
+                var val = eq>-1 ? decodeURIComponent(part.substr(eq+1)) : "";
+                var from = key.indexOf("[");
+                if(from==-1) result[decodeURIComponent(key)] = val;
+                else {
+                var to = key.indexOf("]",from);
+                var index = decodeURIComponent(key.substring(from+1,to));
+                key = decodeURIComponent(key.substring(0,from));
+                if(!result[key]) result[key] = [];
+                if(!index) result[key].push(val);
+                else result[key][index] = val;
+                }
+            });
+            return result;
+        }
         angular.element(document).ready(function () {
             // var cust = $.jStorage.get("customerDetails");
             // if(cust)
@@ -17,22 +55,28 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
-            // apiService.authenticate({}).then( function (response) {
-            //     console.log(response);
-            //     if(response.data.data.value=="False")
-            //     {
-            //         $rootScope.gotsession = false;    
-			// 		$rootScope.gotsession = true;    
-            //     }
-            //     else if(response.data.data.value=="True")
-            //     {
-            //         $rootScope.gotsession = true;
-            //     }
-            //     else
-            //     {
-            //         $rootScope.gotsession = false;
-            //     }
-            // });
+            $(document).on('click', '.reportissue', function(){ 
+                param = getParameterByName('q');
+                var url = "https://customer.i-on.in/supportPage?q="+param;
+                var win = window.open(url, '_blank');
+                win.focus();
+            });
+            apiService.authenticate({}).then( function (response) {
+                //console.log(response);
+                if(response.data.data.value=="False")
+                {
+                    $rootScope.gotsession = false;    
+					$rootScope.gotsession = true;    
+                }
+                else if(response.data.data.value=="True")
+                {
+                    $rootScope.gotsession = true;
+                }
+                else
+                {
+                    $rootScope.gotsession = false;
+                }
+            });
             apiService.get_session({customer_id:customer_id,customer_name:customer_name}).then( function (response) {
                 if(!response.data.session_id)
                 {
@@ -214,7 +258,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
             if (isInIframe) {
                 parentUrl = document.referrer;
-                console.log("in iframe");
+                //console.log("in iframe");
             }
 
             return parentUrl;
@@ -232,6 +276,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.validDomain = false;
         var referrerurl = $scope.getParentUrl();
         console.log(referrerurl);
+        $rootScope.referrerurl = referrerurl;
+        $rootScope.referrerurl="http://adserver.i-on.in:9001/main?q=e2b990319c1c9751f502b8a87e636eae";
         if(referrerurl == null || referrerurl == "https://chat.i-on.in/" || referrerurl == "http://localhost/flatlab/")
             $rootScope.validDomain = true;
         $rootScope.validDomain = true;
@@ -572,8 +618,13 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             
             
         });
-        $scope.outcategorymsg = function() {
-            
+        $scope.outcategorymsg = function(q,a) {
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            formData = {question: q,answer:a,customer_id:customer_id,customer_name:customer_name,user_id:$rootScope.session_id };
+            apiService.outcategoryfaq(formData).then( function (response) {
+
+            });
         };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
@@ -586,12 +637,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 
                 final_link = value2[id].link.split("<br>");
                 var languageid = $.jStorage.get("language");
+                $scope.outcategorymsg(value,value2[id].link);
                 $scope.formData = {"items": final_link,"language":languageid,arr_index:id };
                 apiService.translatelink($scope.formData).then( function (response) {
                     value2.queslink=response.data.data.linkdata;
-                    console.log(value2.queslink);
                     value2.queslink = $sce.trustAsHtml(value2.queslink);
-                    
                     msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
                     $timeout(function(){
                         $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
@@ -748,24 +798,24 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.getmaillink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for Maharashtra is <a href='#'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for other states is <a href='#'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.getcallink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>1800-120-9636</a>",type:"SYS_AUTO"};
+                var msg = {Text:"Toll free number for Maharashtra is <a href='#'>1800-120-9636</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+                var msg = {Text:" Toll free number for other states is <a href='#'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.mailus = function(){
@@ -1031,35 +1081,40 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.showPincodeform = function() {
             var msg = {type:"SYS_LOCATOR"};
             $rootScope.pushSystemMsg(0,msg); 
-            var customer_id = $rootScope.CustomerID;
-            var customer_name = $rootScope.cust_Name;
             
-            var mysessiondata = $.jStorage.get("session_object");
-            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
-            //mysessiondata = mysessiondata.toObject();
-            //var mergedObject = angular.extend(formData, mysessiondata);
-            //var formData = mergedObject;
-            apiService.outlocator(formdata).then( function (data) {
-                $rootScope.session_object = data.data.session_object;
-                $.jStorage.set("session_object",data.data.session_object);
-            });
         };
-        $rootScope.locatorformSubmit = function(formdata) {
-            
-            apiService.officelocator(formdata).then( function (response) {
+        $rootScope.locatorformSubmit = function(formdata1) {
+            apiService.officelocator(formdata1).then( function (response) {
+                var add_answers = "";
                 if(!response.data.value || response.data.data.length == 0)
                 {
                     //alert("Currently we are unavailable at this location");
                     var msg = {type:"SYS_PINERR",error:"Currently we are unavailable at this location"};
                     $rootScope.pushSystemMsg(0,msg); 
+                    add_answers = "Currently we are unavailable at this location";
                 }
                     
                 else
                 {
+                    add_answers = response.data.data;
                     var msg = {type:"SYS_PINADDR",address:response.data.data,responsedata:response.data.data};
                     $rootScope.pushSystemMsg(0,msg); 
                     //alert(response.data.data.address);
                 }
+                var customer_id = $rootScope.CustomerID;
+                var customer_name = $rootScope.cust_Name;
+                
+                var mysessiondata = $.jStorage.get("session_object");
+               
+                    
+                var formdata = {pincode:formdata1.pincode, address:add_answers,customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
+                //mysessiondata = mysessiondata.toObject();
+                //var mergedObject = angular.extend(formData, mysessiondata);
+                //var formData = mergedObject;
+                apiService.outlocator(formdata).then( function (data) {
+                    $rootScope.session_object = data.data.session_object;
+                    $.jStorage.set("session_object",data.data.session_object);
+                });
             });
         };
         $rootScope.showQuerybtn = function() {
