@@ -3,7 +3,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         TemplateService.title = "Home"; //This is the Title of the Website
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
-        $rootScope.gotsession=true;
+        $rootScope.gotsession=false;
         function getParameterByName(name, url) {
             if (!url) url = $rootScope.referrerurl;
             name = name.replace(/[\[\]]/g, "\\$&");

@@ -1,6 +1,6 @@
 apps:
   - script: "app.js"
-    name: "chatbot - 8094"
+    name: "chatbot - 9000"
     watch: false
     args: "--prod"
     exec_mode: "cluster"
