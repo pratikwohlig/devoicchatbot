@@ -570,6 +570,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             
             
         });
+        $scope.outcategorymsg = function() {
+            
+        };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
@@ -584,7 +587,9 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $scope.formData = {"items": final_link,"language":languageid,arr_index:id };
                 apiService.translatelink($scope.formData).then( function (response) {
                     value2.queslink=response.data.data.linkdata;
+                    console.log(value2.queslink);
                     value2.queslink = $sce.trustAsHtml(value2.queslink);
+                    
                     msg2={"queslink":angular.copy(value2.queslink),type:"cat_faq"};
                     $timeout(function(){
                         $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
