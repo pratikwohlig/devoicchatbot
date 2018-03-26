@@ -63435,6 +63435,7 @@ myApp.run(['$http', '$cookies','Idle','$rootScope', function ($http, $cookies,Id
     $(document).on('click', '.q_btn', function(){ 
         //$(this).css('box-shadow','inset 0 3px 5px rgba(0, 0, 0, 0.125)');
     });
+    
     $(document).on('click', '.chat-body .changedthbg', function(){ 
         var stage = $(this).attr("data-bgstage");
         console.log(stage);
@@ -63898,8 +63899,10 @@ myApp.factory('NavigationService', function () {
 });
 myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$httpParamSerializerJQLike) {
     adminurl2 = "https://chat.i-on.in/dvois_backend/";
+    //adminurl2 = "https://cingulariti.com:8094/dvois_backend/";
     var adminurl3 = "http://localhost/api/";
     var adminurl3 = "https://chat.i-on.in:443/api/";
+    //var adminurl3 = "https://exponentiadata.co.in:8094/api/";
     var loginurl = "http://adserver.i-on.in:9001/validateUser";
     //adminurl2 = "http://localhost:8000/";
     //adminurl2 = "http://192.168.0.129:8000/";
@@ -63926,7 +63929,8 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
         getautocomplete: function(formData, callback) {
             
             return $http({
-                url:adminurl3+ "Journey/getautocomplete",
+                //url:adminurl3+ "Journey/getautocomplete",
+                url:adminurl3+ "Chatbotautocomplete/getautocomplete",
                 method: 'POST',
                 data: formData
             })
@@ -63955,6 +63959,17 @@ myApp.factory('apiService', function ($http, $q, $timeout,$httpParamSerializer,$
                 data: formData,
                 headers: {'AuthKey':"685e968a14eaeeade097555e514cf2c1",'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8' },
             })
+        },
+        outcategoryfaq: function (formData, callback) {
+            var fd = formData;
+            fd['session_object'] = $.jStorage.get("session_object");
+            return $http({
+                url: adminurl2 + 'outcategoryfaq/'+formData.user_id+"/",
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8','X-CSRFToken':formData.csrfmiddlewaretoken },
+                method: 'POST',
+                data: $httpParamSerializer(fd),
+                dataType:"json"
+            });
         },
         outlocator: function (formData, callback) {
             var fd = formData;
@@ -64060,6 +64075,44 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
         $rootScope.gotsession=false;
+        function getParameterByName(name, url) {
+            if (!url) url = $rootScope.referrerurl;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        function getJsonFromUrl(hashBased) {
+            var query;
+            if(hashBased) {
+                var pos = location.href.indexOf("?");
+                if(pos==-1) return [];
+                query = location.href.substr(pos+1);
+            } else {
+                query = location.search.substr(1);
+            }
+            var result = {};
+            query.split("&").forEach(function(part) {
+                if(!part) return;
+                part = part.split("+").join(" "); // replace every + with space, regexp-free version
+                var eq = part.indexOf("=");
+                var key = eq>-1 ? part.substr(0,eq) : part;
+                var val = eq>-1 ? decodeURIComponent(part.substr(eq+1)) : "";
+                var from = key.indexOf("[");
+                if(from==-1) result[decodeURIComponent(key)] = val;
+                else {
+                var to = key.indexOf("]",from);
+                var index = decodeURIComponent(key.substring(from+1,to));
+                key = decodeURIComponent(key.substring(0,from));
+                if(!result[key]) result[key] = [];
+                if(!index) result[key].push(val);
+                else result[key][index] = val;
+                }
+            });
+            return result;
+        }
         angular.element(document).ready(function () {
             // var cust = $.jStorage.get("customerDetails");
             // if(cust)
@@ -64073,8 +64126,14 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             // }
             var customer_id = $rootScope.CustomerID;
             var customer_name = $rootScope.cust_Name;
+            $(document).on('click', '.reportissue', function(){ 
+                param = getParameterByName('q');
+                var url = "https://customer.i-on.in/supportPage?q="+param;
+                var win = window.open(url, '_blank');
+                win.focus();
+            });
             apiService.authenticate({}).then( function (response) {
-                console.log(response);
+                //console.log(response);
                 if(response.data.data.value=="False")
                 {
                     $rootScope.gotsession = false;    
@@ -64106,19 +64165,21 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.session_id=response.data.session_id;
                 }
                 //console.log(response.data);
+            }).catch(function(){
+                $rootScope.gotsession = true;    
             });
-            $.ajax({
-                url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
-                dataType: "json",
-                async: true,
-                cache: false,
-                timeout: 3000,
-                type: "GET",
-                success: function (data) {
-                    console.log(data,"live user");
+            // $.ajax({
+            //     url: "https://www.googleapis.com/analytics/v3/data/realtime?ids=ga:167052418&metrics=rt:activeUsers",
+            //     dataType: "json",
+            //     async: true,
+            //     cache: false,
+            //     timeout: 3000,
+            //     type: "GET",
+            //     success: function (data) {
+            //         console.log(data,"live user");
                     
-                },
-            });
+            //     },
+            // });
             // if (navigator.geolocation) {
             //     navigator.geolocation.getCurrentPosition(function(position){
             //         $scope.$apply(function(){
@@ -64145,8 +64206,11 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             return $sce.trustAsResourceUrl(src);
             //return $sce.getTrustedResourceUrl(src);
         };
-       $rootScope.cust_Name="";
-       $rootScope.CustomerID="";
+        $(document).on('click', '.net_speed_test', function(){ 
+            window.open('http://customer.i-on.in:8080/speedTest?customer='+$rootScope.cust_Name, '_blank');
+        });
+        $rootScope.cust_Name="";
+        $rootScope.CustomerID="";
         $rootScope.$on('IdleTimeout', function() {
             // var scope = angular.element(document.getElementById('changepwd')).scope();
             // scope.logout();
@@ -64265,7 +64329,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
             if (isInIframe) {
                 parentUrl = document.referrer;
-                console.log("in iframe");
+                //console.log("in iframe");
             }
 
             return parentUrl;
@@ -64282,7 +64346,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         //console.log(Browser.getParentUrl());
         $rootScope.validDomain = false;
         var referrerurl = $scope.getParentUrl();
-        if(referrerurl == null || referrerurl == "https://104.46.103.162:8096/" || referrerurl == "http://localhost/flatlab/")
+        console.log(referrerurl);
+        $rootScope.referrerurl = referrerurl;
+        $rootScope.referrerurl="http://adserver.i-on.in:9001/main?q=e2b990319c1c9751f502b8a87e636eae";
+        if(referrerurl == null || referrerurl == "https://chat.i-on.in/" || referrerurl == "http://localhost/flatlab/")
             $rootScope.validDomain = true;
         $rootScope.validDomain = true;
         $rootScope.languagelist = [
@@ -64522,10 +64589,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 }
                 var languageid = $.jStorage.get("language");
                 $scope.formData = {"text": chatText,"language":languageid };
-                apiService.translate($scope.formData).then( function (response) {
-                    //$(".chatinput").val(response.data.data);
-                    //console.log(response.data.data);
-                });
+                // apiService.translate($scope.formData).then( function (response) {
+                //     //$(".chatinput").val(response.data.data);
+                //     //console.log(response.data.data);
+                // });
             }
         };
         $rootScope.showFAQAns = function(e) {
@@ -64583,19 +64650,37 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             //$(this).parent().parent().find('.faqless').toggle();
             //$(this).parent().parent().find(".faqless").children('.faqmore').toggle("fast").promise().done(function(){
             //$(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast").promise().done(function(){
-                if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
-                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
-                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
-                    
+
+
+                if ($(this).parents().find('.faqmore').is(':visible') === true ){
+                    //$(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                    $(this).parents().find('.faqmore').fadeOut("fast");
+                    $(this).parents().find('.faqless').fadeIn("fast");
                     $(e).text("View More");
                     console.log("Notvisible");
                 }
                 else {
-                    $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
-                    $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                    //$(this).parents().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                    $(this).parents().find('.faqmore').fadeIn("fast");
+                    $(this).parents().find('.faqless').fadeOut("fast");
                     $(e).text("View Less");
                     console.log("visible");
                 }
+
+                //old
+                // if ($(this).parent().parent().find('.faqmore').is(':visible') === true ){
+                //     $(this).parent().parent().find(".faqless").children('.faqdot').fadeIn("fast");
+                //     $(this).parent().parent().find(".faqless").children('.faqmore').fadeOut("fast");
+                    
+                //     $(e).text("View More");
+                //     console.log("Notvisible");
+                // }
+                // else {
+                //     $(this).parent().parent().find(".faqless").children('.faqdot').fadeOut("fast");
+                //     $(this).parent().parent().find(".faqless").children('.faqmore').fadeIn("fast");
+                //     $(e).text("View Less");
+                //     console.log("visible");
+                // }
             //});
             //$timeout(function() {
                 
@@ -64604,17 +64689,26 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             
             
         });
+        $scope.outcategorymsg = function(q,a) {
+            var customer_id = $rootScope.CustomerID;
+            var customer_name = $rootScope.cust_Name;
+            formData = {question: q,answer:a,customer_id:customer_id,customer_name:customer_name,user_id:$rootScope.session_id };
+            apiService.outcategoryfaq(formData).then( function (response) {
+
+            });
+        };
         $rootScope.pushQuesMsg = function(id,value) {
             $rootScope.chatmsgid = id;
             $rootScope.chatmsg = value;
             var value2 = $rootScope.links;
-            if(value2[id].link != "" )
+            if(value2[id].link != "" && value2[id].link)
             {
                 var linkdata="";
                 var prev_res = false;
                 
                 final_link = value2[id].link.split("<br>");
                 var languageid = $.jStorage.get("language");
+                $scope.outcategorymsg(value,value2[id].link);
                 $scope.formData = {"items": final_link,"language":languageid,arr_index:id };
                 apiService.translatelink($scope.formData).then( function (response) {
                     value2.queslink=response.data.data.linkdata;
@@ -64692,7 +64786,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     $rootScope.chatlist.push({id:id,msg:msg2,position:"left",curTime: $rootScope.getDatetime()});
                     $rootScope.showMsgLoader=false;
                     $rootScope.scrollChatWindow();
-                },2000);
+                },0);
             }
             
             // value2.queslink = $sce.trustAsHtml(value2.queslink);
@@ -64775,24 +64869,24 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.getmaillink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:" Email address for Maharashtra is <a href='mailto:customercare.mum@i-on.in'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for Maharashtra is <a href='#'>customercare.mum@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Email address for other states is <a href='mailto:customercare.blr@i-on.in'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
+                var msg = {Text:" Email address for other states is <a href='#'>customercare.blr@i-on.in</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.getcallink= function(w){
             if(w=='mah')
             {
-                var msg = {Text:"Toll free number for Maharashtra is <a href='tel:18001209636'>1800-120-9636</a>",type:"SYS_AUTO"};
+                var msg = {Text:"Toll free number for Maharashtra is <a href='#'>1800-120-9636</a>",type:"SYS_AUTO"};
                 $rootScope.pushSystemMsg(0,msg); 
             }
             else if(w=='other')
             {
-                var msg = {Text:" Toll free number for other states is <a href='tel:18001035466'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
+                var msg = {Text:" Toll free number for other states is <a href='#'>1800-103-5466</a>",type:"SYS_AUTO"};                $rootScope.pushSystemMsg(0,msg); 
             }
         };
         $scope.mailus = function(){
@@ -64934,15 +65028,15 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                             $('#faqs_dropdown').animate({scrollTop: chatHeight});
                         });
                         var l_index = _.findIndex($rootScope.links, function(o) { return o.questions == value; });
-                        console.log(l_index,"index");
-                        console.log(value,"que");
-                        console.log($rootScope.links,"link");
+                        // console.log(l_index,"index");
+                        // console.log(value,"que");
+                        // console.log($rootScope.answers,"link");
                         var value2 = $rootScope.links;
-                        if($rootScope.autolink != "" )
+                        if($rootScope.autolink != "" || $rootScope.autolink)
                         {
                             var linkdata="";
                             var prev_res = false;
-                            console.log("First link");
+                            //console.log("First link");
                             final_link = $rootScope.autolink.split("<br>");
                             var languageid = $.jStorage.get("language");
                             $scope.formData = {"items": final_link,"language":languageid,arr_index:l_index };
@@ -64960,10 +65054,10 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                         
                         else
                         {    
-                            console.log("2nd link",$rootScope.answers);
+                            //console.log("2nd link",$rootScope.answers);
                             var linkdata="";
                             var prev_res = false;
-                            if(autolink != "")
+                            if(autolink != "" && autolink)
                             {
                                 final_link = autolink.split("<br>");
                                 var languageid = $.jStorage.get("language");
@@ -65058,35 +65152,40 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $rootScope.showPincodeform = function() {
             var msg = {type:"SYS_LOCATOR"};
             $rootScope.pushSystemMsg(0,msg); 
-            var customer_id = $rootScope.CustomerID;
-            var customer_name = $rootScope.cust_Name;
             
-            var mysessiondata = $.jStorage.get("session_object");
-            var formdata = { customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
-            //mysessiondata = mysessiondata.toObject();
-            //var mergedObject = angular.extend(formData, mysessiondata);
-            //var formData = mergedObject;
-            apiService.outlocator(formdata).then( function (data) {
-                $rootScope.session_object = data.data.session_object;
-                $.jStorage.set("session_object",data.data.session_object);
-            });
         };
-        $rootScope.locatorformSubmit = function(formdata) {
-            
-            apiService.officelocator(formdata).then( function (response) {
+        $rootScope.locatorformSubmit = function(formdata1) {
+            apiService.officelocator(formdata1).then( function (response) {
+                var add_answers = "";
                 if(!response.data.value || response.data.data.length == 0)
                 {
                     //alert("Currently we are unavailable at this location");
                     var msg = {type:"SYS_PINERR",error:"Currently we are unavailable at this location"};
                     $rootScope.pushSystemMsg(0,msg); 
+                    add_answers = "Currently we are unavailable at this location";
                 }
                     
                 else
                 {
+                    add_answers = response.data.data;
                     var msg = {type:"SYS_PINADDR",address:response.data.data,responsedata:response.data.data};
                     $rootScope.pushSystemMsg(0,msg); 
                     //alert(response.data.data.address);
                 }
+                var customer_id = $rootScope.CustomerID;
+                var customer_name = $rootScope.cust_Name;
+                
+                var mysessiondata = $.jStorage.get("session_object");
+               
+                    
+                var formdata = {pincode:formdata1.pincode, address:add_answers,customer_id:customer_id,customer_name:customer_name,user_input:"",csrfmiddlewaretoken:$rootScope.getCookie("csrftoken"),auto_id:"",auto_value:"",user_id:$rootScope.session_id };
+                //mysessiondata = mysessiondata.toObject();
+                //var mergedObject = angular.extend(formData, mysessiondata);
+                //var formData = mergedObject;
+                apiService.outlocator(formdata).then( function (data) {
+                    $rootScope.session_object = data.data.session_object;
+                    $.jStorage.set("session_object",data.data.session_object);
+                });
             });
         };
         $rootScope.showQuerybtn = function() {
@@ -65190,7 +65289,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the FAQ panel on the left.",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg);
                 $scope.timerflag = true; 
                 $scope.sendtobackend = false;
@@ -65249,7 +65348,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 });
             }).catch(function (reason) {
                 //console.log(reason);
-                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the panel on the left.",type:"SYS_EMPTY_RES"};
                 $rootScope.pushSystemMsg(0,msg); 
                 $rootScope.showMsgLoader=false;
             });
@@ -65286,6 +65385,12 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
             $rootScope.pushQuesMsg(index,value);
             $rootScope.showMsgLoader = false; 
         };
+        $(document).on('click', '.portalapplink', function(e){ 
+            var index = $(this).attr('data-id');
+            var htmlcont = $(this).parents().find(".answer"+index).html();
+            msg = {Text:htmlcont,type:"SYS_EMPTY_RES"};
+            $rootScope.pushSystemMsg(0,msg); 
+        });
         $rootScope.getSystemMsg = function(id,value){
             Idle.setIdle(120);
             Idle.watch();
@@ -65316,8 +65421,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 $scope.timerflag = false;
                 $scope.sendtobackend = true;
                 $timeout(function(){
-                    console.log($scope.timerflag,"timer");
-                    console.log($scope.sendtobackend,"send");
+                    // console.log($scope.timerflag,"timer");
+                    // console.log($scope.sendtobackend,"send");
                     if(!$scope.timerflag && $scope.sendtobackend)
                     {
                         msg = {Text:"Give me a few seconds",type:"SYS_EMPTY_RES"};
@@ -65334,8 +65439,31 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                     angular.forEach(data.data.tiledlist, function(value, key) {
                         if(value.type=="text")
                         {
-                        	$rootScope.pushSystemMsg(0,data.data);
-                            $rootScope.showMsgLoader = false;
+                            if(value.link)
+                            {
+                                answer1 = value.Text.split("(2nd)");
+                                console.log(answer1);
+                                data.data.tiledlist[0].answer_1 = answer1[0];
+                                data.data.tiledlist[0].answer_2 = answer1[1];
+                                final_link = value.link.split("<br>");
+                                var s_i =1;
+                                var linkdata="";
+                                angular.forEach(final_link, function(value2, key2) {
+                                    linkdata += "<p class='portalapplink' data-id='"+s_i+"' >"+value2+"</p>";
+                                    s_i++;
+                                });
+                                data.data.tiledlist[0].link = linkdata;
+                                $rootScope.pushSystemMsg(0,data.data);
+                                $rootScope.showMsgLoader = false;
+                                //value3.queslink=answer1;    
+                            }
+                            else
+                            {
+                                $rootScope.pushSystemMsg(0,data.data);
+                                $rootScope.showMsgLoader = false;
+                            }
+                            
+                        	
                             
                             if(value.category && value.category != '')
                             {
@@ -65386,8 +65514,8 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
 
                     //$.jStorage.set("sessiondata",data.data.data.session_obj_data);
                 }).catch(function (reason) {
-                    //console.log(reason);
-                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead?",type:"SYS_EMPTY_RES"};
+                    console.log(reason);
+                    msg = {Text:"Nope ! I didn't catch that . Do you want to <a href='#' class='mailus'>Mail Us</a> instead? Or you can refer the FAQ panel on the left.",type:"SYS_EMPTY_RES"};
                     $rootScope.pushSystemMsg(0,msg); 
                     $rootScope.showMsgLoader=false;
                     $scope.timerflag = true;
