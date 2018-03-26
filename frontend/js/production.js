@@ -64075,6 +64075,7 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
         $scope.navigation = NavigationService.getNavigation();
         //$scope.categorydropdown = apiService.getCategoryDropdown({});
         $rootScope.gotsession=false;
+		$rootScope.authenticated=false;
         function getParameterByName(name, url) {
             if (!url) url = $rootScope.referrerurl;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -64136,15 +64137,18 @@ myApp.controller('HomeCtrl', function ($scope, TemplateService, NavigationServic
                 //console.log(response);
                 if(response.data.data.value=="False")
                 {
-                    $rootScope.gotsession = false;    
-					$rootScope.gotsession = true;    
+                    //$rootScope.gotsession = false;    
+					//$rootScope.gotsession = true;    
+					$rootScope.authenticated=true;
                 }
                 else if(response.data.data.value=="True")
                 {
-                    $rootScope.gotsession = true;
+                    //$rootScope.gotsession = true;
+					$rootScope.authenticated=false;
                 }
                 else
                 {
+					$rootScope.authenticated=false;
                     $rootScope.gotsession = false;
                 }
             });
